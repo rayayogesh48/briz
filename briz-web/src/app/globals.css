@@ -1,0 +1,7 @@
+:root { --background: #fff; --foreground: #202020; --muted-foreground: #646464; --border: #ebebeb; --primary: #3e63dd; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-inter), Arial, sans-serif; }
+button, input { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; color: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }

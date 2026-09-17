@@ -1,0 +1,5 @@
+.canvas { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; padding: 20px; background: #f0f0f0; width: max-content; min-width: 100%; min-height: 100vh; }
+.desktop { width: 1440px; }
+.tablet { width: 744px; }
+.phone { width: 393px; }
+.phone > header { height: 133px; }

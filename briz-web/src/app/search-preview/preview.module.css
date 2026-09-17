@@ -1,0 +1,12 @@
+.canvas { min-height: 100vh; padding: 32px; background: #f9f9f9; }
+.heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 32px; }
+.heading h1 { margin: 0 0 8px; font-size: 24px; font-weight: 650; }
+.heading p, .example > p { margin: 0; color: #646464; font-size: 14px; line-height: 20px; }
+.heading button { padding: 10px 16px; border: 1px solid #ebebeb; border-radius: 10px; background: #fff; white-space: nowrap; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, 540px); align-items: start; gap: 40px 32px; }
+.example { min-width: 0; }
+.example h2 { color: #646464; font-size: 13px; font-weight: 500; margin: 0 0 16px; }
+.cards { padding: 12px; background: white; border-radius: 20px; display: flex; flex-direction: column; gap: 12px; }
+.cards > div > * + * { margin-top: 12px; }
+.statuses { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; background: white; border-radius: 16px; margin-bottom: 24px; }
+@media (max-width: 620px) { .canvas { padding: 16px; } .grid { grid-template-columns: minmax(0, 1fr); } .heading { flex-direction: column; } }
