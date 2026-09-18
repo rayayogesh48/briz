@@ -92,16 +92,20 @@ test("categories without sample inventory show empty results, and stale subcateg
   assert.equal(changed.products.length, 4);
 });
 
-test("desktop margins consistently align at 120px from select location and avatar", () => {
+test("desktop margins consistently align at 120px, navbar has 32px padding, and body background is #f9f9f9", () => {
+  const globalsCss = readFileSync(new URL("../src/app/globals.css", import.meta.url), "utf8");
   const headerCss = readFileSync(new URL("../src/components/briz-header.module.css", import.meta.url), "utf8");
   const searchCss = readFileSync(new URL("../src/components/search-results.module.css", import.meta.url), "utf8");
   const footerCss = readFileSync(new URL("../src/components/briz-footer.module.css", import.meta.url), "utf8");
   const homeCss = readFileSync(new URL("../src/app/home.module.css", import.meta.url), "utf8");
 
-  // Logo width is 120px so Select location starts at 120px from the left
-  assert.match(headerCss, /\.logo\s*\{[^}]*width:\s*120px/);
-  // Header actions padding-right is 120px so Avatar right edge is at 120px from the right
-  assert.match(headerCss, /\.actions\s*\{[^}]*padding:\s*0\s+120px\s+0\s+12px/);
+  // Body background token is #f9f9f9
+  assert.match(globalsCss, /--background:\s*#f9f9f9/);
+  assert.match(globalsCss, /body\s*\{[^}]*background:\s*var\(--background\)/);
+
+  // Navbar has 32px padding on both sides as previous
+  assert.match(headerCss, /\.logo\s*\{[^}]*padding-left:\s*32px/);
+  assert.match(headerCss, /\.actions\s*\{[^}]*padding:\s*0\s+32px\s+0\s+12px/);
 
   // Search results body has 120px left/right padding and full width
   assert.match(searchCss, /\.page\s*\{[^}]*padding:\s*0\s+120px\s+48px/);
