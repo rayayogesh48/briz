@@ -103,6 +103,10 @@ test("desktop margins consistently align at 120px, navbar has 32px padding, and 
   assert.match(globalsCss, /--background:\s*#f9f9f9/);
   assert.match(globalsCss, /body\s*\{[^}]*background:\s*var\(--background\)/);
 
+  // Navbar is sticky at top: 0 with elevated z-index
+  assert.match(headerCss, /\.header\s*\{[^}]*position:\s*sticky/);
+  assert.match(headerCss, /\.header\s*\{[^}]*top:\s*0/);
+
   // Navbar has 32px padding on both sides as previous
   assert.match(headerCss, /\.logo\s*\{[^}]*padding-left:\s*32px/);
   assert.match(headerCss, /\.actions\s*\{[^}]*padding:\s*0\s+32px\s+0\s+12px/);

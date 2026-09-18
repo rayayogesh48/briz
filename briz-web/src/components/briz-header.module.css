@@ -1,4 +1,4 @@
-.header { container-type: inline-size; position: relative; display: flex; align-items: center; width: 100%; height: 87px; background: #fff; border-bottom: 1px solid var(--border); }
+.header { container-type: inline-size; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; width: 100%; height: 87px; background: #fff; border-bottom: 1px solid var(--border); }
 .identity { display: flex; align-self: stretch; flex: 1 1 0; min-width: 0; }
 .logo { display: flex; align-items: center; padding-left: 32px; width: 121px; flex-shrink: 0; border-right: 1px solid var(--border); }
 .logo img { display: block; width: 63.733px; height: 28px; }
@@ -45,7 +45,7 @@
 @media (max-width: 540px) { .header { height: 133px; } }
 @media (prefers-reduced-motion: reduce) { .header button { transition: none; } }
 
-.header:has([data-open="true"]) { z-index: 30; }
+.header:has([data-open="true"]) { z-index: 101; }
 @media (max-width: 540px) { .searchDialog { width: 100%; max-width: 100%; height: 100dvh; max-height: 100dvh; margin: 0; border: 0; border-radius: 0; padding: 16px; } }
 @container (min-width: 1280px) and (max-width: 1400px) {
  .location { padding-inline: 16px; }
