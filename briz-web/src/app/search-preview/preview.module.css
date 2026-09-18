@@ -1,12 +1,218 @@
-.canvas { min-height: 100vh; padding: 32px; background: #f9f9f9; }
-.heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 32px; }
-.heading h1 { margin: 0 0 8px; font-size: 24px; font-weight: 650; }
-.heading p, .example > p { margin: 0; color: #646464; font-size: 14px; line-height: 20px; }
-.heading button { padding: 10px 16px; border: 1px solid #ebebeb; border-radius: 10px; background: #fff; white-space: nowrap; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, 540px); align-items: start; gap: 40px 32px; }
-.example { min-width: 0; }
-.example h2 { color: #646464; font-size: 13px; font-weight: 500; margin: 0 0 16px; }
-.cards { padding: 12px; background: white; border-radius: 20px; display: flex; flex-direction: column; gap: 12px; }
-.cards > div > * + * { margin-top: 12px; }
-.statuses { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; background: white; border-radius: 16px; margin-bottom: 24px; }
-@media (max-width: 620px) { .canvas { padding: 16px; } .grid { grid-template-columns: minmax(0, 1fr); } .heading { flex-direction: column; } }
+.canvas {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f9f9f9;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.heading h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 650;
+  color: #202020;
+}
+
+.heading p,
+.example > p {
+  margin: 0;
+  color: #646464;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.heading button {
+  padding: 10px 16px;
+  border: 1px solid #ebebeb;
+  border-radius: 10px;
+  background: #fff;
+  white-space: nowrap;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.heading button:hover {
+  border-color: #3e63dd;
+  color: #3e63dd;
+}
+
+/* Figma 12 Designs Showcase */
+.showcaseSection {
+  background: white;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 40px;
+}
+
+.showcaseHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 16px;
+}
+
+.showcaseHeading h2 {
+  font-size: 18px;
+  font-weight: 650;
+  color: #202020;
+  margin: 0;
+}
+
+.showcaseHeading span {
+  font-size: 13px;
+  color: #646464;
+}
+
+.designLinksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.designCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.15s ease;
+}
+
+.designCard:hover {
+  background: #f0f4ff;
+  border-color: #3e63dd;
+  transform: translateY(-1px);
+}
+
+.designHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nodeBadge {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: monospace;
+  background: #e5e5e5;
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.designType {
+  font-size: 11px;
+  color: #3e63dd;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.designTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #202020;
+  margin: 0;
+}
+
+.designDesc {
+  font-size: 12px;
+  color: #646464;
+  line-height: 16px;
+  margin: 0;
+}
+
+.componentRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f1f1;
+}
+
+.componentPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.componentPreview h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #646464;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 540px);
+  align-items: start;
+  gap: 40px 32px;
+}
+
+.example {
+  min-width: 0;
+}
+
+.example h2 {
+  color: #646464;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 16px;
+}
+
+.cards {
+  padding: 12px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cards > div > * + * {
+  margin-top: 12px;
+}
+
+.statuses {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 620px) {
+  .canvas {
+    padding: 16px;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .heading {
+    flex-direction: column;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { DESIGN_PRODUCTS, DESIGN_STORES, INITIAL_RECENT, searchCatalog, type Product, type Store } from "./search-data";
@@ -38,16 +39,18 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
 
 export type SearchState = "idle" | "focused" | "loading" | "results" | "filled" | "empty-history" | "no-results";
 
-export default function NavbarSearch({ location, embedded = false, previewState }: {
+export default function NavbarSearch({ location, embedded = false, previewState, initialQuery = "", onNavigate }: {
   location: string;
+  initialQuery?: string;
+  onNavigate?: () => void;
   embedded?: boolean;
   previewState?: SearchState;
 }) {
-  const [query, setQuery] = useState(previewState === "filled" ? "Wireless headphone" : previewState === "loading" || previewState === "results" ? "Shoe" : previewState === "no-results" ? "{search-query}" : "");
+  const router = useRouter();
+  const [query, setQuery] = useState(previewState === "filled" ? "Wireless headphone" : previewState === "loading" || previewState === "results" ? "Shoe" : previewState === "no-results" ? "{search-query}" : initialQuery);
   const [open, setOpen] = useState(embedded);
   const [recent, setRecent] = useState(previewState === "empty-history" ? [] : INITIAL_RECENT);
   const [loading, setLoading] = useState(false);
-  const [all, setAll] = useState(false);
   const [request, setRequest] = useState(false);
   const [interacted, setInteracted] = useState(false);
   const [selected, setSelected] = useState<Product | Store | null>(null);
@@ -70,13 +73,17 @@ export default function NavbarSearch({ location, embedded = false, previewState 
   }, [embedded]);
 
   function finishSearch() {
+    if (!query.trim()) return;
     if (timer.current) clearTimeout(timer.current);
-    setLoading(false); setAll(true); setInteracted(true); setOpen(true);
+    setLoading(false); setInteracted(true); setOpen(false);
     remember(query);
+    input.current?.blur();
+    onNavigate?.();
+    router.push(`/search?${new URLSearchParams({ q: query.trim() })}`);
   }
   function change(value: string) {
     if (timer.current) clearTimeout(timer.current);
-    setInteracted(true); setQuery(value); setSelected(null); setAll(false); setOpen(true);
+    setInteracted(true); setQuery(value); setSelected(null); setOpen(true);
     // Simulated catalog latency; replace with a cancellable catalog API request.
     setLoading(Boolean(value.trim()));
     if (value.trim()) timer.current = setTimeout(() => { setLoading(false); timer.current = null; }, 650);
@@ -102,7 +109,7 @@ export default function NavbarSearch({ location, embedded = false, previewState 
 
   const normalized = query.trim();
   const designPreview = Boolean(previewState && !interacted);
-  const { products, stores } = designPreview && previewState === "results" ? { products: DESIGN_PRODUCTS, stores: DESIGN_STORES } : searchCatalog(query, all);
+  const { products, stores } = designPreview && previewState === "results" ? { products: DESIGN_PRODUCTS, stores: DESIGN_STORES } : searchCatalog(query);
   const hasResults = products.length + stores.length > 0;
   const state: SearchState = designPreview ? previewState! : !open ? normalized ? "filled" : "idle" : loading ? "loading" : !normalized ? "focused" : hasResults ? "results" : "no-results";
   const expanded = state !== "idle" && state !== "filled";
@@ -129,7 +136,7 @@ export default function NavbarSearch({ location, embedded = false, previewState 
         {products.length > 0 && <SearchSection title="Products">{products.map(product => <ProductRow key={product.id} product={product} onSelect={() => { setInteracted(true); remember(query); setSelected(product); setOpen(true); }} />)}</SearchSection>}
         {products.length > 0 && stores.length > 0 && <div className={styles.divider} />}
         {stores.length > 0 && <SearchSection title="Stores">{stores.map(store => <StoreRow key={store.id} store={store} onSelect={() => { setInteracted(true); remember(query); setSelected(store); setOpen(true); }} />)}</SearchSection>}
-        <ResultsFooter query={query} all={all} onSelect={finishSearch} />
+        <ResultsFooter query={query} onSelect={finishSearch} />
       </> : <RequestBanner query={query} onRequest={() => { remember(query); setRequest(true); }} />}
     </div>}
     {request && <RequestProduct query={query} location={location} onClose={() => { setRequest(false); input.current?.focus(); }} />}

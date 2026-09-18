@@ -1,0 +1,141 @@
+.sortControl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  width: 170px;
+  user-select: none;
+}
+
+.label {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--muted-foreground, #646464);
+  letter-spacing: 0.12px;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 4px 10px;
+  background: var(--card, #ffffff);
+  border: 1px solid var(--border, #ebebeb);
+  border-radius: 10px;
+  color: var(--foreground, #202020);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 450;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.trigger:hover {
+  border-color: #d1d5db;
+}
+
+.trigger:focus-visible {
+  outline: none;
+  border-color: var(--primary, #3e63dd);
+  box-shadow: 0 0 0 3px rgba(62, 99, 221, 0.15);
+}
+
+.triggerValue {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--foreground, #202020);
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground, #646464);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: 200px;
+  background: var(--card, #ffffff);
+  border: 1px solid var(--border, #ebebeb);
+  border-radius: 16px;
+  box-shadow: 0px 32px 33px -15px rgba(10, 9, 11, 0.17), 0px 0px 3px -1px rgba(10, 9, 11, 0.04);
+  padding: 4px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  animation: dropdownIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted-foreground, #646464);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  width: 100%;
+}
+
+.menuItem:hover,
+.menuItemFocus {
+  background-color: var(--muted, #f1f1f1);
+  color: var(--foreground, #202020);
+}
+
+.menuItemSelected {
+  color: var(--foreground, #202020);
+  font-weight: 500;
+}
+
+.checkIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--primary, #3e63dd);
+}
+
+.checkHidden {
+  visibility: hidden;
+}
+

@@ -1,0 +1,30 @@
+.loading { width: 100%; padding: 40px 120px; }
+@media (max-width: 1279px) { .loading { padding: 40px 24px; } }
+.loading > p { margin: 0 0 24px; color: var(--muted-foreground); font-size: 14px; }
+.stores, .products { display: grid; gap: 24px; margin-bottom: 32px; }
+.stores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.products { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.skeleton { position: relative; overflow: hidden; }
+.bar { background: var(--border); border-radius: 4px; }
+.image { aspect-ratio: 1; border-radius: 16px; }
+.content { display: flex; flex-direction: column; gap: 6px; padding: 12px 0 10px; }
+.distancePill { display: flex; align-items: center; gap: 4px; background: var(--muted); padding: 5px 9px; border-radius: 999px; width: fit-content; height: 24px; }
+.distance { width: 42px; height: 7px; background: #16161999; }
+.title { height: 12px; width: 100%; }
+.subtitle { height: 10px; width: 63%; }
+.price { height: 16px; width: 74px; margin-top: 4px; }
+.store { background: white; border-radius: 16px; box-shadow: 0 5px 13px -5px #0a090b0d; }
+.cover { height: 103px; background: var(--muted); border-radius: 0; }
+.store .content { padding: 27px 12px 12px; gap: 8px; height: 116px; }
+.store .bar { background: var(--muted); }
+.logo { position: absolute; top: 79px; left: 12px; width: 44px; height: 44px; border: 2px solid white; border-radius: 8px; }
+.storeTitle { width: 70%; height: 16px; border-radius: 8px; }
+.category { width: 68px; height: 10px; border-radius: 999px; }
+.ratingRow { display: flex; align-items: center; gap: 4px; }
+.rating { width: 96px; height: 9px; border-radius: 999px; }
+.hiddenDistance { position: absolute; opacity: 0; }
+.shimmerPosition { position: absolute; left: -68px; top: -75px; bottom: -46px; width: 181px; pointer-events: none; }
+.shimmer { height: 100%; width: 90px; transform: rotate(-12deg); opacity: .72; background: linear-gradient(90deg, transparent, #ffffffb8, transparent); }
+.store .shimmerPosition { left: -5px; top: -52px; height: 340px; width: 156px; }
+.store .shimmer { width: 54px; transform: rotate(18deg); opacity: .58; }
+@media (max-width: 600px) { .stores { grid-template-columns: 1fr; } .stores > :not(:first-child) { display: none; } .products { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
