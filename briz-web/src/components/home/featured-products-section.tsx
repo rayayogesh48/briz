@@ -57,3 +57,4 @@ export function FeaturedProductsSection() {
     </section>
   );
 }
+

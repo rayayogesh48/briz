@@ -33,3 +33,4 @@ test("home page responsive tokens and mobile scroll transitions are preserved", 
   // Mobile scrolled header collapses to 68px (node 379:55492)
   assert.match(headerCss, /\.header\[data-scrolled="true"\]\s*\{[^}]*height:\s*68px/);
 });
+

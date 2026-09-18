@@ -44,3 +44,4 @@ export function ProductCarousel({ title, category, products }: ProductCarouselPr
     </section>
   );
 }
+

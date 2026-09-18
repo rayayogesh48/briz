@@ -427,3 +427,4 @@ export const REQUEST_STEPS = [
     image: "/figma/home/step-compare-chat.png",
   },
 ];
+
