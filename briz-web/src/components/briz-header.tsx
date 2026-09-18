@@ -12,10 +12,21 @@ function Icon({ name }: { name: string }) { return <Image src={`/figma/${name}.s
 export function BrizHeader({ variant = "signed-in", searchQuery = "" }: Props) {
   const [location, setLocation] = useState(locations[0]);
   const [panel, setPanel] = useState<Panel | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => { if (panel && !dialog.current?.open) dialog.current?.showModal(); else if (!panel && dialog.current?.open) dialog.current?.close(); }, [panel]);
-  return <header className={styles.header}>
+  return <header className={styles.header} data-scrolled={scrolled}>
     <div className={styles.identity}>
       <Link className={styles.logo} href="/" aria-label="Briz home"><Image src="/figma/logo.svg" alt="Briz" width={64} height={28} unoptimized priority /></Link>
       <button className={styles.location} onClick={() => setPanel("location")} aria-haspopup="dialog"><strong>🛍️ Shopping from</strong><span><span className={styles.address}>{location}</span><Icon name="chevron-down" /></span></button>

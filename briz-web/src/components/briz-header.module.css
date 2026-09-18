@@ -42,7 +42,11 @@
  .location { position: absolute; left: 16px; top: 72px; padding: 0; }
  .compactActions { position: absolute; right: 16px; top: 12px; padding: 0; gap: 8px; }
 }
-@media (max-width: 540px) { .header { height: 133px; } }
+@media (max-width: 540px) {
+  .header { height: 133px; transition: height 200ms ease; }
+  .header[data-scrolled="true"] { height: 68px; }
+  .header[data-scrolled="true"] .location { opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity 150ms ease, transform 150ms ease; }
+}
 @media (prefers-reduced-motion: reduce) { .header button { transition: none; } }
 
 .header:has([data-open="true"]) { z-index: 101; }
