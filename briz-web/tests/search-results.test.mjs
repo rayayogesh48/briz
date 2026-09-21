@@ -119,3 +119,23 @@ test("desktop margins consistently align at 120px, navbar has 32px padding, and 
   assert.match(footerCss, /\.footer\s*\{[^}]*padding:\s*48px\s+120px/);
   assert.match(homeCss, /\.home\s*\{[^}]*padding:\s*40px\s+120px/);
 });
+
+test("price range filter includes an interactive dual-thumb range slider", () => {
+  const filtersTsx = readFileSync(new URL("../src/components/search-filters.tsx", import.meta.url), "utf8");
+  const filtersCss = readFileSync(new URL("../src/components/search-filters.module.css", import.meta.url), "utf8");
+
+  // Dual-thumb range slider markup with aria labels
+  assert.match(filtersTsx, /type="range"/);
+  assert.match(filtersTsx, /aria-label="Minimum price range slider"/);
+  assert.match(filtersTsx, /aria-label="Maximum price range slider"/);
+  assert.match(filtersTsx, /className=\{styles\.rangeSlider\}/);
+  assert.match(filtersTsx, /className=\{styles\.sliderTrack\}/);
+  assert.match(filtersTsx, /className=\{styles\.sliderRange\}/);
+
+  // Range slider CSS styles matching design system
+  assert.match(filtersCss, /\.rangeSlider\s*\{[^}]*display:\s*flex/);
+  assert.match(filtersCss, /\.sliderTrack\s*\{[^}]*background:\s*var\(--border/);
+  assert.match(filtersCss, /\.sliderRange\s*\{[^}]*background:\s*var\(--primary/);
+  assert.match(filtersCss, /\.thumbInput::-webkit-slider-thumb\s*\{[^}]*border:\s*2px\s+solid\s+var\(--primary/);
+});
+

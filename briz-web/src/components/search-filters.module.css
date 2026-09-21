@@ -147,6 +147,119 @@
   width: 100%;
 }
 
+.rangeSliderContainer {
+  width: 100%;
+  padding: 4px 0 10px;
+}
+
+.rangeSlider {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.sliderTrack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--border, #ebebeb);
+  border-radius: 9999px;
+}
+
+.sliderRange {
+  position: absolute;
+  height: 4px;
+  background: var(--primary, #3e63dd);
+  border-radius: 9999px;
+  z-index: 1;
+}
+
+.thumbInput {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  z-index: 2;
+}
+
+.thumbInputTop {
+  z-index: 3;
+}
+
+.thumbInput::-webkit-slider-runnable-track {
+  height: 4px;
+  background: transparent;
+  border: none;
+}
+
+.thumbInput::-moz-range-track {
+  height: 4px;
+  background: transparent;
+  border: none;
+}
+
+.thumbInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--primary, #3e63dd);
+  box-shadow: 0 2px 5px rgba(10, 9, 11, 0.15);
+  cursor: pointer;
+  pointer-events: auto;
+  margin-top: -7px;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.thumbInput::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--primary, #3e63dd);
+  box-shadow: 0 2px 5px rgba(10, 9, 11, 0.15);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.thumbInput::-webkit-slider-thumb:hover,
+.thumbInput::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(62, 99, 221, 0.28);
+}
+
+.thumbInput:focus-visible::-webkit-slider-thumb,
+.thumbInput:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--primary, #3e63dd);
+  outline-offset: 2px;
+}
+
+.rangeLabels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--muted-foreground, #888888);
+  margin-top: 2px;
+  user-select: none;
+}
+
 .priceInputs {
   display: flex;
   gap: 8px;
