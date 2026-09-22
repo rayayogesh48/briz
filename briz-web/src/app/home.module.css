@@ -15,6 +15,14 @@
   gap: 8px;
 }
 
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 .portalTitle {
   margin: 0;
   font-family: "Inter", sans-serif;
@@ -26,11 +34,38 @@
 }
 
 .portalSubtitle {
-  margin: 0;
+  margin: 4px 0 0;
   font-family: "Inter", sans-serif;
   font-size: 16px;
   line-height: 24px;
   color: #646464;
+}
+
+.shareCtaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #202020;
+  border: 1px solid #ebebeb;
+  box-shadow: 0 1.5px 4px -1px rgba(10, 9, 11, 0.05);
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.shareCtaButton:hover {
+  background-color: #f8fafc;
+  border-color: #3e63dd;
+  color: #3e63dd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(62, 99, 221, 0.12);
 }
 
 /* Section Groups */
@@ -207,6 +242,85 @@
   background-color: #3354c7;
 }
 
+/* Action / Dialog Card */
+.actionCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  box-shadow: 0 1.5px 4px -1px rgba(10, 9, 11, 0.05);
+  gap: 20px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.actionCard:hover {
+  transform: translateY(-2px);
+  border-color: #3e63dd;
+  box-shadow: 0 8px 24px rgba(62, 99, 221, 0.12);
+}
+
+.actionCardBody {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.actionIconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #eff4ff;
+  color: #3e63dd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.actionCardTitle {
+  margin: 0 0 4px;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #202020;
+}
+
+.actionCardDescription {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  line-height: 20px;
+  color: #646464;
+  max-width: 600px;
+}
+
+.openDialogBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 20px;
+  background-color: #3e63dd;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.openDialogBtn:hover {
+  background-color: #3354c7;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1280px) {
   .home {
@@ -225,12 +339,19 @@
   .redirectGrid {
     grid-template-columns: 1fr;
   }
-  .componentCard {
+  .componentCard,
+  .actionCard {
     flex-direction: column;
     align-items: flex-start;
     padding: 20px 16px;
   }
-  .componentButton {
+  .actionCardBody {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .componentButton,
+  .openDialogBtn,
+  .shareCtaButton {
     width: 100%;
   }
   .portalTitle {

@@ -433,5 +433,54 @@ test("ProductCategoryList implements Figma 946:103107 with all edge cases handle
   assert.match(compCss, /\.gradientRight\s*\{[^}]*width:\s*152px/);
 });
 
+test("ShareDialog provides social sharing, copyable share link, and CTA trigger on home page", () => {
+  const shareDialogTsx = readFileSync(new URL("../src/components/share-dialog.tsx", import.meta.url), "utf8");
+  const shareDialogCss = readFileSync(new URL("../src/components/share-dialog.module.css", import.meta.url), "utf8");
+  const homeTsx = readFileSync(new URL("../src/app/page.tsx", import.meta.url), "utf8");
+  const homeCss = readFileSync(new URL("../src/app/home.module.css", import.meta.url), "utf8");
 
+  // ShareDialog export and props
+  assert.match(shareDialogTsx, /export function ShareDialog\(/);
+  assert.match(shareDialogTsx, /isOpen:\s*boolean/);
+  assert.match(shareDialogTsx, /onClose:\s*\(\)\s*=>\s*void/);
 
+  // Social sharing: Facebook, Instagram, WhatsApp, Email
+  assert.match(shareDialogTsx, /IconFacebook/);
+  assert.match(shareDialogTsx, /IconInstagram/);
+  assert.match(shareDialogTsx, /IconWhatsApp/);
+  assert.match(shareDialogTsx, /IconMail/);
+  assert.match(shareDialogTsx, /https:\/\/www\.facebook\.com\/sharer\/sharer\.php/);
+  assert.match(shareDialogTsx, /https:\/\/www\.instagram\.com/);
+  assert.match(shareDialogTsx, /https:\/\/api\.whatsapp\.com\/send/);
+  assert.match(shareDialogTsx, /mailto:\?subject=/);
+
+  // Copyable link section
+  assert.match(shareDialogTsx, /className=\{styles\.linkInput\}/);
+  assert.match(shareDialogTsx, /navigator\.clipboard\.writeText/);
+  assert.match(shareDialogTsx, /Copied!/);
+
+  // Dialog accessibility and keyboard handling
+  assert.match(shareDialogTsx, /role="dialog"/);
+  assert.match(shareDialogTsx, /aria-modal="true"/);
+  assert.match(shareDialogTsx, /aria-labelledby="share-dialog-title"/);
+  assert.match(shareDialogTsx, /e\.key === "Escape"/);
+  assert.match(shareDialogTsx, /document\.body\.style\.overflow = "hidden"/);
+
+  // CSS module styling for dialog
+  assert.match(shareDialogCss, /\.backdrop\s*\{[^}]*position:\s*fixed/);
+  assert.match(shareDialogCss, /\.modal\s*\{[^}]*border-radius:\s*20px/);
+  assert.match(shareDialogCss, /\.socialGrid\s*\{[^}]*display:\s*grid/);
+  assert.match(shareDialogCss, /\.copyBtn\s*\{[^}]*background-color:\s*#3e63dd/);
+  assert.match(shareDialogCss, /\.copyBtnSuccess\s*\{[^}]*background-color:\s*#30a46c/);
+
+  // Home page integrates ShareDialog and CTA
+  assert.match(homeTsx, /import \{ ShareDialog \} from "@\/components\/share-dialog"/);
+  assert.match(homeTsx, /const \[isShareOpen, setIsShareOpen\] = useState\(false\)/);
+  assert.match(homeTsx, /onClick=\{\(\) => setIsShareOpen\(true\)\}/);
+  assert.match(homeTsx, /Open Share Dialog/);
+  assert.match(homeTsx, /<ShareDialog[^>]*isOpen=\{isShareOpen\}/);
+
+  // Home CSS styling for CTA
+  assert.match(homeCss, /\.openDialogBtn\s*\{[^}]*background-color:\s*#3e63dd/);
+  assert.match(homeCss, /\.actionCard/);
+});

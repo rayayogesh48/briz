@@ -69,12 +69,11 @@ export default function ProductCategoryListDocPage() {
             <div className={styles.badgeRow}>
               <span className={styles.badge}>Component</span>
               <a
-                href="https://www.figma.com/design/WBxilPJIVmVdEMutum6eXp/Briz-Web?node-id=946-103107&m=dev"
-                target="_blank"
+                href="https://www.figma.com/design/WBxilPJIVmVdEMutum6eXp/Briz-Web?node-id=946-103107&t=FAiy3jInkFxq1rx5-4"
                 rel="noopener noreferrer"
                 className={styles.figmaLink}
               >
-                Figma 946:103107 ↗
+                Go to figma Component ↗
               </a>
             </div>
             <h1 className={styles.title}>Product Category List</h1>

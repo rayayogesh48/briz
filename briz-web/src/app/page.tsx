@@ -1,6 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { BrizHeader } from "@/components/briz-header";
 import { BrizFooter } from "@/components/briz-footer";
+import { ShareDialog } from "@/components/share-dialog";
 import styles from "./home.module.css";
 
 const REDIRECTION_PAGES = [
@@ -35,6 +39,8 @@ const REDIRECTION_PAGES = [
 ];
 
 export default function Home() {
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
   return (
     <>
       <BrizHeader />
@@ -42,12 +48,63 @@ export default function Home() {
       <main className={styles.home} aria-label="Briz Navigation Hub">
         {/* Navigation & Redirection Portal Header */}
         <section className={styles.portalHeader} aria-labelledby="portal-heading">
-          <h1 id="portal-heading" className={styles.portalTitle}>
-            Briz Web Application Navigation Hub
-          </h1>
-          <p className={styles.portalSubtitle}>
-            Select any page or component below to navigate directly to that specific section.
-          </p>
+          <div className={styles.headerRow}>
+            <div>
+              <h1 id="portal-heading" className={styles.portalTitle}>
+                Briz Web Application Navigation Hub
+              </h1>
+              <p className={styles.portalSubtitle}>
+                Select any page, component, or interactive dialog below to test and inspect.
+              </p>
+            </div>
+            <button
+              type="button"
+              className={styles.shareCtaButton}
+              onClick={() => setIsShareOpen(true)}
+              aria-label="Open share dialog from header"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              <span>Share Application</span>
+            </button>
+          </div>
+        </section>
+
+        {/* Dialogs & Interactive CTAs */}
+        <section className={styles.sectionGroup} aria-label="Dialogs and Actions">
+          <h2 className={styles.sectionHeading}>Dialogs & Actions</h2>
+          <div className={styles.actionCard}>
+            <div className={styles.actionCardBody}>
+              <div className={styles.actionIconWrapper} aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+              </div>
+              <div>
+                <h3 className={styles.actionCardTitle}>Share Dialog</h3>
+                <p className={styles.actionCardDescription}>
+                  Social media sharing modal supporting Facebook, Instagram, WhatsApp, Email, copy-to-clipboard, and native Web Share.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.openDialogBtn}
+              onClick={() => setIsShareOpen(true)}
+              aria-label="Open Share Dialog"
+            >
+              Open Share Dialog ↗
+            </button>
+          </div>
         </section>
 
         {/* Core Application Pages Grid */}
@@ -90,6 +147,14 @@ export default function Home() {
           </Link>
         </section>
       </main>
+
+      {/* Share Dialog Modal */}
+      <ShareDialog
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        title="Briz — Discover & Shop Local in Kathmandu"
+        description="Find authentic stores, real-time stock, and local pickup in Kathmandu on Briz."
+      />
 
       <BrizFooter />
     </>
