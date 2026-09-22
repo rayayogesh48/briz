@@ -1,0 +1,412 @@
+.page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 120px;
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+}
+
+/* Breadcrumb matching Figma 836:3688 */
+.breadcrumbSection {
+  padding: 16px 0 16px 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #667085;
+}
+
+.breadcrumb a {
+  color: #667085;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb a:hover {
+  color: #101828;
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: #d0d5dd;
+  user-select: none;
+}
+
+.breadcrumbActive {
+  color: #101828;
+  font-weight: 600;
+}
+
+/* Main Container matching Figma 836:3698 */
+.container {
+  display: flex;
+  gap: 25px;
+  align-items: flex-start;
+  padding-bottom: 60px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Main Content Area matching Figma 836:3762 */
+.mainContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header Section matching Figma 868:80334 */
+.headerSection {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.categoryTitle {
+  font-size: 24px;
+  font-weight: 650;
+  color: #202020;
+  line-height: 32px;
+  letter-spacing: -0.36px;
+  margin: 0;
+}
+
+/* Filter applied chips */
+.filteringPanel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+}
+
+.filterAppliedLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #667085;
+}
+
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #f9f5ff;
+  border: 1px solid #e9d7fe;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6938ef;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.filterChip:hover {
+  background: #f4ebff;
+}
+
+.filterChipClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearAllButton {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #667085;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: auto;
+}
+
+.clearAllButton:hover {
+  color: #101828;
+}
+
+/* 4-column Product Grid matching Figma 836:3771 */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.storeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 16px;
+}
+
+.emptyIllustration {
+  margin-bottom: 16px;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #101828;
+  margin: 0 0 8px 0;
+}
+
+.emptySubtitle {
+  font-size: 14px;
+  color: #667085;
+  max-width: 400px;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.emptyResetButton {
+  padding: 10px 18px;
+  background: #7f56d9;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.emptyResetButton:hover {
+  background: #6938ef;
+}
+
+/* Centered Show More Button matching Figma 836:28812 & 836:28813 */
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 0 0 0;
+}
+
+.showMoreButton {
+  height: 48px;
+  min-width: 215px;
+  padding: 0 24px;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #344054;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showMoreButton:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #98a2b3;
+  color: #101828;
+}
+
+.showMoreButton:disabled {
+  background: #f2f4f7;
+  color: #98a2b3;
+  cursor: default;
+  border-color: #eaecf0;
+}
+
+/* Product Inquiry Dialog Modal */
+.productModal {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  background: #ffffff;
+  box-shadow: 0 20px 24px -4px rgba(16, 24, 40, 0.1), 0 8px 8px -4px rgba(16, 24, 40, 0.04);
+  max-width: 500px;
+  width: 90vw;
+}
+
+.productModal::backdrop {
+  background: rgba(16, 24, 40, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  padding: 24px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modalHeader h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #101828;
+  margin: 0;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #667085;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modalClose:hover {
+  color: #101828;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modalImageWrapper {
+  display: flex;
+  justify-content: center;
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.modalImage {
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.modalDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modalStore,
+.modalLocation,
+.modalPrice {
+  font-size: 14px;
+  color: #475467;
+  margin: 0;
+}
+
+.modalPrice {
+  font-size: 18px;
+  font-weight: 700;
+  color: #101828;
+  margin: 4px 0 12px 0;
+}
+
+.requestButton {
+  width: 100%;
+  padding: 12px;
+  background: #7f56d9;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.requestButton:hover {
+  background: #6938ef;
+}
+
+.modalSuccess {
+  padding: 12px;
+  background: #ecfdf3;
+  border: 1px solid #d1fadf;
+  color: #027a48;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.modalError {
+  font-size: 13px;
+  color: #d92d20;
+  margin: 4px 0 0 0;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1200px) {
+  .page {
+    padding: 0 40px;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .page {
+    padding: 0 24px;
+  }
+
+  .container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .storeGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0 16px;
+  }
+
+  .categoryTitle {
+    font-size: 20px;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .storeGrid {
+    grid-template-columns: 1fr;
+  }
+}

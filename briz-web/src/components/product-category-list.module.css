@@ -1,0 +1,180 @@
+/* Product Category List matching Figma node 946:103107 */
+.container {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+}
+
+/* Scrollable Track */
+.track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Category Pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background-color: #f1f1f1;
+  color: #202020;
+  border: none;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease, max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
+  user-select: none;
+  outline: none;
+}
+
+.pill:hover:not(.pillActive) {
+  background-color: #e5e5e5;
+}
+
+.pill:focus-visible {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #3e63dd;
+}
+
+/* Active State matching Figma 946:103110 */
+.pillActive {
+  background-color: #3e63dd;
+  color: #ffffff;
+}
+
+.pillActive:hover {
+  background-color: #3354c7;
+}
+
+/* Edge Case 1: Truncation for unselected long names */
+.pillLabel {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: var(--max-item-width, 160px);
+  transition: max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 20px;
+}
+
+/* When selected, expands fully so the entire name is visible */
+.pillActive .pillLabel {
+  max-width: 1000px; /* Expands fully */
+}
+
+
+/* Left Gradient Overlay & Chevron */
+.gradientLeft {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 152px;
+  height: 40px;
+  background: linear-gradient(to right, var(--bg-color, #f9f9f9) 0%, rgba(249, 249, 249, 0) 100%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.chevronBtnLeft {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  color: #202020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease;
+  z-index: 12;
+}
+
+.chevronBtnLeft:hover {
+  background-color: #f1f1f1;
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Right Gradient Overlay & Chevron */
+.gradientRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 152px;
+  height: 40px;
+  background: linear-gradient(to right, rgba(249, 249, 249, 0) 0%, var(--bg-color, #f9f9f9) 100%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 10;
+}
+
+.chevronBtnRight {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  color: #202020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease;
+  z-index: 12;
+}
+
+.chevronBtnRight:hover {
+  background-color: #f1f1f1;
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Empty fallback */
+.emptyState {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  color: #8c8c8c;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+}
+

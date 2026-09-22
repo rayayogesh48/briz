@@ -1,0 +1,141 @@
+.filterContainer {
+  width: 260px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 96px;
+  max-height: calc(100vh - 110px);
+  border-right: 1px solid #ebebeb;
+  padding: 0 8px 32px 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #eaecf0 transparent;
+}
+
+.categoryList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.categoryList::-webkit-scrollbar-thumb {
+  background-color: #eaecf0;
+  border-radius: 4px;
+}
+
+.shopCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 64px;
+  padding: 8px 16px 8px 8px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease-in-out;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.shopCard:hover {
+  background: #f2f4f7;
+}
+
+.shopCard:focus-visible {
+  box-shadow: 0 0 0 2px #7f56d9;
+}
+
+.imageContainer {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.thumbWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #f4f5f7;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eaecf0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #202020;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+/* Active Shop Card State matching Figma 862:77851 */
+.shopCardActive {
+  background: #ffffff;
+  border-color: #ebebeb;
+  box-shadow: 0px 2px 4px -1px rgba(10, 9, 11, 0.04), 0px 5px 13px -5px rgba(10, 9, 11, 0.08);
+}
+
+.shopCardActive .label {
+  font-weight: 650;
+  color: #101828;
+}
+
+.shopCardActive .thumbWrapper {
+  border-color: #7f56d9;
+  background: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .filterContainer {
+    width: 100%;
+    position: static;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid #ebebeb;
+    padding: 0 0 12px 0;
+  }
+
+  .categoryList {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    gap: 8px;
+  }
+
+  .shopCard {
+    width: auto;
+    min-width: 160px;
+    padding: 6px 12px 6px 6px;
+  }
+}

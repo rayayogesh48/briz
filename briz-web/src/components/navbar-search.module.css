@@ -97,5 +97,41 @@
 .root.embedded { width: 100%; }
 .embedded .dropdown { position: static; box-shadow: none; border: 0; max-height: none; margin-top: 8px; }
 .root[data-preview="true"] .dropdown { position: relative; top: auto; margin-top: 8px; max-height: none; }
+.scopedActions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border-top: 1px solid #ebebeb;
+}
+
+.scopedButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  color: #202020;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.scopedButton:hover {
+  background-color: #edf2f7;
+  color: #3e63dd;
+}
+
+.scopedButton strong {
+  color: #3e63dd;
+  font-weight: 600;
+}
+
 @media (hover: none) { .remove { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .root, .field { transition: none; } .skeletonBar { opacity: 1 !important; } }

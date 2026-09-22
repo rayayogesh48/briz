@@ -25,7 +25,7 @@
 .price button:hover { color: var(--primary); }
 .price[data-muted="true"] { color: var(--muted-foreground); }
 .unknown { color: #dc2626; }
-.store { display: block; width: 100%; min-width: 0; padding: 0; border: 0; text-align: left; border-radius: 16px; background: white; overflow: hidden; box-shadow: 0 5px 13px -5px #0a090b0d, 0 2px 4px -1px #0a090b05; }
+.store { display: block; width: 100%; min-width: 0; padding: 0; border: 0; text-align: left; border-radius: 16px; background: white; overflow: hidden; box-shadow: 0 5px 13px -5px #0a090b0d, 0 2px 4px -1px #0a090b05; text-decoration: none; color: inherit; }
 .store:hover { box-shadow: 0 0 0 1px #3e63dd66, 0 5px 13px -5px #0a090b0d; }
 .cover { position: relative; aspect-ratio: 780 / 288; }
 .cover > img { object-fit: cover; }

@@ -1,0 +1,368 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Tabs matching Figma 836:3764 */
+.tabs {
+  background: #f1f1f1;
+  padding: 2px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tab {
+  height: 36px;
+  min-width: 100px;
+  padding: 4px 12px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.tabText {
+  font-size: 14px;
+  font-weight: 450;
+  color: #646464;
+  letter-spacing: -0.1px;
+}
+
+.tabActive {
+  background: #ffffff;
+  box-shadow: 0px 5px 13px -5px rgba(10, 9, 11, 0.05), 0px 2px 4px -1px rgba(10, 9, 11, 0.02);
+}
+
+.tabActive .tabText {
+  font-weight: 650;
+  color: #202020;
+}
+
+.badge {
+  height: 22px;
+  padding: 4px 10px;
+  border-radius: 26px;
+  background: #ebebeb;
+  font-size: 12px;
+  font-weight: 750;
+  color: #646464;
+  letter-spacing: 0.12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.badgeActive {
+  background: #f0f4ff;
+  color: #3e63dd;
+}
+
+/* In-Category Search Field matching Figma 836:3763 "Search & Sort by:" */
+.searchField {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 280px;
+  min-width: 170px;
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.searchField:focus-within {
+  border-color: #3e63dd;
+  box-shadow: 0 0 0 3px rgba(62, 99, 221, 0.12);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.searchInput {
+  width: 100%;
+  height: 100%;
+  padding: 0 32px 0 34px;
+  border: none;
+  background: transparent;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #202020;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #8c8c8c;
+  font-size: 13.5px;
+}
+
+.clearSearchButton {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #8c8c8c;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.clearSearchButton:hover {
+  color: #202020;
+  background-color: #f1f1f1;
+}
+
+/* Controls matching Figma 868:80369 */
+.filterControls {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  position: relative;
+}
+
+.fieldWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+  width: 136px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 450;
+  color: #646464;
+  line-height: 16px;
+  letter-spacing: 0.12px;
+}
+
+.selectButton {
+  height: 40px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #ebebeb;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.selectButton:hover {
+  border-color: #d0d5dd;
+  background: #fbfbfb;
+}
+
+.selectButtonOpen {
+  border-color: #7f56d9;
+  box-shadow: 0 0 0 2px rgba(127, 86, 217, 0.15);
+}
+
+.selectButtonActive {
+  border-color: #7f56d9;
+  background: #f9f5ff;
+}
+
+.selectButtonActive .selectValue {
+  color: #6938ef;
+  font-weight: 600;
+}
+
+.selectValue {
+  font-size: 13px;
+  font-weight: 400;
+  color: #202020;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  opacity: 0.6;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Dropdown Menu Popover */
+.popoverMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  max-width: 260px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 10px 15px -3px rgba(16, 24, 40, 0.1), 0 4px 6px -4px rgba(16, 24, 40, 0.05);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #344054;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s ease;
+}
+
+.menuItem:hover {
+  background: #f2f4f7;
+}
+
+.menuItemActive {
+  background: #f9f5ff;
+  color: #6938ef;
+  font-weight: 600;
+}
+
+.checkmark {
+  color: #6938ef;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.emptyNotice {
+  padding: 12px;
+  font-size: 12px;
+  color: #667085;
+  text-align: center;
+  margin: 0;
+}
+
+/* Price Range Popover */
+.pricePopover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 10px 15px -3px rgba(16, 24, 40, 0.1), 0 4px 6px -4px rgba(16, 24, 40, 0.05);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pricePopoverHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f2f4f7;
+}
+
+.popoverTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #101828;
+}
+
+.resetLink {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6938ef;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pricePopoverActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.applyButton {
+  padding: 6px 16px;
+  background: #7f56d9;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.applyButton:hover {
+  background: #6938ef;
+}
+
+/* Mobile adjustments */
+@media (max-width: 860px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .filterControls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .fieldWrapper {
+    flex: 1;
+    min-width: 100px;
+  }
+}
+

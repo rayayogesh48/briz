@@ -109,7 +109,7 @@ export function SearchResults() {
             <span className={styles.breadcrumbActive}>Search results</span>
           ) : category ? (
             <>
-              <Link href="/search">Categories</Link>
+              <Link href="/category">Categories</Link>
               <span className={styles.breadcrumbSeparator} aria-hidden>
                 ›
               </span>

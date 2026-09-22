@@ -7,7 +7,6 @@ import { Asset } from "./catalog-cards";
 import styles from "./briz-footer.module.css";
 
 const categories = ["Education & Training", "Healthcare & Wellness", "Finance & Banking", "Retail & E-commerce", "Real Estate & Construction", "Technology & Innovation", "Entertainment & Media", "Travel & Tourism", "Sports & Recreation", "Food & Beverage", "Technology & Innovation", "Entertainment & Media", "Travel & Tourism", "Sports & Recreation", "Food & Beverage", "Technology & Innovation", "Entertainment & Media", "Travel & Tourism", "Sports & Recreation", "Food & Beverage", "Education & Training", "Healthcare & Wellness", "Finance & Banking", "Retail & E-commerce", "Retail & E-commerce"];
-const categoryQueries: Record<string, string> = { "Retail & E-commerce": "Office Supplies", "Technology & Innovation": "Electronics", "Sports & Recreation": "Sports & Fitness", "Food & Beverage": "Groceries" };
 const useful = ["About Briz", "Become a Seller", "FAQs", "Contact Support"];
 const legal = ["Privacy Policy", "Terms of Use", "Return Policy"];
 const description = "Find what you need from local sellers near you. Request products, compare offers, and chat directly with nearby stores.";
@@ -26,7 +25,7 @@ export function BrizFooter() {
   const accordion: [string, ReactNode][] = [["Useful Links", <FooterLinks key="useful" items={useful} onSelect={show} />], ["Quick Links", <FooterLinks key="legal" items={legal} onSelect={show} />], ["Company Information", company], ["Grievance Redressal", grievance], ["Need Help?", help]];
   return <footer className={styles.footer}>
     <div className={styles.inner}>
-      <section className={styles.categories}><h2>Categories</h2><div>{categories.map((label, index) => <Link key={`${label}-${index}`} href={`/search?${new URLSearchParams({ q: categoryQueries[label] || label })}`}>{label}</Link>)}</div></section>
+      <section className={styles.categories}><h2>Categories</h2><div>{categories.map((label, index) => <Link key={`${label}-${index}`} href={`/category?${new URLSearchParams({ category: label })}`}>{label}</Link>)}</div></section>
       <div className={styles.middle}>
         <div className={styles.brand}><Link href="/" aria-label="Briz home"><Image src="/figma/results/footer-imgLogo.svg" width={56} height={26} alt="Briz" unoptimized /></Link><p>{description}</p><div className={styles.socials}><span>FOLLOW US ON</span><div>{["Facebook", "Instagram", "Twitter", "Linkedin"].map(name => <button key={name} aria-label={`Briz on ${name}`} onClick={() => show(`${name} community`)}><Asset name={`footer-imgSocialsIconDarkDefault${name}`} size={24} /></button>)}</div></div></div>
         <section className={styles.desktop}><h2>Useful Links</h2>{<FooterLinks key="useful" items={useful} onSelect={show} />}</section>

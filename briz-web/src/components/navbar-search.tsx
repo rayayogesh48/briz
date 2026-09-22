@@ -39,9 +39,10 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
 
 export type SearchState = "idle" | "focused" | "loading" | "results" | "filled" | "empty-history" | "no-results";
 
-export default function NavbarSearch({ location, embedded = false, previewState, initialQuery = "", onNavigate }: {
+export default function NavbarSearch({ location, embedded = false, previewState, initialQuery = "", categoryContext, onNavigate }: {
   location: string;
   initialQuery?: string;
+  categoryContext?: string;
   onNavigate?: () => void;
   embedded?: boolean;
   previewState?: SearchState;
@@ -72,14 +73,18 @@ export default function NavbarSearch({ location, embedded = false, previewState,
     return () => { document.removeEventListener("pointerdown", outside); if (timer.current) clearTimeout(timer.current); };
   }, [embedded]);
 
-  function finishSearch() {
+  function finishSearch(targetCategory?: string) {
     if (!query.trim()) return;
     if (timer.current) clearTimeout(timer.current);
     setLoading(false); setInteracted(true); setOpen(false);
     remember(query);
     input.current?.blur();
     onNavigate?.();
-    router.push(`/search?${new URLSearchParams({ q: query.trim() })}`);
+    if (targetCategory) {
+      router.push(`/category?${new URLSearchParams({ category: targetCategory, q: query.trim() })}`);
+    } else {
+      router.push(`/search?${new URLSearchParams({ q: query.trim() })}`);
+    }
   }
   function change(value: string) {
     if (timer.current) clearTimeout(timer.current);
@@ -120,11 +125,27 @@ export default function NavbarSearch({ location, embedded = false, previewState,
   }}>
     <form className={styles.field} role="search" onSubmit={event => { event.preventDefault(); finishSearch(); }}>
       <Image src="/figma/search.svg" width={20} height={20} alt="" unoptimized />
-      <input ref={input} type="text" role="combobox" aria-label="Search products, stores, or categories" aria-expanded={expanded} aria-controls={expanded ? id : undefined} aria-haspopup="dialog" autoComplete="off" placeholder={'Search for "wireless earphones"'} value={query} onFocus={focusSearch} onClick={focusSearch} onChange={event => change(event.target.value)} />
+      <input ref={input} type="text" role="combobox" aria-label="Search products, stores, or categories" aria-expanded={expanded} aria-controls={expanded ? id : undefined} aria-haspopup="dialog" autoComplete="off" placeholder={categoryContext ? `Search in ${categoryContext} or all Briz...` : 'Search for "wireless earphones"'} value={query} onFocus={focusSearch} onClick={focusSearch} onChange={event => change(event.target.value)} />
       {query && <button type="button" className={styles.clear} aria-label="Clear search" onClick={() => { change(""); input.current?.focus(); }}><SearchIcon name="close" /></button>}
     </form>
     {expanded && <div ref={content} id={id} className={styles.dropdown} role="dialog" aria-label="Search suggestions" aria-busy={state === "loading"}>
-      {state === "loading" ? <><SkeletonResults /><ResultsFooter query={query} onSelect={finishSearch} /></> : selected ? <div className={styles.detail}>
+      {state === "loading" ? <>
+        <SkeletonResults />
+        {categoryContext ? (
+          <div className={styles.scopedActions}>
+            <button type="button" className={styles.scopedButton} onClick={() => finishSearch(categoryContext)}>
+              <span>Search &ldquo;{query}&rdquo; in <strong>{categoryContext}</strong></span>
+              <SearchIcon name="arrow" />
+            </button>
+            <button type="button" className={styles.scopedButton} onClick={() => finishSearch()}>
+              <span>Search &ldquo;{query}&rdquo; across <strong>all of Briz</strong></span>
+              <SearchIcon name="arrow" />
+            </button>
+          </div>
+        ) : (
+          <ResultsFooter query={query} onSelect={() => finishSearch()} />
+        )}
+      </> : selected ? <div className={styles.detail}>
         <button className={styles.textButton} onClick={() => setSelected(null)}>Back to results</button><h3>{selected.name}</h3>
         {"price" in selected ? <><p>Rs. {selected.price.toLocaleString("en-IN")}</p><p>{selected.storeName} · {selected.location} · {selected.distance}</p><p>{selected.inStock ? "In stock" : "Out of stock"}</p></> : <><p>{selected.category}</p><p>{selected.location} · {selected.distance}</p><OperatingHours status={selected.status} /></>}
         <small>Demo catalog · checkout and store pages aren’t connected.</small>
@@ -136,7 +157,20 @@ export default function NavbarSearch({ location, embedded = false, previewState,
         {products.length > 0 && <SearchSection title="Products">{products.map(product => <ProductRow key={product.id} product={product} onSelect={() => { setInteracted(true); remember(query); setSelected(product); setOpen(true); }} />)}</SearchSection>}
         {products.length > 0 && stores.length > 0 && <div className={styles.divider} />}
         {stores.length > 0 && <SearchSection title="Stores">{stores.map(store => <StoreRow key={store.id} store={store} onSelect={() => { setInteracted(true); remember(query); setSelected(store); setOpen(true); }} />)}</SearchSection>}
-        <ResultsFooter query={query} onSelect={finishSearch} />
+        {categoryContext ? (
+          <div className={styles.scopedActions}>
+            <button type="button" className={styles.scopedButton} onClick={() => finishSearch(categoryContext)}>
+              <span>Search &ldquo;{query}&rdquo; in <strong>{categoryContext}</strong></span>
+              <SearchIcon name="arrow" />
+            </button>
+            <button type="button" className={styles.scopedButton} onClick={() => finishSearch()}>
+              <span>Search &ldquo;{query}&rdquo; across <strong>all of Briz</strong></span>
+              <SearchIcon name="arrow" />
+            </button>
+          </div>
+        ) : (
+          <ResultsFooter query={query} onSelect={() => finishSearch()} />
+        )}
       </> : <RequestBanner query={query} onRequest={() => { remember(query); setRequest(true); }} />}
     </div>}
     {request && <RequestProduct query={query} location={location} onClose={() => { setRequest(false); input.current?.focus(); }} />}

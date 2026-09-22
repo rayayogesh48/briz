@@ -11,7 +11,7 @@ export function PopularCategories() {
     <section className={styles.section} aria-label="Popular Categories">
       <div className={styles.sectionHeader}>
         <h2>Popular Categories</h2>
-        <Link href="/search" className={styles.viewAllLink}>
+        <Link href="/categories" className={styles.viewAllLink}>
           <span>Explore All Categories</span>
           <Asset name="footer-imgChevron" size={16} />
         </Link>
@@ -21,7 +21,7 @@ export function PopularCategories() {
         {POPULAR_CATEGORIES.map((cat) => (
           <Link
             key={cat.id}
-            href={`/search?category=${encodeURIComponent(cat.query)}`}
+            href={`/category?category=${encodeURIComponent(cat.name)}`}
             className={styles.categoryCard}
           >
             <div className={styles.categoryThumb}>

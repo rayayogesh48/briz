@@ -19,25 +19,25 @@ export const PROMO_BANNERS = [
     id: "promo-1",
     title: "Smart Learning",
     image: "/figma/home/promo-banner-1.png",
-    link: "/search?category=Education+%26+Training",
+    link: "/category?category=Education+%26+Training",
   },
   {
     id: "promo-2",
     title: "ShopeeFood / 20.03",
     image: "/figma/home/promo-banner-2.png",
-    link: "/search?category=Food+%26+Beverage",
+    link: "/category?category=Food+%26+Beverage",
   },
   {
     id: "promo-3",
     title: "Neighborhood Finds",
     image: "/figma/home/promo-banner-3.png",
-    link: "/search",
+    link: "/category",
   },
   {
     id: "promo-4",
     title: "Handpicked Deals",
     image: "/figma/home/promo-banner-1.png",
-    link: "/search?category=Retail+%26+E-commerce",
+    link: "/category?category=Retail+%26+E-commerce",
   },
 ];
 

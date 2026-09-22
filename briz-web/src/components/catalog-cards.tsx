@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import type { Product, Store } from "./search-data";
 import { discountOf, money } from "./search-results-model";
@@ -32,8 +33,8 @@ export function ProductCard({ product, onSelect }: { product: Product; onSelect:
     </div>
   </article>;
 }
-export function StoreCard({ store, onSelect }: { store: Store; onSelect: (store: Store) => void }) {
-  return <button className={styles.store} onClick={() => onSelect(store)} aria-label={`View products from ${store.name}`} data-store-id={store.id}>
+export function StoreCard({ store, onSelect }: { store: Store; onSelect?: (store: Store) => void }) {
+  return <Link className={styles.store} href={`/store/${store.id}`} onClick={() => { if (onSelect) onSelect(store); }} aria-label={`View products from ${store.name}`} data-store-id={store.id}>
     <div className={styles.cover}><Image src={store.cover || "/figma/results/store-imgImage2.png"} alt="" fill sizes="(max-width: 600px) 85vw, 320px" /><DistanceBadge distance={store.distance} /></div>
     <div className={styles.storeInfo}>
       <Image className={styles.storeLogo} src={store.logo || "/figma/results/store-imgAvatarImage2.png"} alt="" width={48} height={48} />
@@ -41,5 +42,5 @@ export function StoreCard({ store, onSelect }: { store: Store; onSelect: (store:
       <span className={styles.category}>{store.category}</span>
       <span className={styles.rating}><Asset name="store-imgStarIcon" />{store.rating?.toFixed(1) || "New"}{store.reviewCount ? ` (${store.reviewCount} Reviews)` : " store"}</span>
     </div>
-  </button>;
+  </Link>;
 }

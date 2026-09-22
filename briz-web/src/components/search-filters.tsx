@@ -11,7 +11,7 @@ type Props = { category: string; subcategory: string; min?: number; max?: number
 const SLIDER_DEFAULT_MAX = 10000;
 const SLIDER_STEP = 50;
 
-function PriceFilter({ min, max, update }: Pick<Props, "min" | "max" | "update">) {
+export function PriceFilter({ min, max, update }: Pick<Props, "min" | "max" | "update">) {
   const [low, setLow] = useState(min?.toString() || "");
   const [high, setHigh] = useState(max?.toString() || "");
   const [error, setError] = useState("");

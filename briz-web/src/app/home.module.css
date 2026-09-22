@@ -1,55 +1,240 @@
 .home {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 120px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* Redirection Hub Header */
+.portalHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.portalTitle {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: -0.6px;
+  color: #202020;
+}
+
+.portalSubtitle {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #646464;
+}
+
+/* Section Groups */
+.sectionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeading {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 650;
+  color: #202020;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Redirection Buttons Grid */
+.redirectGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.redirectCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  box-shadow: 0 1.5px 4px -1px rgba(10, 9, 11, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.redirectCard:hover {
+  transform: translateY(-2px);
+  border-color: #3e63dd;
+  box-shadow: 0 8px 24px rgba(62, 99, 221, 0.12);
+}
+
+.cardIcon {
+  font-size: 30px;
+  margin-bottom: 14px;
+  display: inline-block;
+}
+
+.cardTitle {
+  margin: 0 0 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 24px;
+  color: #202020;
+}
+
+.cardDescription {
+  margin: 0 0 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  line-height: 20px;
+  color: #646464;
+  flex-grow: 1;
+}
+
+.cardButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  background-color: #3e63dd;
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.redirectCard:hover .cardButton {
+  background-color: #3354c7;
+}
+
+/* Featured Component Card */
+.componentCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 32px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  box-shadow: 0 1.5px 4px -1px rgba(10, 9, 11, 0.05);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  gap: 24px;
+}
+
+.componentCard:hover {
+  transform: translateY(-2px);
+  border-color: #3e63dd;
+  box-shadow: 0 8px 24px rgba(62, 99, 221, 0.12);
+}
+
+.componentCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.componentBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: #eff4ff;
+  color: #3e63dd;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.componentTitle {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #202020;
+}
+
+.componentDescription {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  color: #646464;
+  max-width: 680px;
+}
+
+.componentButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 24px;
+  background-color: #3e63dd;
+  color: #ffffff;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.componentCard:hover .componentButton {
+  background-color: #3354c7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1280px) {
+  .home {
+    padding: 36px 48px 64px;
+  }
+  .redirectGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .home {
+    padding: 24px 16px 48px;
+    gap: 32px;
+  }
+  .redirectGrid {
+    grid-template-columns: 1fr;
+  }
+  .componentCard {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 16px;
+  }
+  .componentButton {
     width: 100%;
-    padding: 40px 120px;
-}
-
-.category p {
-    margin: 0 0 8px;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--muted-foreground);
-}
-
-.category h1 {
-    margin: 0 0 24px;
-    font-size: 28px;
-    line-height: 36px;
-    font-weight: 650;
-    letter-spacing: -.6px;
-}
-
-.category a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 12px 20px;
-    border-radius: 10px;
-    color: white;
-    background: var(--primary);
-    text-decoration: none;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 650;
-}
-
-.category a:hover {
-    background: #3457ca;
-}
-
-@media (max-width: 1279px) {
-    .home {
-        padding: 40px 32px;
-    }
-}
-
-@media (max-width: 600px) {
-    .home {
-        padding: 32px 16px;
-    }
-
-    .category h1 {
-        font-size: 24px;
-        line-height: 32px;
-    }
+  }
+  .portalTitle {
+    font-size: 24px;
+    line-height: 32px;
+  }
 }
