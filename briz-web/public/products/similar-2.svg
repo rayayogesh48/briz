@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" fill="none">
+  <rect width="600" height="600" fill="#f8fafc"/>
+  <ellipse cx="300" cy="530" rx="110" ry="15" fill="rgba(15, 23, 42, 0.12)"/>
+  <!-- Silver Sports Bottle with Red Accent 1L -->
+  <rect x="230" y="200" width="140" height="310" rx="10" fill="#cbd5e1"/>
+  <rect x="285" y="202" width="18" height="306" fill="#ffffff" opacity="0.4"/>
+  <path d="M250 150 L350 150 L370 200 L230 200 Z" fill="#e11d48"/>
+  <rect x="270" y="110" width="60" height="42" rx="8" fill="#1e293b"/>
+  <path d="M290 85 C290 60, 330 60, 330 110" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
+</svg>
+

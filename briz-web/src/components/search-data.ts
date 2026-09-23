@@ -15,6 +15,7 @@ export interface Product {
   subcategory?: string;
   addedAt?: string;
   askForPrice?: boolean;
+  featured?: boolean;
 }
 export interface ScheduleDay {
   day: string;

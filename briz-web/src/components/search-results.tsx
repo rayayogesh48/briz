@@ -9,6 +9,7 @@ import { getSearchResults, money, PRODUCT_SORTS, STORE_SORTS } from "./search-re
 import { SearchFilters } from "./search-filters";
 import { ProductCard, StoreCard } from "./catalog-cards";
 import { SortDropdown } from "./sort-dropdown";
+import { SlidersHorizontal } from "lucide-react";
 import styles from "./search-results.module.css";
 
 export function SearchResults() {
@@ -171,18 +172,22 @@ export function SearchResults() {
                 setFiltersOpen(true);
                 mobileFilters.current?.showModal();
               }}
+              aria-label="Open category and search filters"
             >
-              Filters
-              {activeCount > 0 && <span>{activeCount}</span>}
+              <SlidersHorizontal size={16} />
+              <span>Category & Filters</span>
+              {activeCount > 0 && <span className={styles.filterCountBadge}>{activeCount}</span>}
             </button>
 
-            <SortDropdown
-              label="Sort by:"
-              value={sort}
-              options={sortOptions}
-              onChange={newSort => update({ sort: newSort })}
-              ariaLabel={`Sort ${view}`}
-            />
+            <div className={styles.sortWrapper}>
+              <SortDropdown
+                label="Sort by:"
+                value={sort}
+                options={sortOptions}
+                onChange={newSort => update({ sort: newSort })}
+                ariaLabel={`Sort ${view}`}
+              />
+            </div>
           </div>
 
           {/* Filtering Panel / Applied filter state matching Figma 822:39486 / 811:37415 */}

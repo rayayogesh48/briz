@@ -8,6 +8,7 @@ import { ALL_STORES } from "@/components/search-data";
 
 interface StoreRouteProps {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ tab?: string }>;
 }
 
 export async function generateMetadata({ params }: StoreRouteProps): Promise<Metadata> {
@@ -20,15 +21,21 @@ export async function generateMetadata({ params }: StoreRouteProps): Promise<Met
   };
 }
 
-export default async function StoreDetailRoute({ params }: StoreRouteProps) {
+export default async function StoreDetailRoute({ params, searchParams }: StoreRouteProps) {
   const { id } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const store = ALL_STORES.find(s => s.id === id) || ALL_STORES[0];
+  const initialTab = resolvedSearchParams?.tab === "reviews" ? "reviews" : "products";
 
   return (
     <>
       <BrizHeader categoryContext={store.mainCategory || store.category} />
       <Suspense fallback={<SearchResultsLoading />}>
-        <StoreDetailPage storeId={id} />
+        {initialTab === "reviews" ? (
+          <StoreDetailPage storeId={id} initialTab="reviews" />
+        ) : (
+          <StoreDetailPage storeId={id} />
+        )}
       </Suspense>
       <BrizFooter />
     </>

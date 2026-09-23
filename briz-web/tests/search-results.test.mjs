@@ -484,3 +484,310 @@ test("ShareDialog provides social sharing, copyable share link, and CTA trigger 
   assert.match(homeCss, /\.openDialogBtn\s*\{[^}]*background-color:\s*#3e63dd/);
   assert.match(homeCss, /\.actionCard/);
 });
+
+test("product detail data model correctly specifies bottle specs, 24% discount, Urban Essentials seller, and similar items", () => {
+  const dataTs = readFileSync(new URL("../src/data/product-detail-data.ts", import.meta.url), "utf8");
+
+  // Main product attributes matching user specification
+  assert.match(dataTs, /name:\s*"Insulated Stainless Steel Water Bottle, 750 ml"/);
+  assert.match(dataTs, /category:\s*"Home & Kitchen"/);
+  assert.match(dataTs, /subcategory:\s*"Drinkware"/);
+  assert.match(dataTs, /currentPrice:\s*1250/);
+  assert.match(dataTs, /originalPrice:\s*1650/);
+  assert.match(dataTs, /inStock:\s*true/);
+  assert.match(dataTs, /distance:\s*"1\.8 km from your location"/);
+  assert.match(dataTs, /shortSummary:\s*[\s\S]*Keep your drinks hot or cold/);
+
+  // Discount rule: 24% off calculation formula
+  assert.match(dataTs, /calculateDiscount/);
+  assert.match(dataTs, /Math\.round\(\(\(originalPrice - currentPrice\) \/ originalPrice\) \* 100\)/);
+
+  // Nepalese rupees format
+  assert.match(dataTs, /`Rs\. \$\{amount\.toLocaleString\("en-IN"\)\}`/);
+
+  // Structured specifications
+  assert.match(dataTs, /\{ label: "Capacity", value: "750 ml" \}/);
+  assert.match(dataTs, /\{ label: "Material", value: "Stainless steel" \}/);
+  assert.match(dataTs, /\{ label: "Colour", value: "Midnight blue" \}/);
+  assert.match(dataTs, /\{ label: "Lid type", value: "Screw top" \}/);
+  assert.match(dataTs, /\{ label: "Care", value: "Hand wash recommended" \}/);
+
+  // 5 realistic packshot & lifestyle images
+  assert.match(dataTs, /\/products\/bottle-main\.svg/);
+  assert.match(dataTs, /\/products\/bottle-angle\.svg/);
+  assert.match(dataTs, /\/products\/bottle-detail\.svg/);
+  assert.match(dataTs, /\/products\/bottle-lifestyle\.svg/);
+  assert.match(dataTs, /\/products\/bottle-outdoor\.svg/);
+
+  // Seller details: Urban Essentials in New Baneshwor with 4.7 rating and 128 reviews
+  assert.match(dataTs, /name:\s*"Urban Essentials"/);
+  assert.match(dataTs, /verified:\s*true/);
+  assert.match(dataTs, /rating:\s*4\.7/);
+  assert.match(dataTs, /reviewCount:\s*128/);
+  assert.match(dataTs, /address:\s*"New Baneshwor, Kathmandu"/);
+  assert.match(dataTs, /deliveryType:\s*"both"/);
+
+  // Similar products and edge cases
+  assert.match(dataTs, /SIMILAR_PRODUCTS:\s*SimilarProduct\[\]/);
+  assert.match(dataTs, /out-of-stock-bottle/);
+  assert.match(dataTs, /single-image-tumbler/);
+  assert.match(dataTs, /no-reviews-store-item/);
+  assert.match(dataTs, /getProductBySlug/);
+});
+
+test("product detail page implements complete responsive layout, image lightbox, mobile sticky action bar, and interactive dialogs", () => {
+  const routeTsx = readFileSync(new URL("../src/app/products/[slug]/page.tsx", import.meta.url), "utf8");
+  const loadingTsx = readFileSync(new URL("../src/app/products/[slug]/loading.tsx", import.meta.url), "utf8");
+  const pageTsx = readFileSync(new URL("../src/components/product-detail/product-detail-page.tsx", import.meta.url), "utf8");
+  const galleryTsx = readFileSync(new URL("../src/components/product-detail/product-gallery.tsx", import.meta.url), "utf8");
+  const modalTsx = readFileSync(new URL("../src/components/product-detail/image-viewer-modal.tsx", import.meta.url), "utf8");
+  const infoTsx = readFileSync(new URL("../src/components/product-detail/product-information.tsx", import.meta.url), "utf8");
+  const actionsTsx = readFileSync(new URL("../src/components/product-detail/product-actions.tsx", import.meta.url), "utf8");
+  const mobileBarTsx = readFileSync(new URL("../src/components/product-detail/mobile-product-action-bar.tsx", import.meta.url), "utf8");
+  const sellerTsx = readFileSync(new URL("../src/components/product-detail/seller-details.tsx", import.meta.url), "utf8");
+  const descTsx = readFileSync(new URL("../src/components/product-detail/product-description.tsx", import.meta.url), "utf8");
+  const benefitsTsx = readFileSync(new URL("../src/components/product-detail/briz-benefits.tsx", import.meta.url), "utf8");
+  const similarTsx = readFileSync(new URL("../src/components/product-detail/similar-products.tsx", import.meta.url), "utf8");
+  const chatDrawerTsx = readFileSync(new URL("../src/components/product-detail/store-chat-drawer.tsx", import.meta.url), "utf8");
+  const shareDialogTsx = readFileSync(new URL("../src/components/product-detail/share-product-dialog.tsx", import.meta.url), "utf8");
+  const homeTsx = readFileSync(new URL("../src/app/page.tsx", import.meta.url), "utf8");
+
+  // Route: Server component with generateMetadata, BrizHeader, BrizFooter, and 404 fallback
+  assert.match(routeTsx, /export async function generateMetadata/);
+  assert.match(routeTsx, /<BrizHeader/);
+  assert.match(routeTsx, /<ProductDetailPage/);
+  assert.match(routeTsx, /<BrizFooter/);
+  assert.match(routeTsx, /Product not found/);
+  assert.match(routeTsx, /Browse products/);
+
+  // Loading skeleton matching layout structure
+  assert.match(loadingTsx, /animate-pulse/);
+  assert.match(loadingTsx, /max-w-\[1280px\]/);
+
+  // 2-column section (first = image, second = details with store detail at last) and bottom 1-column similar items
+  assert.match(pageTsx, /max-w-\[1280px\]/);
+  assert.match(pageTsx, /lg:w-\[(52|55)%\]/);
+  assert.match(pageTsx, /lg:w-\[(45|48)%\]/);
+  assert.match(pageTsx, /Similar Products Section/);
+
+  // Breadcrumb navigation
+  assert.match(pageTsx, /aria-label="Breadcrumb"/);
+  assert.match(pageTsx, /href="\/"/);
+  assert.match(pageTsx, /product\.category/);
+  assert.match(pageTsx, /product\.subcategory/);
+
+  // Gallery: Desktop thumbnails + mobile swipe gestures
+  assert.match(galleryTsx, /cursor-zoom-in/);
+  assert.match(galleryTsx, /border-\[\#3e63dd\]/);
+  assert.match(galleryTsx, /onTouchStart=\{handleTouchStart\}/);
+  assert.match(galleryTsx, /onTouchEnd=\{handleTouchEnd\}/);
+  assert.match(galleryTsx, /\{activeIndex \+ 1\} \/ \{images\.length\}/);
+
+  // Lightbox modal: Keyboard navigation and focus restoration
+  assert.match(modalTsx, /role="dialog"/);
+  assert.match(modalTsx, /e\.key === "Escape"/);
+  assert.match(modalTsx, /e\.key === "ArrowLeft"/);
+  assert.match(modalTsx, /e\.key === "ArrowRight"/);
+  assert.match(modalTsx, /triggerRef\?\.current\?\.focus\(\)/);
+
+  // Product information: Title, price, discount badge, availability, and distance
+  assert.match(infoTsx, /formatPriceNPR\(product\.currentPrice\)/);
+  assert.match(infoTsx, /\{discount\}% off/);
+  assert.match(infoTsx, /In stock/);
+  assert.match(infoTsx, /product\.distance/);
+  assert.equal(infoTsx.includes("product.shortSummary"), false); // sub-description after pricing removed as requested
+  assert.match(infoTsx, /toggleFavourite\(product\.id\)/);
+
+  // Product actions: Add to Cart and Message Store
+  assert.match(actionsTsx, /Add to Cart/);
+  assert.match(actionsTsx, /Added to cart/);
+  assert.match(actionsTsx, /Message Store/);
+  assert.match(actionsTsx, /Out of stock/);
+  assert.match(actionsTsx, /Ask about availability/);
+
+  // Mobile sticky bottom action bar
+  assert.match(mobileBarTsx, /fixed bottom-0/);
+  assert.match(mobileBarTsx, /md:hidden/);
+  assert.match(mobileBarTsx, /pb-\[calc\(0\.75rem\+env\(safe-area-inset-bottom\)\)\]/);
+
+  // Seller details: "Sold by", Urban Essentials, verified badge, rating, reviews
+  assert.match(sellerTsx, /Sold by/);
+  assert.match(sellerTsx, /seller\.verified/);
+  assert.match(sellerTsx, /seller\.rating/);
+  assert.match(sellerTsx, /store reviews/);
+  assert.match(sellerTsx, /Delivery options/);
+  assert.match(sellerTsx, /View Store Profile/);
+
+  // Product description: Clean description with Read more toggle (structured specs removed)
+  assert.match(descTsx, /Description/);
+  assert.match(descTsx, /Read more/);
+  assert.equal(descTsx.includes("Product details"), false); // structured specs removed as requested
+
+  // Why shop on Briz 3-column benefits
+  assert.match(benefitsTsx, /Why shop on Briz\?/);
+  assert.match(benefitsTsx, /Shop nearby/);
+  assert.match(benefitsTsx, /Talk to the store/);
+  assert.match(benefitsTsx, /Choose how you shop/);
+
+  // Similar products grid
+  assert.match(similarTsx, /Similar products/);
+  assert.match(similarTsx, /grid-cols-2 md:grid-cols-4/);
+  assert.match(similarTsx, /e\.stopPropagation\(\)/);
+
+  // Store chat drawer: Attached product context card and demo indicator
+  assert.match(chatDrawerTsx, /Attached Product/);
+  assert.match(chatDrawerTsx, /Demo conversation/);
+  assert.match(chatDrawerTsx, /handleSendMessage/);
+
+  // Share dialog: product preview, copy link, and social channels
+  assert.match(shareDialogTsx, /Share this product/);
+  assert.match(shareDialogTsx, /Copy Link/);
+  assert.match(shareDialogTsx, /WhatsApp/);
+  assert.match(shareDialogTsx, /Facebook/);
+
+  // Home portal links to product detail page
+  assert.match(homeTsx, /\/products\/insulated-stainless-steel-water-bottle-750ml/);
+});
+
+test("search module is optimized for mobile responsiveness, ergonomics, and touch targets", () => {
+  const navbarSearchTsx = readFileSync(new URL("../src/components/navbar-search.tsx", import.meta.url), "utf8");
+  const navbarSearchCss = readFileSync(new URL("../src/components/navbar-search.module.css", import.meta.url), "utf8");
+  const searchPartsTsx = readFileSync(new URL("../src/components/search-parts.tsx", import.meta.url), "utf8");
+  const headerTsx = readFileSync(new URL("../src/components/briz-header.tsx", import.meta.url), "utf8");
+  const headerCss = readFileSync(new URL("../src/components/briz-header.module.css", import.meta.url), "utf8");
+
+  // 1. iOS Safari Auto-Zoom Fix: font-size 16px on mobile viewports & embedded mode
+  assert.match(navbarSearchCss, /@media\s*\(max-width:\s*768px\)\s*\{[^}]*\.field\s+input\s*\{[^}]*font-size:\s*16px/);
+  assert.match(navbarSearchCss, /\.embedded\s+\.field\s+input\s*\{[^}]*font-size:\s*16px/);
+
+  // 2. Touch-friendly hit targets (clear button >= 36px, remove button >= 36px, chip >= 38px)
+  assert.match(navbarSearchCss, /\.clear\s*\{[^}]*min-width:\s*36px/);
+  assert.match(navbarSearchCss, /\.clear\s*\{[^}]*height:\s*36px/);
+  assert.match(navbarSearchCss, /\.remove\s*\{[^}]*width:\s*36px/);
+  assert.match(navbarSearchCss, /\.remove\s*\{[^}]*height:\s*36px/);
+  assert.match(navbarSearchCss, /\.chips\s+button\s*\{[^}]*min-height:\s*38px/);
+  assert.match(navbarSearchCss, /\.scopedButton\s*\{[^}]*min-height:\s*44px/);
+
+  // 3. Mobile Back / Close Navigation in Search Header
+  assert.match(navbarSearchTsx, /className=\{styles\.searchHeader\}/);
+  assert.match(navbarSearchTsx, /className=\{styles\.backButton\}/);
+  assert.match(navbarSearchTsx, /<ArrowLeft/);
+  assert.match(navbarSearchCss, /\.backButton\s*\{[^}]*width:\s*44px/);
+  assert.match(navbarSearchCss, /\.backButton\s*\{[^}]*height:\s*44px/);
+
+  // 4. Smooth touch scrolling performance & overscroll containment
+  assert.match(navbarSearchCss, /\.dropdown\s*\{[^}]*overscroll-behavior-y:\s*contain/);
+  assert.match(navbarSearchCss, /\.dropdown\s*\{[^}]*-webkit-overflow-scrolling:\s*touch/);
+  assert.match(navbarSearchCss, /\.embedded\s+\.dropdown\s*\{[^}]*-webkit-overflow-scrolling:\s*touch/);
+
+  // 5. Mobile search dialog layout with safe area insets
+  assert.match(headerCss, /@media\s*\(max-width:\s*768px\)\s*\{[^}]*\.searchDialog\s*\{[^}]*height:\s*100dvh/);
+  assert.match(headerCss, /safe-area-inset-top/);
+  assert.match(headerCss, /safe-area-inset-bottom/);
+
+  // 6. Header renders integrated search header without redundant modal title on mobile
+  assert.match(headerTsx, /panel\s*!==\s*"search"\s*&&\s*\(/);
+  assert.match(headerTsx, /className=\{styles\.srOnly\}>Search Briz<\/h2>/);
+  assert.match(headerTsx, /onClose=\{\(\)\s*=>\s*setPanel\(null\)\}/);
+
+  // 7. Recent searches remove button prevents accidental query trigger
+  assert.match(searchPartsTsx, /event\.stopPropagation\(\)/);
+});
+
+test("mobile responsive toolbar orders Category filter & sortby on top, with product & store tabs after", () => {
+  const searchResultsCss = readFileSync(new URL("../src/components/search-results.module.css", import.meta.url), "utf8");
+  const searchResultsTsx = readFileSync(new URL("../src/components/search-results.tsx", import.meta.url), "utf8");
+  const categoryToolbarCss = readFileSync(new URL("../src/components/category-toolbar.module.css", import.meta.url), "utf8");
+
+  // Search results mobile toolbar ordering
+  assert.match(searchResultsTsx, /Category & Filters/);
+  assert.match(searchResultsTsx, /className=\{styles\.sortWrapper\}/);
+  assert.match(searchResultsCss, /\.mobileFilterButton\s*\{[^}]*order:\s*1/);
+  assert.match(searchResultsCss, /\.sortWrapper\s*\{[^}]*order:\s*2/);
+  assert.match(searchResultsCss, /\.tabs\s*\{[^}]*order:\s*3/);
+
+  // Category page mobile toolbar ordering
+  assert.match(categoryToolbarCss, /\.filterControls\s*\{[^}]*order:\s*1/);
+  assert.match(categoryToolbarCss, /\.searchField\s*\{[^}]*order:\s*2/);
+  assert.match(categoryToolbarCss, /\.tabs\s*\{[^}]*order:\s*3/);
+});
+
+test("store reviews experience displays Avatar, Username, Given Star, Tags, max 360 char Content, and Date in right side-pop drawer (view-only)", () => {
+  const reviewsDataTs = readFileSync(new URL("../src/data/store-reviews-data.ts", import.meta.url), "utf8");
+  const storeDetailPageTsx = readFileSync(new URL("../src/components/store-detail-page.tsx", import.meta.url), "utf8");
+  const storeReviewsDrawerTsx = readFileSync(new URL("../src/components/store-reviews-drawer.tsx", import.meta.url), "utf8");
+  const storeReviewsDrawerCss = readFileSync(new URL("../src/components/store-reviews-drawer.module.css", import.meta.url), "utf8");
+
+  // Transpile reviews module to verify data helpers directly
+  const { outputText } = ts.transpileModule(reviewsDataTs, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  });
+  const reviewModule = {};
+  const exports = reviewModule;
+  const fn = new Function("exports", "module", outputText);
+  fn(exports, { exports });
+  const { MAX_REVIEW_LENGTH, validateReviewContent, getInitialStoreReviews } = exports;
+
+  // 1. Constraint: Max 360 characters
+  assert.equal(MAX_REVIEW_LENGTH, 360);
+  assert.equal(validateReviewContent("   ").valid, false);
+  assert.equal(validateReviewContent("Great store!").valid, true);
+  const longReview = "a".repeat(361);
+  assert.equal(validateReviewContent(longReview).valid, false);
+  assert(validateReviewContent(longReview).error.includes("360"));
+
+  // 2. Data model contains all 6 required fields
+  const sampleReviews = getInitialStoreReviews("s1");
+  assert(sampleReviews.length >= 3);
+  for (const review of sampleReviews) {
+    assert(typeof review.avatar === "string" && review.avatar.length > 0, "Avatar is required");
+    assert(typeof review.username === "string" && review.username.length > 0, "Username is required");
+    assert(typeof review.givenStar === "number" && review.givenStar >= 1 && review.givenStar <= 5, "Given Star is required (1-5)");
+    assert(Array.isArray(review.tags) && review.tags.length > 0, "Tags are required");
+    assert(typeof review.content === "string" && review.content.length > 0, "Review content is required");
+    assert(review.content.length <= 360, "Review content must not exceed 360 characters");
+    assert(typeof review.date === "string" && review.date.length > 0, "Review date is required");
+  }
+
+  // 3. Side-pop Drawer UI component renders all 6 data fields
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewAvatarWrapper\}/); // 1. Avatar
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewAuthorName\}/); // 2. Username
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewStarsRow\}/); // 3. Given Star
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewTagsList\}/); // 4. Tags
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewTagBadge\}/);
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewContentText\}/); // 5. Content
+  assert.match(storeReviewsDrawerTsx, /review\.content\.slice\(0,\s*MAX_REVIEW_LENGTH\)/); // 360 char cap
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.reviewDateText\}/); // 6. Review Date
+
+  // 4. Rating overview and filter options in drawer
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.ratingOverviewCard\}/);
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.starBarsCol\}/);
+  assert.match(storeReviewsDrawerTsx, /className=\{styles\.tagsFilterCloud\}/);
+  assert.match(storeReviewsDrawerTsx, /Customer Reviews/);
+
+  // 5. Drawer styling & right side-pop layout
+  assert.match(storeReviewsDrawerCss, /\.backdrop\s*\{[^}]*position:\s*fixed/);
+  assert.match(storeReviewsDrawerCss, /\.backdrop\s*\{[^}]*backdrop-filter:\s*blur\(4px\)/);
+  assert.match(storeReviewsDrawerCss, /\.drawer\s*\{[^}]*position:\s*fixed/);
+  assert.match(storeReviewsDrawerCss, /\.drawer\s*\{[^}]*right:\s*0/);
+  assert.match(storeReviewsDrawerCss, /\.drawer\s*\{[^}]*width:\s*min\(520px,\s*100vw\)/);
+  assert.match(storeReviewsDrawerCss, /animation:\s*slideInRight/);
+  assert.match(storeReviewsDrawerCss, /@keyframes slideInRight\s*\{[^}]*transform:\s*translateX\(100%\)/);
+
+  // 6. View-only constraint: visitors cannot submit reviews
+  assert.match(storeReviewsDrawerTsx, /View-only/);
+  assert.doesNotMatch(storeReviewsDrawerTsx, /<textarea/);
+  assert.doesNotMatch(storeReviewsDrawerTsx, /<input/);
+  assert.doesNotMatch(storeReviewsDrawerTsx, /Submit Review/);
+  assert.doesNotMatch(storeDetailPageTsx, /Write a Review/);
+  assert.doesNotMatch(storeDetailPageTsx, /Submit Review/);
+
+  // 7. Store Detail Page integration: opens side-pop drawer on review click
+  assert.match(storeDetailPageTsx, /import\s*\{\s*StoreReviewsDrawer\s*\}\s*from\s*"\.\/store-reviews-drawer"/);
+  assert.match(storeDetailPageTsx, /<StoreReviewsDrawer/);
+  assert.match(storeDetailPageTsx, /isOpen=\{isReviewsDrawerOpen\}/);
+  assert.match(storeDetailPageTsx, /onClose=\{\(\)\s*=>\s*setIsReviewsDrawerOpen\(false\)\}/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.reviewsCluster\}/);
+  assert.match(storeDetailPageTsx, /onClick=\{\(\)\s*=>\s*setIsReviewsDrawerOpen\(true\)\}/);
+});
+

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" fill="none">
+  <rect width="600" height="600" fill="#f8fafc"/>
+  <ellipse cx="300" cy="525" rx="100" ry="15" fill="rgba(15, 23, 42, 0.12)"/>
+  <!-- Emerald Green Insulated Flask 750ml -->
+  <rect x="235" y="210" width="130" height="295" rx="8" fill="#065f46"/>
+  <rect x="285" y="212" width="16" height="290" fill="#ffffff" opacity="0.2"/>
+  <path d="M255 165 L345 165 L365 210 L235 210 Z" fill="#047857"/>
+  <!-- Gold ring and lid -->
+  <rect x="260" y="155" width="80" height="12" fill="#d97706"/>
+  <rect x="265" y="115" width="70" height="42" rx="8" fill="#0f172a"/>
+</svg>
+

@@ -1,7 +1,45 @@
-:root { --background: #f9f9f9; --card: #ffffff; --foreground: #202020; --muted-foreground: #646464; --border: #ebebeb; --primary: #3e63dd; --primary-container: #f0f4ff; --muted: #f1f1f1; --secondary: #30a46c; --secondary-container: #e9f9ee; --discount: #e54666; }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-inter), Arial, sans-serif; }
-button, input, select, textarea { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
-button { cursor: pointer; color: inherit; }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+@import "tailwindcss";
+
+:root {
+  --background: #f9f9f9;
+  --card: #ffffff;
+  --foreground: #202020;
+  --muted-foreground: #646464;
+  --border: #ebebeb;
+  --primary: #3e63dd;
+  --primary-hover: #3354c7;
+  --primary-container: #eff4ff;
+  --muted: #f1f1f1;
+  --secondary: #30a46c;
+  --secondary-container: #e9f9ee;
+  --discount: #e54666;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}

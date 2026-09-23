@@ -325,6 +325,20 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.reviewsCluster:hover {
+  opacity: 0.85;
+}
+
+.reviewsCluster:hover .reviewCountText {
+  text-decoration: underline;
+  color: #3e63dd;
 }
 
 .reviewScore {
@@ -1040,9 +1054,592 @@
   }
 }
 
+/* Store View Tabs: Products | Reviews */
+.storeTabsNav {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f1f1;
+  padding: 3px;
+  border-radius: 12px;
+  gap: 4px;
+  width: fit-content;
+}
+
+.storeTabBtn {
+  height: 38px;
+  min-width: 120px;
+  padding: 4px 16px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #646464;
+  transition: all 0.15s ease-in-out;
+}
+
+.storeTabBtn:hover {
+  color: #202020;
+}
+
+.storeTabBtnActive {
+  background: #ffffff;
+  color: #202020;
+  font-weight: 650;
+  box-shadow: 0px 5px 13px -5px rgba(10, 9, 11, 0.05), 0px 2px 4px -1px rgba(10, 9, 11, 0.02);
+}
+
+.storeTabBadge {
+  height: 22px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #ebebeb;
+  font-size: 12px;
+  font-weight: 700;
+  color: #646464;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.storeTabBadgeActive {
+  background: #f0f4ff;
+  color: #3e63dd;
+}
+
+/* Reviews Experience Section */
+.reviewsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+/* Rating Overview Card */
+.ratingOverviewCard {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  gap: 32px;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.ratingScoreCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.ratingScoreHuge {
+  font-family: "Inter", sans-serif;
+  font-size: 48px;
+  font-weight: 750;
+  color: #202020;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.ratingStarsRow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #f59e0b;
+}
+
+.ratingCountSub {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #646464;
+  margin: 0;
+}
+
+/* Star Breakdown Progress Bars */
+.starBarsCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.starBarRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #646464;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+  text-align: left;
+}
+
+.starBarRow:hover {
+  background: #f9f9f9;
+}
+
+.starBarRowActive {
+  background: #f0f4ff;
+  color: #3e63dd;
+  font-weight: 650;
+}
+
+.starBarLabel {
+  width: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starBarTrack {
+  flex: 1;
+  height: 8px;
+  background: #f1f1f1;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.starBarFill {
+  height: 100%;
+  background: #f59e0b;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.starBarCount {
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+/* Write Review Column */
+.writeReviewCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.writeReviewBtn {
+  height: 44px;
+  padding: 0 20px;
+  background: #3e63dd;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.writeReviewBtn:hover {
+  background: #3354c7;
+}
+
+/* Tags Filter Section */
+.reviewFilterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filterHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filterHeading {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 650;
+  color: #202020;
+  margin: 0;
+}
+
+.clearFilterLink {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #3e63dd;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.tagsFilterCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tagFilterChip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #646464;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tagFilterChip:hover {
+  border-color: #d0d5dd;
+  background: #fbfbfb;
+}
+
+.tagFilterChipActive {
+  background: #f0f4ff;
+  border-color: rgba(62, 99, 221, 0.25);
+  color: #3e63dd;
+  font-weight: 650;
+}
+
+.tagFilterBadge {
+  background: #ebebeb;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.tagFilterChipActive .tagFilterBadge {
+  background: rgba(62, 99, 221, 0.12);
+  color: #3e63dd;
+}
+
+/* Reviews List & Cards */
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.reviewCard {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.reviewCard:hover {
+  border-color: #d0d5dd;
+}
+
+.reviewCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.reviewAuthorBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviewAvatarWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #ebebeb;
+  position: relative;
+}
+
+.reviewAvatarImg {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.reviewAvatarFallback {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 650;
+  color: #3e63dd;
+}
+
+.reviewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.reviewAuthorRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reviewAuthorName {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 650;
+  color: #202020;
+  margin: 0;
+}
+
+.verifiedBadge {
+  background: #e9f9ee;
+  color: #30a46c;
+  font-size: 11px;
+  font-weight: 650;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.reviewDateText {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: #646464;
+  margin: 0;
+}
+
+.reviewRatingBlock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reviewStarsRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #f59e0b;
+}
+
+.reviewScoreBadge {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #202020;
+  margin-left: 2px;
+}
+
+/* Tags in review card */
+.reviewTagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.reviewTagBadge {
+  padding: 4px 10px;
+  background: #f0f4ff;
+  border: 1px solid rgba(62, 99, 221, 0.15);
+  border-radius: 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3e63dd;
+}
+
+/* Review Content (strictly capped at 360 chars) */
+.reviewContentText {
+  font-family: "Inter", sans-serif;
+  font-size: 14.5px;
+  line-height: 22px;
+  color: #344054;
+  margin: 0;
+  word-break: break-word;
+}
+
+.reviewCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 6px;
+  border-top: 1px solid #f2f4f7;
+}
+
+.helpfulBtn {
+  background: transparent;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-family: "Inter", sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #646464;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.helpfulBtn:hover {
+  background: #f9f9f9;
+  border-color: #d0d5dd;
+}
+
+.helpfulBtnActive {
+  background: #f0f4ff;
+  border-color: #3e63dd;
+  color: #3e63dd;
+}
+
+/* Empty Reviews State */
+.emptyReviews {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.emptyReviewsTitle {
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 650;
+  color: #202020;
+  margin: 0;
+}
+
+.emptyReviewsSubtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: #646464;
+  max-width: 420px;
+  margin: 0;
+}
+
+/* Write Review Modal Styles */
+.modalStarPicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.starPickerBtn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+}
+
+.starPickerBtn:hover {
+  transform: scale(1.15);
+}
+
+.starPickerLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #202020;
+  margin-left: 8px;
+}
+
+.tagPickerChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.tagPickerChip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f1f1f1;
+  border: 1px solid transparent;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #202020;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tagPickerChipSelected {
+  background: #f0f4ff;
+  border-color: #3e63dd;
+  color: #3e63dd;
+  font-weight: 600;
+}
+
+.charCounterWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.charCounter {
+  font-size: 12px;
+  color: #646464;
+  font-family: "Inter", sans-serif;
+}
+
+.charCounterNearLimit {
+  color: #e54666;
+  font-weight: 600;
+}
+
 @media (max-width: 1024px) {
   .productGrid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .ratingOverviewCard {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .writeReviewCol {
+    align-items: flex-start;
   }
 }
 

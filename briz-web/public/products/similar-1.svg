@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" fill="none">
+  <rect width="600" height="600" fill="#f8fafc"/>
+  <ellipse cx="300" cy="520" rx="100" ry="14" fill="rgba(15, 23, 42, 0.12)"/>
+  <!-- Matte Black Tumbler 500ml -->
+  <path d="M230 180 L370 180 L350 490 L250 490 Z" fill="#1e293b"/>
+  <rect x="235" y="190" width="16" height="290" fill="#ffffff" opacity="0.12"/>
+  <rect x="220" y="150" width="160" height="34" rx="8" fill="#0f172a"/>
+  <!-- Flip Straw Lid -->
+  <rect x="280" y="130" width="40" height="24" rx="4" fill="#3e63dd"/>
+</svg>
+

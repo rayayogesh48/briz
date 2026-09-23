@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" fill="none">
+  <defs>
+    <!-- Warm wood table gradient -->
+    <linearGradient id="deskWood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8d8c8"/>
+      <stop offset="50%" stop-color="#ddc8b4"/>
+      <stop offset="100%" stop-color="#cfb69e"/>
+    </linearGradient>
+    <linearGradient id="laptopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="50%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="notebookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <linearGradient id="bottleLife" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0e1f42"/>
+      <stop offset="35%" stop-color="#244ea3"/>
+      <stop offset="65%" stop-color="#163570"/>
+      <stop offset="100%" stop-color="#0a162e"/>
+    </linearGradient>
+    <radialGradient id="lifeShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(30, 41, 59, 0.35)"/>
+      <stop offset="60%" stop-color="rgba(30, 41, 59, 0.08)"/>
+      <stop offset="100%" stop-color="rgba(30, 41, 59, 0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Wooden Desk Surface -->
+  <rect width="800" height="800" fill="url(#deskWood)"/>
+
+  <!-- Desk wood plank lines -->
+  <line x1="0" y1="260" x2="800" y2="260" stroke="#c0a68d" stroke-width="2" opacity="0.6"/>
+  <line x1="0" y1="520" x2="800" y2="520" stroke="#c0a68d" stroke-width="2" opacity="0.6"/>
+
+  <!-- Sleek Laptop Edge (Left side of desk) -->
+  <g transform="translate(-140, 280) rotate(12)">
+    <rect x="0" y="0" width="380" height="260" rx="14" fill="url(#laptopGrad)" stroke="#64748b" stroke-width="2"/>
+    <rect x="15" y="15" width="350" height="230" rx="8" fill="#1e293b"/>
+    <!-- Keypad representation -->
+    <rect x="35" y="35" width="310" height="150" rx="6" fill="#334155"/>
+    <rect x="120" y="195" width="140" height="40" rx="6" fill="#475569"/>
+  </g>
+
+  <!-- Moleskine Style Clean Notebook & Pen (Right side) -->
+  <g transform="translate(520, 360) rotate(-14)">
+    <rect x="0" y="0" width="260" height="340" rx="12" fill="#1e293b" filter="drop-shadow(0 8px 16px rgba(0,0,0,0.12))"/>
+    <rect x="10" y="10" width="240" height="320" rx="8" fill="url(#notebookGrad)"/>
+    <!-- Page ruling -->
+    <line x1="25" y1="50" x2="230" y2="50" stroke="#cbd5e1" stroke-width="1.5"/>
+    <line x1="25" y1="80" x2="230" y2="80" stroke="#cbd5e1" stroke-width="1.5"/>
+    <line x1="25" y1="110" x2="230" y2="110" stroke="#cbd5e1" stroke-width="1.5"/>
+    <line x1="25" y1="140" x2="230" y2="140" stroke="#cbd5e1" stroke-width="1.5"/>
+    <!-- Pen -->
+    <rect x="-30" y="40" width="12" height="220" rx="6" fill="#0f172a" stroke="#d97706" stroke-width="2"/>
+    <polygon points="-30,40 -24,15 -18,40" fill="#cbd5e1"/>
+  </g>
+
+  <!-- Water Bottle Standing on Desk (Center-Right Focus) -->
+  <!-- Shadow on desk -->
+  <ellipse cx="400" cy="670" rx="130" ry="20" fill="url(#lifeShadow)"/>
+
+  <g transform="translate(0, 10)">
+    <!-- Carry Loop -->
+    <path d="M375 140 C375 90, 425 90, 425 140" stroke="#1e293b" stroke-width="22" stroke-linecap="round"/>
+    <rect x="360" y="140" width="80" height="46" rx="8" fill="#1e293b"/>
+    <!-- Stainless collar -->
+    <rect x="358" y="184" width="84" height="12" rx="3" fill="#cbd5e1"/>
+
+    <!-- Taper Neck -->
+    <path d="M362 196 L438 196 L470 250 L330 250 Z" fill="url(#bottleLife)"/>
+
+    <!-- Bottle Body -->
+    <rect x="330" y="248" width="140" height="400" rx="6" fill="url(#bottleLife)"/>
+    <!-- Clean Specular highlights -->
+    <rect x="390" y="250" width="20" height="396" fill="#ffffff" opacity="0.22"/>
+    <rect x="420" y="250" width="8" height="396" fill="#ffffff" opacity="0.14"/>
+
+    <!-- Stainless steel base -->
+    <path d="M330 644 L470 644 L470 662 C470 668, 462 674, 452 674 L348 674 C338 674, 330 668, 330 662 Z" fill="#94a3b8"/>
+  </g>
+
+  <!-- Lifestyle badge -->
+  <rect x="40" y="40" width="160" height="32" rx="16" fill="#ffffff" stroke="#ebebeb" filter="drop-shadow(0 2px 8px rgba(0,0,0,0.06))"/>
+  <text x="120" y="61" font-family="'Inter', sans-serif" font-size="11" font-weight="600" fill="#3e63dd" text-anchor="middle">Everyday Office & Work</text>
+</svg>
+

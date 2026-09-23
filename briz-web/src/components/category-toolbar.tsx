@@ -96,7 +96,7 @@ export function CategoryToolbar({
         : min !== undefined
         ? `> Rs. ${min}`
         : `Up to Rs. ${max}`
-      : "Rs. 0 - Any";
+      : "All Price Range";
 
   const currentSortLabel = sortOptions[sort] || "Relevance";
 
@@ -132,12 +132,14 @@ export function CategoryToolbar({
         </button>
       </div>
 
-      {/* Center: In-Category Search matching Figma 836:3763 */}
+      {/* In-Category Search matching Figma 836:3763 */}
       <form
         className={styles.searchField}
         role="search"
+        data-active={Boolean(searchVal)}
         onSubmit={handleSearchSubmit}
         aria-label={`Search in ${category}`}
+        data-node-id="836:3767"
       >
         <span className={styles.searchIcon} aria-hidden>
           <Image src="/figma/search.svg" width={16} height={16} alt="" unoptimized />
@@ -162,73 +164,32 @@ export function CategoryToolbar({
         )}
       </form>
 
-      {/* Right: Filter & Sort Controls matching Figma 868:80369 */}
-      <div className={styles.filterControls} data-node-id="868:80369" data-name="Frame 2147207424">
-        {/* 1. Sub-Category Field */}
-        <div className={styles.fieldWrapper} data-node-id="836:3767" data-name="Input field">
-          <label className={styles.fieldLabel} data-node-id="836:3768" data-name="FieldLabel">
-            Sub-Category
-          </label>
-          <button
-            type="button"
-            className={`${styles.selectButton} ${subcategory ? styles.selectButtonActive : ""} ${activeMenu === "subcategory" ? styles.selectButtonOpen : ""}`}
-            onClick={() => setActiveMenu(activeMenu === "subcategory" ? null : "subcategory")}
-            aria-expanded={activeMenu === "subcategory"}
-            aria-haspopup="listbox"
-            data-node-id="836:3769"
-            data-name="Input"
-          >
-            <span className={styles.selectValue} title={subcategory || "All"}>
-              {subcategory || "All"}
-            </span>
-            <span className={`${styles.chevron} ${activeMenu === "subcategory" ? styles.chevronOpen : ""}`}>
-              <Image src="/figma/chevron-down.svg" width={14} height={14} alt="" unoptimized />
-            </span>
-          </button>
+      {/* Right: Filter & Sort Controls matching Figma 974:114096 */}
+      <div className={styles.filterControls} data-node-id="974:114096" data-name="filter">
+        {/* Optional Sub-Category Trigger when subcategory is active */}
+        {subcategory && (
+          <div className={styles.fieldWrapper}>
+            <button
+              type="button"
+              className={`${styles.selectButton} ${styles.selectButtonActive}`}
+              onClick={() => setActiveMenu(activeMenu === "subcategory" ? null : "subcategory")}
+              aria-expanded={activeMenu === "subcategory"}
+              aria-label="Sub-category filter"
+            >
+              <span className={styles.selectValue} title={subcategory}>
+                {subcategory}
+              </span>
+              <span className={styles.chevron}>
+                <Image src="/figma/chevron-down.svg" width={14} height={14} alt="" unoptimized />
+              </span>
+            </button>
+          </div>
+        )}
 
-          {/* Subcategory Popover */}
-          {activeMenu === "subcategory" && (
-            <div className={styles.popoverMenu} role="listbox" aria-label="Select sub-category">
-              <button
-                type="button"
-                role="option"
-                aria-selected={!subcategory}
-                className={`${styles.menuItem} ${!subcategory ? styles.menuItemActive : ""}`}
-                onClick={() => {
-                  update({ subcategory: null });
-                  setActiveMenu(null);
-                }}
-              >
-                <span>All Sub-Categories</span>
-                {!subcategory && <span className={styles.checkmark}>✓</span>}
-              </button>
-              {subcategories.map(item => (
-                <button
-                  key={item}
-                  type="button"
-                  role="option"
-                  aria-selected={subcategory === item}
-                  className={`${styles.menuItem} ${subcategory === item ? styles.menuItemActive : ""}`}
-                  onClick={() => {
-                    update({ subcategory: item });
-                    setActiveMenu(null);
-                  }}
-                >
-                  <span>{item}</span>
-                  {subcategory === item && <span className={styles.checkmark}>✓</span>}
-                </button>
-              ))}
-              {subcategories.length === 0 && (
-                <p className={styles.emptyNotice}>No subcategories available</p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* 2. Price Range Field */}
-        <div className={styles.fieldWrapper} data-node-id="868:80337" data-name="Input field">
-          <label className={styles.fieldLabel} data-node-id="868:80338" data-name="FieldLabel">
-            Price Range
+        {/* 1. Filter by: Price Range matching Figma 974:114101 */}
+        <div className={styles.fieldWrapper} data-node-id="974:114101" data-name="Input field">
+          <label className={styles.fieldLabel} data-node-id="974:114102" data-name="FieldLabel">
+            Filter by
           </label>
           <button
             type="button"
@@ -236,14 +197,14 @@ export function CategoryToolbar({
             onClick={() => setActiveMenu(activeMenu === "price" ? null : "price")}
             aria-expanded={activeMenu === "price"}
             aria-haspopup="dialog"
-            data-node-id="868:80339"
+            data-node-id="974:114105"
             data-name="Input"
           >
             <span className={styles.selectValue} title={priceLabel}>
               {priceLabel}
             </span>
             <span className={`${styles.chevron} ${activeMenu === "price" ? styles.chevronOpen : ""}`}>
-              <Image src="/figma/chevron-down.svg" width={14} height={14} alt="" unoptimized />
+              <Image src="/figma/results/sort-chevron-down.svg" width={16} height={16} alt="" unoptimized />
             </span>
           </button>
 
@@ -283,25 +244,25 @@ export function CategoryToolbar({
           )}
         </div>
 
-        {/* 3. Sort By Field */}
-        <div className={styles.fieldWrapper} data-node-id="868:80353" data-name="Input field">
-          <label className={styles.fieldLabel} data-node-id="868:80354" data-name="FieldLabel">
+        {/* 2. Sort by: Sort Field matching Figma 974:114108 */}
+        <div className={styles.fieldWrapper} data-node-id="974:114108" data-name="Input field">
+          <label className={styles.fieldLabel} data-node-id="974:114109" data-name="FieldLabel">
             Sort by
           </label>
           <button
             type="button"
-            className={`${styles.selectButton} ${activeMenu === "sort" ? styles.selectButtonOpen : ""}`}
+            className={`${styles.selectButton} ${styles.sortButton} ${activeMenu === "sort" ? styles.selectButtonOpen : ""}`}
             onClick={() => setActiveMenu(activeMenu === "sort" ? null : "sort")}
             aria-expanded={activeMenu === "sort"}
             aria-haspopup="listbox"
-            data-node-id="868:80355"
+            data-node-id="974:114110"
             data-name="Input"
           >
             <span className={styles.selectValue} title={currentSortLabel}>
               {currentSortLabel}
             </span>
             <span className={`${styles.chevron} ${activeMenu === "sort" ? styles.chevronOpen : ""}`}>
-              <Image src="/figma/chevron-down.svg" width={14} height={14} alt="" unoptimized />
+              <Image src="/figma/results/sort-chevron-down.svg" width={16} height={16} alt="" unoptimized />
             </span>
           </button>
 
@@ -327,6 +288,41 @@ export function CategoryToolbar({
             </div>
           )}
         </div>
+
+        {/* Subcategory dropdown if activeMenu === "subcategory" */}
+        {activeMenu === "subcategory" && subcategories.length > 0 && (
+          <div className={styles.popoverMenu} role="listbox" aria-label="Select sub-category">
+            <button
+              type="button"
+              role="option"
+              aria-selected={!subcategory}
+              className={`${styles.menuItem} ${!subcategory ? styles.menuItemActive : ""}`}
+              onClick={() => {
+                update({ subcategory: null });
+                setActiveMenu(null);
+              }}
+            >
+              <span>All Sub-Categories</span>
+              {!subcategory && <span className={styles.checkmark}>✓</span>}
+            </button>
+            {subcategories.map(item => (
+              <button
+                key={item}
+                type="button"
+                role="option"
+                aria-selected={subcategory === item}
+                className={`${styles.menuItem} ${subcategory === item ? styles.menuItemActive : ""}`}
+                onClick={() => {
+                  update({ subcategory: item });
+                  setActiveMenu(null);
+                }}
+              >
+                <span>{item}</span>
+                {subcategory === item && <span className={styles.checkmark}>✓</span>}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

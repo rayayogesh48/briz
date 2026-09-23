@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" fill="none">
+  <defs>
+    <radialGradient id="bgGlowAngle" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </radialGradient>
+    <linearGradient id="bodyGradAngle" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#091733"/>
+      <stop offset="25%" stop-color="#183672"/>
+      <stop offset="48%" stop-color="#3b6fd8"/>
+      <stop offset="68%" stop-color="#1d3f84"/>
+      <stop offset="100%" stop-color="#0a1835"/>
+    </linearGradient>
+    <linearGradient id="metalRingAngle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1"/>
+      <stop offset="35%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <radialGradient id="shadowAngle" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.32)"/>
+      <stop offset="60%" stop-color="rgba(15, 23, 42, 0.08)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#bgGlowAngle)"/>
+  <!-- Perspective Shadow -->
+  <ellipse cx="440" cy="710" rx="200" ry="28" fill="url(#shadowAngle)" transform="rotate(-5 440 710)"/>
+
+  <!-- Tilted bottle group (-8 deg rotation for dynamic alternate angle) -->
+  <g transform="rotate(7 400 400)">
+    <!-- Carry Loop -->
+    <path d="M375 125 C360 70, 440 70, 425 125" stroke="#1e293b" stroke-width="26" stroke-linecap="round"/>
+    <path d="M375 125 C360 85, 440 85, 425 125" stroke="url(#metalRingAngle)" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- Cap with dynamic angle -->
+    <rect x="350" y="125" width="100" height="50" rx="10" fill="#1e293b"/>
+    <rect x="348" y="175" width="104" height="14" rx="3" fill="url(#metalRingAngle)"/>
+
+    <!-- Taper Neck -->
+    <path d="M352 188 L448 188 L488 255 L312 255 Z" fill="url(#bodyGradAngle)"/>
+    <path d="M395 188 L415 188 L435 255 L415 255 Z" fill="#ffffff" opacity="0.22"/>
+
+    <!-- Main Body -->
+    <rect x="312" y="254" width="176" height="415" rx="6" fill="url(#bodyGradAngle)"/>
+
+    <!-- Diagonal Highlight reflection -->
+    <polygon points="380,255 410,255 435,668 405,668" fill="#ffffff" opacity="0.18"/>
+    <polygon points="420,255 430,255 448,668 438,668" fill="#ffffff" opacity="0.12"/>
+
+    <!-- Base Ring -->
+    <path d="M312 668 L488 668 L488 688 C488 696, 478 702, 468 702 L332 702 C322 702, 312 696, 312 688 Z" fill="url(#metalRingAngle)"/>
+
+    <!-- Angle Spec Badge -->
+    <rect x="360" y="470" width="80" height="26" rx="13" fill="#ffffff" opacity="0.12"/>
+    <text x="400" y="488" font-family="'Inter', sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle" letter-spacing="1">18/8 STEEL</text>
+  </g>
+</svg>
+

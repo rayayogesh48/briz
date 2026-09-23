@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" fill="none">
+  <defs>
+    <linearGradient id="detailBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="metalChrome" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64748b"/>
+      <stop offset="20%" stop-color="#cbd5e1"/>
+      <stop offset="45%" stop-color="#ffffff"/>
+      <stop offset="65%" stop-color="#94a3b8"/>
+      <stop offset="85%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+    <linearGradient id="siliconeSeal" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="50%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <linearGradient id="bodyBlueClose" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f224a"/>
+      <stop offset="35%" stop-color="#2d5bb8"/>
+      <stop offset="70%" stop-color="#1a3b7c"/>
+      <stop offset="100%" stop-color="#0d1b38"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#detailBg)"/>
+
+  <!-- Macro Close-up Zoom View -->
+  <!-- Cap unscrewed, hovering above neck -->
+  <g transform="translate(0, -60)">
+    <!-- Floating Cap Base with Silicone Gasket Ring -->
+    <path d="M260 210 L540 210 L510 260 L290 260 Z" fill="#1e293b"/>
+    <!-- Orange Food-grade Silicone Ring -->
+    <rect x="295" y="248" width="210" height="14" rx="6" fill="url(#siliconeSeal)"/>
+    <text x="400" y="259" font-family="'Inter', sans-serif" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1">BPA-FREE SILICONE SEAL</text>
+
+    <!-- Handle loop -->
+    <path d="M330 210 C330 110, 470 110, 470 210" stroke="#1e293b" stroke-width="40" stroke-linecap="round"/>
+    <path d="M330 210 C330 125, 470 125, 470 210" stroke="url(#metalChrome)" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- Macro View of Bottle Mouth & Double-Wall Threads -->
+  <g transform="translate(0, 50)">
+    <!-- Polished Stainless Steel Threaded Mouth -->
+    <rect x="270" y="270" width="260" height="80" rx="8" fill="url(#metalChrome)"/>
+    <!-- Thread 1 -->
+    <path d="M272 290 Q400 298 528 290" stroke="#475569" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <!-- Thread 2 -->
+    <path d="M272 318 Q400 326 528 318" stroke="#475569" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+    <!-- Double Wall Vacuum Thickness Highlight -->
+    <ellipse cx="400" cy="270" rx="130" ry="24" fill="#334155"/>
+    <ellipse cx="400" cy="270" rx="106" ry="19" fill="#0f172a"/>
+    <ellipse cx="400" cy="270" rx="118" ry="21" stroke="url(#metalChrome)" stroke-width="5" fill="none"/>
+
+    <!-- Stainless steel collar -->
+    <rect x="250" y="348" width="300" height="24" rx="4" fill="url(#metalChrome)"/>
+
+    <!-- Midnight Blue Powder Coat Shoulder & Body -->
+    <path d="M250 372 L550 372 L620 480 L180 480 Z" fill="url(#bodyBlueClose)"/>
+    <rect x="180" y="478" width="440" height="260" fill="url(#bodyBlueClose)"/>
+
+    <!-- Specular highlight reflection -->
+    <rect x="360" y="372" width="44" height="360" fill="#ffffff" opacity="0.2"/>
+    <rect x="420" y="372" width="16" height="360" fill="#ffffff" opacity="0.12"/>
+  </g>
+
+  <!-- Technical Callout Label -->
+  <g transform="translate(560, 310)">
+    <circle cx="0" cy="0" r="16" fill="#3e63dd"/>
+    <path d="M-6 0 L6 0 M0 -6 L0 6" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="26" y="-18" width="180" height="36" rx="8" fill="#ffffff" stroke="#ebebeb" filter="drop-shadow(0 2px 6px rgba(0,0,0,0.08))"/>
+    <text x="38" y="-2" font-family="'Inter', sans-serif" font-size="11" font-weight="700" fill="#202020">Double-Wall Vacuum</text>
+    <text x="38" y="11" font-family="'Inter', sans-serif" font-size="9" font-weight="500" fill="#646464">Keeps cold 24h · hot 12h</text>
+  </g>
+</svg>
+

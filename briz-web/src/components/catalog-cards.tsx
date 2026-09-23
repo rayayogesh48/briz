@@ -20,7 +20,7 @@ export function ProductCard({ product, onSelect }: { product: Product; onSelect:
   return <article className={styles.product} data-product-id={product.id}>
     <div className={styles.picture}>
       <button className={styles.imageButton} aria-label={`View ${product.name}`} onClick={() => onSelect(product)}><Image src={product.image} alt={product.name} fill sizes="(max-width: 600px) 45vw, 240px" />{!product.inStock && <span className={styles.outOfStock}>OUT OF STOCK</span>}</button>
-      {discount > 0 && <span className={styles.discount}>{discount}% OFF</span>}
+      {product.featured ? <span className={styles.featuredBadge}>FEATURED</span> : discount > 0 && <span className={styles.discount}>{discount}% OFF</span>}
       <button className={styles.favorite} aria-label={`${saved ? "Unsave" : "Save"} ${product.name}`} aria-pressed={saved} onClick={() => setSaved(!saved)}><Asset name="product-imgSvg" size={27} /></button>
       {product.inStock && !product.askForPrice && (quantity ? <div className={styles.quantity}>
         <button aria-label={`Remove one ${product.name}`} onClick={() => setQuantity(quantity - 1)}><Asset name="product-imgHeroiconsSolidMinus" size={20} /></button><output aria-label={`Quantity of ${product.name}`} aria-live="polite">{quantity}</output><button aria-label={`Add one ${product.name}`} onClick={() => setQuantity(quantity + 1)}><Asset name="product-imgHeroiconsSolidPlus" size={20} /></button>

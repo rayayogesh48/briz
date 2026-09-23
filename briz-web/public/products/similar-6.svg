@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" fill="none">
+  <rect width="600" height="600" fill="#f8fafc"/>
+  <ellipse cx="300" cy="535" rx="115" ry="16" fill="rgba(15, 23, 42, 0.12)"/>
+  <!-- Wide-Mouth Hydro Flask 900ml Cobalt Blue -->
+  <rect x="220" y="190" width="160" height="320" rx="12" fill="#2563eb"/>
+  <rect x="280" y="192" width="22" height="316" fill="#ffffff" opacity="0.25"/>
+  <rect x="235" y="150" width="130" height="42" rx="6" fill="#cbd5e1"/>
+  <rect x="240" y="115" width="120" height="40" rx="10" fill="#1e293b"/>
+  <!-- Flexible Strap Handle -->
+  <path d="M260 120 C260 70, 340 70, 340 120" stroke="#1e293b" stroke-width="14" stroke-linecap="round"/>
+</svg>
+

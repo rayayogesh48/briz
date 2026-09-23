@@ -161,6 +161,16 @@
   display: none;
 }
 
+.sortWrapper {
+  display: flex;
+}
+
+.filterCountBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Active Filters Panel (Filtering panel 822:39486) */
 .filteringPanel {
   display: flex;
@@ -562,7 +572,15 @@
   .filters {
     display: none;
   }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
   .mobileFilterButton {
+    order: 1;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -572,18 +590,37 @@
     border-radius: 10px;
     background: white;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
+    color: var(--foreground, #202020);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
-  .mobileFilterButton span {
-    padding: 2px 6px;
+  .mobileFilterButton:hover,
+  .mobileFilterButton:active {
+    background: #f8f8f8;
+    border-color: #d1d5db;
+  }
+  .mobileFilterButton .filterCountBadge {
+    padding: 2px 7px;
     background: var(--primary-container, #f0f4ff);
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 12px;
+    font-weight: 750;
     color: var(--primary, #3e63dd);
+    line-height: 1;
   }
-  .toolbar {
-    flex-wrap: wrap;
-    gap: 12px;
+  .sortWrapper {
+    order: 2;
+  }
+  .tabs {
+    order: 3;
+    width: 100%;
+    display: flex;
+    margin-top: 4px;
+  }
+  .tabs button {
+    flex: 1;
+    justify-content: center;
   }
   .productGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

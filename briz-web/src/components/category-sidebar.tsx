@@ -26,10 +26,10 @@ export function CategorySidebar({
               aria-selected={isSelected}
               className={`${styles.shopCard} ${isSelected ? styles.shopCardActive : ""}`}
               onClick={() => onSelectCategory(item.name)}
-              data-node-id="862:77851"
+              data-node-id={isSelected ? "974:111796" : "947:103290"}
             >
-              <div className={styles.imageContainer} data-node-id="862:77852">
-                <div className={styles.thumbWrapper} data-node-id="862:77853">
+              <div className={styles.imageContainer} data-node-id="974:111797">
+                <div className={styles.thumbWrapper} data-node-id="974:111798">
                   <Image
                     src={item.image}
                     alt=""
@@ -39,7 +39,7 @@ export function CategorySidebar({
                   />
                 </div>
               </div>
-              <span className={styles.label} data-node-id="862:77854">
+              <span className={styles.label} title={item.name} data-node-id="974:111799">
                 {item.name}
               </span>
             </button>

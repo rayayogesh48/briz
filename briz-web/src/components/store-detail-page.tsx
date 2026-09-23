@@ -7,10 +7,14 @@ import { ALL_STORES, ALL_PRODUCTS, type Store, type Product, DEFAULT_STORE_SCHED
 import { ProductCard } from "./catalog-cards";
 import { ProductCategoryList } from "./product-category-list";
 import { money } from "./search-results-model";
+import { getInitialStoreReviews } from "@/data/store-reviews-data";
+import { StoreReviewsDrawer } from "./store-reviews-drawer";
 import styles from "./store-detail-page.module.css";
 
 interface StoreDetailPageProps {
   storeId: string;
+  initialTab?: "products" | "reviews";
+  initialOpenReviews?: boolean;
 }
 
 function IconTruck() {
@@ -122,10 +126,19 @@ function subscribeToStorage(callback: () => void) {
   return () => window.removeEventListener("storage", callback);
 }
 
-export function StoreDetailPage({ storeId }: StoreDetailPageProps) {
+export function StoreDetailPage({ storeId, initialTab = "products", initialOpenReviews = false }: StoreDetailPageProps) {
   const store: Store = useMemo(() => {
     return ALL_STORES.find(s => s.id === storeId) || ALL_STORES[0];
   }, [storeId]);
+
+  // Reviews state and side-drawer toggle
+  const [isReviewsDrawerOpen, setIsReviewsDrawerOpen] = useState(initialOpenReviews || initialTab === "reviews" || false);
+  const reviews = useMemo(() => getInitialStoreReviews(storeId), [storeId]);
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return store.rating || 5.0;
+    const sum = reviews.reduce((acc, r) => acc + r.givenStar, 0);
+    return sum / reviews.length;
+  }, [reviews, store.rating]);
 
   // All products belonging to this store (supplementing to at least 15 for full 5-column grid rows)
   const storeProducts = useMemo(() => {
@@ -388,11 +401,18 @@ export function StoreDetailPage({ storeId }: StoreDetailPageProps) {
 
               {/* Info Clusters matching Figma 893:99919 */}
               <div className={styles.infoClusters} data-node-id="893:99919" data-name="Info Clusters">
-                <div className={styles.reviewsCluster} data-node-id="893:99920" data-name="Reviews">
+                <button
+                  type="button"
+                  className={styles.reviewsCluster}
+                  data-node-id="893:99920"
+                  data-name="Reviews"
+                  onClick={() => setIsReviewsDrawerOpen(true)}
+                  aria-label={`View ${reviews.length} reviews for ${store.name}`}
+                >
                   <IconStar />
-                  <span className={styles.reviewScore}>{store.rating ? store.rating.toFixed(1) : "5.0"}</span>
-                  <span className={styles.reviewCountText}>({store.reviewCount || 32} Reviews)</span>
-                </div>
+                  <span className={styles.reviewScore}>{averageRating.toFixed(1)}</span>
+                  <span className={styles.reviewCountText}>({reviews.length} Reviews)</span>
+                </button>
 
                 <span className={styles.clusterDot} data-node-id="893:99941" aria-hidden />
 
@@ -713,6 +733,14 @@ export function StoreDetailPage({ storeId }: StoreDetailPageProps) {
           </div>
         )}
       </dialog>
+
+      {/* Side-pop Reviews Drawer (View-only) */}
+      <StoreReviewsDrawer
+        isOpen={isReviewsDrawerOpen}
+        onClose={() => setIsReviewsDrawerOpen(false)}
+        store={store}
+        reviews={reviews}
+      />
 
       {/* Lightbox Modal */}
       {lightboxImage && (

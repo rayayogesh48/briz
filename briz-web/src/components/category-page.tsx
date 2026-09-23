@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
-import { ALL_CATEGORY_ITEMS } from "./category-data";
+import { ALL_CATEGORY_ITEMS, FIGMA_SHOWCASE_PRODUCTS } from "./category-data";
 import { ALL_STORES, type Product, type Store } from "./search-data";
 import { getSearchResults, money, PRODUCT_SORTS, STORE_SORTS } from "./search-results-model";
 import { CategorySidebar } from "./category-sidebar";
@@ -48,14 +48,31 @@ export function CategoryPage() {
     Number(min !== undefined || max !== undefined) +
     Number(Boolean(storeId));
 
+  // When activeCategory has no items in the sample catalog and no explicit search/filter is set,
+  // display the Figma showcase products (e.g. for Agriculture & Farming default view)
+  const isDefaultShowcase =
+    products.length === 0 &&
+    !query &&
+    !subcategory &&
+    min === undefined &&
+    max === undefined &&
+    !storeId;
+
+  const displayProducts = isDefaultShowcase && view === "products" ? FIGMA_SHOWCASE_PRODUCTS : products;
+  const displayStores = stores;
+  const displayItems = view === "products" ? displayProducts : displayStores;
+
+  const productCount = products.length > 0 ? products.length : (isDefaultShowcase ? 100 : 0);
+  const storeCount = stores.length > 0 ? stores.length : (isDefaultShowcase ? 40 : 0);
+
   const sortOptions = view === "products" ? PRODUCT_SORTS : STORE_SORTS;
-  const items = view === "products" ? products : stores;
   const perPage = 8; // 2 rows of 4 cards per row matching Figma 836:3771
   const requestedPage = Number(params.get("page") || 1);
+  const totalItemCount = displayItems.length;
   const page = Number.isSafeInteger(requestedPage)
-    ? Math.max(1, Math.min(requestedPage, Math.max(1, Math.ceil(items.length / perPage))))
+    ? Math.max(1, Math.min(requestedPage, Math.max(1, Math.ceil(totalItemCount / perPage))))
     : 1;
-  const displayed = Math.min(page * perPage, items.length);
+  const displayed = Math.min(page * perPage, totalItemCount);
 
   function update(changes: Record<string, string | null>) {
     const next = new URLSearchParams(params.toString());
@@ -146,8 +163,8 @@ export function CategoryPage() {
             sort={sort}
             view={view}
             sortOptions={sortOptions}
-            productCount={products.length}
-            storeCount={stores.length}
+            productCount={productCount}
+            storeCount={storeCount}
             update={update}
           />
 
@@ -244,7 +261,7 @@ export function CategoryPage() {
           )}
 
           {/* Product list matching Figma 836:3771 (4 cards per row) */}
-          {items.length === 0 ? (
+          {displayItems.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyIllustration}>
                 <Image
@@ -285,7 +302,7 @@ export function CategoryPage() {
             </div>
           ) : view === "products" ? (
             <div className={styles.productGrid} data-node-id="836:3771" data-name="product lists">
-              {(items as Product[]).slice(0, displayed).map(product => (
+              {(displayProducts as Product[]).slice(0, displayed).map(product => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -295,7 +312,7 @@ export function CategoryPage() {
             </div>
           ) : (
             <div className={styles.storeGrid}>
-              {(items as Store[]).slice(0, displayed).map(store => (
+              {(displayStores as Store[]).slice(0, displayed).map(store => (
                 <StoreCard
                   key={store.id}
                   store={store}
@@ -305,19 +322,20 @@ export function CategoryPage() {
             </div>
           )}
 
-          {/* Centered Show More button matching Figma 836:28812 */}
-          {items.length > perPage && (
-            <div className={styles.buttonWrapper} data-node-id="836:28812">
+          {/* Centered button matching Figma 974:113260 / 974:113261 */}
+          {displayItems.length > 0 && (
+            <div className={styles.buttonWrapper} data-node-id="974:113260">
               <button
                 type="button"
                 className={styles.showMoreButton}
-                disabled={displayed >= items.length}
+                disabled={displayed >= totalItemCount && !isDefaultShowcase}
                 onClick={() => update({ page: String(page + 1) })}
-                data-node-id="836:28813"
+                data-node-id="974:113261"
               >
-                {displayed >= items.length
-                  ? `Showing all ${items.length} ${view}`
-                  : `Show more (${displayed} of ${items.length})`}
+                <span>Load More Products</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="#202020" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </button>
             </div>
           )}

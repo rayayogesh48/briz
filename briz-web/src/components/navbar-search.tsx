@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { ArrowLeft } from "lucide-react";
 import { DESIGN_PRODUCTS, DESIGN_STORES, INITIAL_RECENT, searchCatalog, type Product, type Store } from "./search-data";
 import { ProductRow, StoreRow, SearchIcon, SearchSection, RecentSearches, Suggestions, RequestBanner, ResultsFooter, SkeletonResults, OperatingHours } from "./search-parts";
 import styles from "./navbar-search.module.css";
@@ -39,11 +40,12 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
 
 export type SearchState = "idle" | "focused" | "loading" | "results" | "filled" | "empty-history" | "no-results";
 
-export default function NavbarSearch({ location, embedded = false, previewState, initialQuery = "", categoryContext, onNavigate }: {
+export default function NavbarSearch({ location, embedded = false, previewState, initialQuery = "", categoryContext, onNavigate, onClose }: {
   location: string;
   initialQuery?: string;
   categoryContext?: string;
   onNavigate?: () => void;
+  onClose?: () => void;
   embedded?: boolean;
   previewState?: SearchState;
 }) {
@@ -123,11 +125,23 @@ export default function NavbarSearch({ location, embedded = false, previewState,
   return <div ref={root} className={`${styles.root} ${embedded ? styles.embedded : ""}`} data-open={expanded} data-filled={Boolean(normalized)} data-preview={Boolean(previewState)} data-state={state} onKeyDown={keyDown} onBlur={event => {
     if (!embedded && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
   }}>
-    <form className={styles.field} role="search" onSubmit={event => { event.preventDefault(); finishSearch(); }}>
-      <Image src="/figma/search.svg" width={20} height={20} alt="" unoptimized />
-      <input ref={input} type="text" role="combobox" aria-label="Search products, stores, or categories" aria-expanded={expanded} aria-controls={expanded ? id : undefined} aria-haspopup="dialog" autoComplete="off" placeholder={categoryContext ? `Search in ${categoryContext} or all Briz...` : 'Search for "wireless earphones"'} value={query} onFocus={focusSearch} onClick={focusSearch} onChange={event => change(event.target.value)} />
-      {query && <button type="button" className={styles.clear} aria-label="Clear search" onClick={() => { change(""); input.current?.focus(); }}><SearchIcon name="close" /></button>}
-    </form>
+    <div className={styles.searchHeader}>
+      {embedded && onClose && (
+        <button
+          type="button"
+          className={styles.backButton}
+          aria-label="Back"
+          onClick={onClose}
+        >
+          <ArrowLeft size={20} />
+        </button>
+      )}
+      <form className={styles.field} role="search" onSubmit={event => { event.preventDefault(); finishSearch(); }}>
+        <Image src="/figma/search.svg" width={20} height={20} alt="" unoptimized />
+        <input ref={input} type="text" role="combobox" aria-label="Search products, stores, or categories" aria-expanded={expanded} aria-controls={expanded ? id : undefined} aria-haspopup="dialog" autoComplete="off" placeholder={categoryContext ? `Search in ${categoryContext} or all Briz...` : 'Search for "wireless earphones"'} value={query} onFocus={focusSearch} onClick={focusSearch} onChange={event => change(event.target.value)} />
+        {query && <button type="button" className={styles.clear} aria-label="Clear search" onClick={() => { change(""); input.current?.focus(); }}><SearchIcon name="close" /></button>}
+      </form>
+    </div>
     {expanded && <div ref={content} id={id} className={styles.dropdown} role="dialog" aria-label="Search suggestions" aria-busy={state === "loading"}>
       {state === "loading" ? <>
         <SkeletonResults />
@@ -146,8 +160,43 @@ export default function NavbarSearch({ location, embedded = false, previewState,
           <ResultsFooter query={query} onSelect={() => finishSearch()} />
         )}
       </> : selected ? <div className={styles.detail}>
-        <button className={styles.textButton} onClick={() => setSelected(null)}>Back to results</button><h3>{selected.name}</h3>
-        {"price" in selected ? <><p>Rs. {selected.price.toLocaleString("en-IN")}</p><p>{selected.storeName} · {selected.location} · {selected.distance}</p><p>{selected.inStock ? "In stock" : "Out of stock"}</p></> : <><p>{selected.category}</p><p>{selected.location} · {selected.distance}</p><OperatingHours status={selected.status} /></>}
+        <button className={styles.textButton} onClick={() => setSelected(null)}>← Back to results</button>
+        <h3 style={{ marginTop: "12px", marginBottom: "8px" }}>{selected.name}</h3>
+        {"price" in selected ? (
+          <>
+            <p style={{ fontWeight: 700, fontSize: "16px", color: "var(--primary)" }}>Rs. {selected.price.toLocaleString("en-IN")}</p>
+            <p>{selected.storeName} · {selected.location} · {selected.distance}</p>
+            <p>{selected.inStock ? "In stock" : "Out of stock"}</p>
+            <button
+              type="button"
+              className={styles.primary}
+              style={{ marginTop: "12px" }}
+              onClick={() => {
+                onNavigate?.();
+                router.push("/products/insulated-stainless-steel-water-bottle-750ml");
+              }}
+            >
+              View product details
+            </button>
+          </>
+        ) : (
+          <>
+            <p>{selected.category}</p>
+            <p>{selected.location} · {selected.distance}</p>
+            <OperatingHours status={selected.status} />
+            <button
+              type="button"
+              className={styles.primary}
+              style={{ marginTop: "12px" }}
+              onClick={() => {
+                onNavigate?.();
+                router.push(`/store/${selected.id}`);
+              }}
+            >
+              Visit store profile
+            </button>
+          </>
+        )}
         <small>Demo catalog · checkout and store pages aren’t connected.</small>
       </div> : state === "focused" || state === "empty-history" ? <>
         <RecentSearches recent={recent} onChoose={choose} onClear={() => setRecent([])} onRemove={itemId => setRecent(previous => previous.filter(item => item.id !== itemId))} />

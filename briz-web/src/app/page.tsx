@@ -36,6 +36,13 @@ const REDIRECTION_PAGES = [
     cta: "Go to Store Detail",
     icon: "🏪",
   },
+  {
+    title: "Product Detail Page",
+    description: "Responsive product detail page with 5-angle packshot gallery, accessible lightbox, sticky mobile action bar, and Urban Essentials seller profile.",
+    href: "/products/insulated-stainless-steel-water-bottle-750ml",
+    cta: "Go to Product Detail",
+    icon: "🍶",
+  },
 ];
 
 export default function Home() {

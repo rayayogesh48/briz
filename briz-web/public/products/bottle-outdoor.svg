@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" fill="none">
+  <defs>
+    <!-- Soft sky gradient -->
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="60%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#f0f9ff"/>
+    </linearGradient>
+    <linearGradient id="mountainFar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="mountainNear" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <linearGradient id="packGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="60%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="bottleOutdoor" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0a1835"/>
+      <stop offset="35%" stop-color="#2d5bb8"/>
+      <stop offset="70%" stop-color="#163268"/>
+      <stop offset="100%" stop-color="#09142b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="800" fill="url(#skyGrad)"/>
+
+  <!-- Distant Himalayan Ridge -->
+  <polygon points="0,320 180,180 340,280 520,150 680,270 800,210 800,800 0,800" fill="url(#mountainFar)" opacity="0.4"/>
+  <!-- Near Ridge with snow peaks -->
+  <polygon points="0,420 140,290 280,390 460,250 620,380 800,310 800,800 0,800" fill="url(#mountainNear)" opacity="0.65"/>
+  <polygon points="460,250 430,300 480,305" fill="#ffffff" opacity="0.8"/>
+  <polygon points="140,290 115,330 160,335" fill="#ffffff" opacity="0.8"/>
+
+  <!-- Hiking Backpack Profile (Left side & foreground) -->
+  <g transform="translate(-60, 240)">
+    <!-- Backpack body -->
+    <path d="M120 120 C120 40, 360 40, 420 140 L450 560 L100 560 Z" fill="url(#packGrad)"/>
+    <!-- Yellow compression strap -->
+    <line x1="160" y1="260" x2="440" y2="280" stroke="#eab308" stroke-width="8" stroke-linecap="round"/>
+    <line x1="150" y1="410" x2="445" y2="430" stroke="#eab308" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Mesh Side Pocket holding the bottle -->
+    <!-- The Midnight Blue Bottle placed securely in the pocket -->
+    <g transform="translate(110, 0)">
+      <!-- Bottle Top & Neck protruding from mesh pocket -->
+      <!-- Loop Handle -->
+      <path d="M305 100 C305 50, 355 50, 355 100" stroke="#0f172a" stroke-width="22" stroke-linecap="round"/>
+      <rect x="290" y="100" width="80" height="46" rx="8" fill="#0f172a"/>
+      <rect x="288" y="144" width="84" height="12" rx="3" fill="#cbd5e1"/>
+
+      <!-- Taper Neck -->
+      <path d="M292 156 L368 156 L400 210 L260 210 Z" fill="url(#bottleOutdoor)"/>
+
+      <!-- Bottle Body -->
+      <rect x="260" y="208" width="140" height="300" rx="6" fill="url(#bottleOutdoor)"/>
+      <rect x="320" y="210" width="22" height="296" fill="#ffffff" opacity="0.25"/>
+
+      <!-- Semi-transparent Elastic Mesh Pocket Covering Lower Half of Bottle -->
+      <path d="M245 320 C245 300, 415 300, 415 320 L425 510 L235 510 Z" fill="rgba(30, 41, 59, 0.7)" stroke="#64748b" stroke-width="2"/>
+      <!-- Mesh texture criss-cross -->
+      <line x1="260" y1="340" x2="400" y2="480" stroke="#94a3b8" stroke-width="2" opacity="0.4"/>
+      <line x1="280" y1="330" x2="420" y2="470" stroke="#94a3b8" stroke-width="2" opacity="0.4"/>
+      <line x1="400" y1="340" x2="260" y2="480" stroke="#94a3b8" stroke-width="2" opacity="0.4"/>
+      <line x1="420" y1="330" x2="280" y2="470" stroke="#94a3b8" stroke-width="2" opacity="0.4"/>
+      <!-- Elastic top cord of mesh pocket -->
+      <path d="M245 320 Q330 330 415 320" stroke="#eab308" stroke-width="6" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Outdoor Adventure Badge -->
+  <rect x="40" y="40" width="170" height="32" rx="16" fill="#ffffff" stroke="#ebebeb" filter="drop-shadow(0 2px 8px rgba(0,0,0,0.08))"/>
+  <text x="125" y="61" font-family="'Inter', sans-serif" font-size="11" font-weight="600" fill="#3e63dd" text-anchor="middle">Travel & Hiking Ready</text>
+</svg>
+

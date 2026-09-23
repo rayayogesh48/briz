@@ -47,7 +47,7 @@ export function RecentSearches({ recent, onChoose, onClear, onRemove }: {
     <div className={styles.sectionHeading}><h3>Recent searches</h3>{recent.length > 0 && <button className={styles.clearAll} onClick={onClear}>Clear All</button>}</div>
     {recent.length ? <div className={styles.recentList}>{recent.map(item => <div className={styles.recent} key={item.id}>
       <button data-search-item onClick={() => onChoose(item.query)}><SearchIcon name="clock" />{item.query}</button>
-      <button className={styles.remove} aria-label={`Remove "${item.query}"`} onClick={() => onRemove(item.id)}><SearchIcon name="close" /></button>
+      <button className={styles.remove} aria-label={`Remove "${item.query}"`} onClick={event => { event.stopPropagation(); onRemove(item.id); }}><SearchIcon name="close" /></button>
     </div>)}</div> : <p className={styles.emptyHistory}>No recent searches yet</p>}
   </section>;
 }

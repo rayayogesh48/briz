@@ -9,36 +9,37 @@
 
 /* Breadcrumb matching Figma 836:3688 */
 .breadcrumbSection {
-  padding: 16px 0 16px 0;
+  padding: 12px 0 16px 0;
 }
 
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #667085;
+  gap: 6px;
+  font-size: 14px;
+  color: #646464;
 }
 
 .breadcrumb a {
-  color: #667085;
+  color: #646464;
   text-decoration: none;
+  font-weight: 450;
   transition: color 0.15s ease;
 }
 
 .breadcrumb a:hover {
-  color: #101828;
-  text-decoration: underline;
+  color: #202020;
 }
 
 .breadcrumbSeparator {
-  color: #d0d5dd;
+  color: #646464;
+  font-size: 14px;
   user-select: none;
 }
 
 .breadcrumbActive {
-  color: #101828;
-  font-weight: 600;
+  color: #202020;
+  font-weight: 450;
 }
 
 /* Main Container matching Figma 836:3698 */
@@ -197,7 +198,7 @@
   background: #6938ef;
 }
 
-/* Centered Show More Button matching Figma 836:28812 & 836:28813 */
+/* Centered Load More Products Button matching Figma 974:113260 & 974:113261 */
 .buttonWrapper {
   display: flex;
   justify-content: center;
@@ -207,32 +208,29 @@
 
 .showMoreButton {
   height: 48px;
-  min-width: 215px;
-  padding: 0 24px;
-  background: #ffffff;
-  border: 1px solid #d0d5dd;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #344054;
+  width: 215px;
+  background: #f1f1f1;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 650;
+  color: #202020;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 }
 
 .showMoreButton:hover:not(:disabled) {
-  background: #f8f9fa;
-  border-color: #98a2b3;
-  color: #101828;
+  background: #e5e5e5;
+  color: #202020;
 }
 
 .showMoreButton:disabled {
-  background: #f2f4f7;
-  color: #98a2b3;
+  opacity: 0.6;
   cursor: default;
-  border-color: #eaecf0;
 }
 
 /* Product Inquiry Dialog Modal */

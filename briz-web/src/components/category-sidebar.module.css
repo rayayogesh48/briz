@@ -97,20 +97,20 @@
   transition: color 0.15s ease, font-weight 0.15s ease;
 }
 
-/* Active Shop Card State matching Figma 862:77851 */
+/* Active Shop Card State matching Figma 974:111796 */
 .shopCardActive {
-  background: #ffffff;
-  border-color: #ebebeb;
-  box-shadow: 0px 2px 4px -1px rgba(10, 9, 11, 0.04), 0px 5px 13px -5px rgba(10, 9, 11, 0.08);
+  background: #f0f4ff;
+  border-color: rgba(62, 99, 221, 0.1);
+  box-shadow: none;
 }
 
 .shopCardActive .label {
   font-weight: 650;
-  color: #101828;
+  color: #3e63dd;
 }
 
 .shopCardActive .thumbWrapper {
-  border-color: #7f56d9;
+  border-color: rgba(62, 99, 221, 0.2);
   background: #ffffff;
 }
 
