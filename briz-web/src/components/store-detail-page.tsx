@@ -17,13 +17,13 @@ interface StoreDetailPageProps {
   initialOpenReviews?: boolean;
 }
 
-function IconTruck() {
+
+function IconShoppingBagSpeed() {
   return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="1" y="3" width="15" height="13" rx="2" />
-      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-      <circle cx="5.5" cy="18.5" r="2.5" />
-      <circle cx="18.5" cy="18.5" r="2.5" />
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#30a46c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <path d="M3 6h18" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
     </svg>
   );
 }
@@ -87,15 +87,34 @@ function IconGoogleMaps() {
   );
 }
 
-function IconEllipsisVertical() {
+function IconShare() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="19" r="1.5" fill="currentColor" />
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
     </svg>
   );
 }
+
+function IconSliders() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="4" y1="21" x2="4" y2="14" />
+      <line x1="4" y1="10" x2="4" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12" y2="3" />
+      <line x1="20" y1="21" x2="20" y2="16" />
+      <line x1="20" y1="12" x2="20" y2="3" />
+      <line x1="1" y1="14" x2="7" y2="14" />
+      <line x1="9" y1="8" x2="15" y2="8" />
+      <line x1="17" y1="16" x2="23" y2="16" />
+    </svg>
+  );
+}
+
 
 const EMPTY_FAVOURITES: string[] = [];
 let cachedRawFavourites: string | null = null;
@@ -160,20 +179,22 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
     return combined;
   }, [store]);
 
-  // Subcategories available in this store (matching Figma 893:100955)
+  // Subcategories available in this store (matching Figma 893:100955 / 1181:53858)
   const subcategories = useMemo(() => {
     const list = new Set(storeProducts.map(p => p.subcategory).filter(Boolean) as string[]);
     const dynamicList = Array.from(list);
     if (dynamicList.length >= 3) {
       return ["All Products", ...dynamicList];
     }
-    return ["All Products", "Men's Fashion", "Women's Fashion", "Kids Clothes", "Others"];
+    return ["All Products", "Men's Fashion", "Women's Fashion", "Men's Streetwear", "Women's Streetwear", "Kids' Apparel"];
   }, [storeProducts]);
 
   // UI state
   const [selectedSubcategory, setSelectedSubcategory] = useState("All Products");
   const [inStoreQuery, setInStoreQuery] = useState("");
   const [sortOption, setSortOption] = useState("relevance");
+  const [priceRange, setPriceRange] = useState("all");
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(10);
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [isHoursOpen, setIsHoursOpen] = useState(false);
@@ -261,6 +282,16 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
       );
     }
 
+    if (priceRange === "under-500") {
+      list = list.filter(p => p.price < 500);
+    } else if (priceRange === "500-1000") {
+      list = list.filter(p => p.price >= 500 && p.price <= 1000);
+    } else if (priceRange === "1000-2500") {
+      list = list.filter(p => p.price >= 1000 && p.price <= 2500);
+    } else if (priceRange === "above-2500") {
+      list = list.filter(p => p.price > 2500);
+    }
+
     const sorted = [...list];
     if (sortOption === "price-asc") {
       sorted.sort((a, b) => a.price - b.price);
@@ -277,7 +308,7 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
     }
 
     return sorted;
-  }, [storeProducts, selectedSubcategory, inStoreQuery, sortOption]);
+  }, [storeProducts, selectedSubcategory, inStoreQuery, priceRange, sortOption]);
 
   const schedule = store.schedule || DEFAULT_STORE_SCHEDULE;
 
@@ -295,27 +326,27 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
       </nav>
 
       <div className={styles.container}>
-        {/* Profile Section matching Figma 890:98045 */}
+        {/* Profile Section matching Figma 890:98045 / 1181:53295 / 1181:53413 / 1181:53614 */}
         <div className={styles.profileSection} data-node-id="890:98045" data-name="profile Section">
-          {/* Cover Image matching Figma 893:99952 */}
+          {/* Cover Image matching Figma 893:99952 / 1181:52615 / 1181:53094 */}
           <div className={styles.coverImageWrapper} data-node-id="893:99952" data-name="cover-image">
             <Image
-              src={store.cover || "/figma/home/hero-banner.png"}
+              src={store.cover || "/figma/results/store-imgImage2.png"}
               alt={`${store.name} cover`}
-              width={1200}
-              height={340}
+              width={1280}
+              height={420}
               className={styles.coverImage}
               unoptimized
               priority
             />
           </div>
 
-          {/* Bottom Gradient Fade matching Figma 893:99892 */}
+          {/* Bottom Gradient Fade matching Figma 893:99892 / 1181:52617 / 1181:53096 */}
           <div className={styles.coverGradient} data-node-id="893:99892" data-name="gradient" />
 
-          {/* Details Container matching Figma 893:99814 */}
+          {/* Details Container matching Figma 893:99814 / 1181:52618 / 1181:53097 */}
           <div className={styles.storeDetailsContainer} data-node-id="893:99814" data-name="Container">
-            {/* Profile Picture Frame overlapping the banner matching Figma 893:99851 */}
+            {/* Profile Picture Frame overlapping the banner matching Figma 893:99851 / 1181:52648 / 1181:53122 */}
             <div className={styles.profilePictureFrame} data-node-id="893:99851" data-name="Profile Picture Frame">
               <div className={styles.profilePictureInner} data-node-id="893:99852" data-name="Profile Picture">
                 <Image
@@ -330,21 +361,24 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
             </div>
 
             <div className={styles.storeContentBlock} data-node-id="893:99815" data-name="Store Container">
-              {/* Header Row: Store Info & Actions matching Figma 893:99819 */}
+              {/* Header Row: Store Info & Actions matching Figma 893:99819 / 1181:52623 / 1181:53102 */}
               <div className={styles.storeHeaderRow} data-node-id="893:99819" data-name="Header">
                 <div className={styles.storeInfoTitleBlock} data-node-id="893:99820" data-name="Store Info">
-                  <h1 className={styles.storeTitle} data-node-id="893:99821">{store.name}</h1>
-                  {store.verified && (
-                    <div className={styles.verifiedBadgeWrapper} data-node-id="893:99822" data-name="Verification Icon" title="Verified Store">
-                      <Image src="/figma/results/store-imgVerifiedIcon.svg" width={20} height={20} alt="Verified" unoptimized />
-                    </div>
-                  )}
+                  <div className={styles.titleWithVerified}>
+                    <h1 className={styles.storeTitle} data-node-id="893:99821">{store.name}</h1>
+                    {store.verified && (
+                      <div className={styles.verifiedBadgeWrapper} data-node-id="893:99822" data-name="Verification Icon" title="Verified Store">
+                        <Image src="/figma/results/store-imgVerifiedIcon.svg" width={20} height={20} alt="Verified" unoptimized />
+                      </div>
+                    )}
+                  </div>
                   <span className={styles.distanceBadge}>
                     <IconMapPin />
                     <span>{store.distance}</span>
                   </span>
                 </div>
 
+                {/* Desktop/Tablet Store Actions matching Figma 893:99823 / 949:103407 */}
                 <div className={styles.actionsCluster} data-node-id="893:99823" data-name="Actions">
                   <button
                     type="button"
@@ -389,18 +423,31 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
                     aria-label="More options / share store"
                     title="Copy store link"
                   >
-                    <IconEllipsisVertical />
+                    <IconShare />
                   </button>
                 </div>
               </div>
 
-              {/* Category Container matching Figma 893:99827 */}
+              {/* Category Container matching Figma 893:99827 / 1181:52630 / 1181:53109 */}
               <div className={styles.categoryContainer} data-node-id="893:99827" data-name="Category Container">
                 <p className={styles.categoryText} data-node-id="893:99828">{store.category}</p>
               </div>
 
-              {/* Info Clusters matching Figma 893:99919 */}
+              {/* Info Clusters matching Figma 893:99919 / 1181:52632 / 1181:53111 */}
               <div className={styles.infoClusters} data-node-id="893:99919" data-name="Info Clusters">
+                <div className={styles.deliveryCluster}>
+                  <IconShoppingBagSpeed />
+                  <span className={styles.deliveryText}>
+                    {store.deliveryType === "online"
+                      ? "Online Delivery Only"
+                      : store.deliveryType === "pickup"
+                      ? "Store Pickup Only"
+                      : "Store Pickup & Delivery"}
+                  </span>
+                </div>
+
+                <span className={styles.clusterDot} data-node-id="893:99941" aria-hidden />
+
                 <button
                   type="button"
                   className={styles.reviewsCluster}
@@ -414,7 +461,7 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
                   <span className={styles.reviewCountText}>({reviews.length} Reviews)</span>
                 </button>
 
-                <span className={styles.clusterDot} data-node-id="893:99941" aria-hidden />
+                <span className={styles.clusterDot} data-node-id="893:99942" aria-hidden />
 
                 <div className={styles.statusCluster} data-node-id="893:99924" data-name="Status Frame">
                   <IconClock />
@@ -454,28 +501,55 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
                   )}
                 </div>
 
-                <span className={styles.clusterDot} data-node-id="893:99942" aria-hidden />
+                <span className={styles.clusterDot} aria-hidden />
 
                 <div className={styles.locationCluster} data-node-id="893:99921" data-name="Location Frame">
                   <IconMapPin />
                   <span className={styles.locationText} data-node-id="893:99923">{store.address || `${store.location}, Kathmandu, Nepal`}</span>
                 </div>
-
-                <span className={styles.clusterDot} aria-hidden />
-
-                <div className={styles.deliveryCluster}>
-                  <IconTruck />
-                  <span className={styles.deliveryText}>
-                    {store.deliveryType === "online"
-                      ? "Online Delivery Only"
-                      : store.deliveryType === "pickup"
-                      ? "In-Store Pickup Only"
-                      : "Online Delivery & In-Store Pickup"}
-                  </span>
-                </div>
               </div>
 
-              {/* Description matching Figma 893:99944 */}
+              {/* Mobile Actions matching Figma 1181:53223 (Phone View) */}
+              <div className={styles.mobileActionsCluster} data-node-id="1181:53223" data-name="store-Actions">
+                <button
+                  type="button"
+                  className={styles.messageActionBtn}
+                  onClick={() => messageModalRef.current?.showModal()}
+                  aria-label="Message seller"
+                >
+                  <IconChat />
+                  <span>Message</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.mapActionBtn}
+                  onClick={() => mapModalRef.current?.showModal()}
+                  aria-label="Open store on map"
+                >
+                  <IconGoogleMaps />
+                  <span>Open Map</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.iconActionBtn} ${isFavourited ? styles.iconActionBtnActive : ""}`}
+                  onClick={toggleFavourite}
+                  aria-label={isFavourited ? "Remove from favourites" : "Add to favourites"}
+                  aria-pressed={isFavourited}
+                >
+                  <IconHeart filled={isFavourited} />
+                </button>
+                <button
+                  type="button"
+                  className={styles.iconActionBtn}
+                  onClick={handleCopyShareLink}
+                  aria-label="Share store"
+                  title="Copy store link"
+                >
+                  <IconShare />
+                </button>
+              </div>
+
+              {/* Description matching Figma 893:99944 / 1181:52647 / 1181:53121 */}
               <div className={styles.descriptionBlock} data-node-id="893:99944" data-name="Description">
                 <p className={`${styles.descriptionText} ${!isDescExpanded ? styles.descriptionClamp : ""}`}>
                   {store.description ||
@@ -493,23 +567,12 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
           </div>
         </div>
 
-        {/* Product Catalog Section matching Figma 893:100516 */}
+        {/* Product Catalog Section matching Figma 893:100516 / 1153:24753 / 1152:22526 / 1153:23394 */}
         <section className={styles.catalogContainer} data-node-id="893:100516" data-name="container" aria-label="Browse All Products">
-          {/* Section Header & Subcategory Pills matching Figma 893:100519 */}
-          <div className={styles.catalogHeadingSection} data-node-id="893:100519" data-name="Search & Sort by:">
-            <h2 className={styles.catalogTitle} data-node-id="893:100845">Browse All Products</h2>
-            <div data-node-id="893:100955" style={{ width: "100%" }}>
-              <ProductCategoryList
-                categories={subcategories}
-                selected={selectedSubcategory}
-                onSelect={setSelectedSubcategory}
-                backgroundColor="#f9f9f9"
-                ariaLabel="Filter by product category"
-              />
-            </div>
-          </div>
+          {/* Section Heading matching Figma 893:100845 / 1153:24994 */}
+          <h2 className={styles.catalogTitle} data-node-id="893:100845">Browse All Products</h2>
 
-          {/* Search & Sort Toolbar matching Figma 893:100847 */}
+          {/* Search & Sort Toolbar matching Figma 893:100847 / 1153:24996 / 1153:25166 / 1153:25281 */}
           <div className={styles.catalogToolbar} data-node-id="893:100847" data-name="Search & Sort by:">
             <div className={styles.searchInputWrapper} data-node-id="893:100912" data-name="Search State">
               <span className={styles.searchMagnifier} aria-hidden>
@@ -535,26 +598,78 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
               )}
             </div>
 
-            <div className={styles.sortWrapper} data-node-id="893:100863" data-name="Input">
-              <select
-                className={styles.sortSelect}
-                value={sortOption}
-                onChange={e => setSortOption(e.target.value)}
-                aria-label="Sort products"
-              >
-                <option value="relevance">Relevance</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="discount">Highest Discount</option>
-                <option value="newest">Newest Arrivals</option>
-              </select>
-              <span className={styles.sortChevron} aria-hidden>
-                <IconChevronDown />
-              </span>
+            {/* Desktop Filter by & Sort by Controls matching Figma 1153:24999 */}
+            <div className={styles.desktopFilterControls} data-node-id="1153:24999" data-name="filter">
+              <div className={styles.filterByGroup} data-node-id="1153:25004">
+                <span className={styles.filterFieldLabel}>Filter by</span>
+                <div className={styles.filterSelectWrapper}>
+                  <select
+                    className={styles.filterSelect}
+                    value={priceRange}
+                    onChange={e => setPriceRange(e.target.value)}
+                    aria-label="Filter by price range"
+                  >
+                    <option value="all">All Price Range</option>
+                    <option value="under-500">Under Rs. 500</option>
+                    <option value="500-1000">Rs. 500 - Rs. 1,000</option>
+                    <option value="1000-2500">Rs. 1,000 - Rs. 2,500</option>
+                    <option value="above-2500">Above Rs. 2,500</option>
+                  </select>
+                  <span className={styles.filterChevron} aria-hidden>
+                    <IconChevronDown />
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.sortByGroup} data-node-id="1153:25011">
+                <span className={styles.filterFieldLabel}>Sort by</span>
+                <div className={styles.sortWrapper} data-node-id="893:100863" data-name="Input">
+                  <select
+                    className={styles.sortSelect}
+                    value={sortOption}
+                    onChange={e => setSortOption(e.target.value)}
+                    aria-label="Sort products"
+                  >
+                    <option value="relevance">Relevance</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="discount">Highest Discount</option>
+                    <option value="newest">Newest Arrivals</option>
+                  </select>
+                  <span className={styles.sortChevron} aria-hidden>
+                    <IconChevronDown />
+                  </span>
+                </div>
+              </div>
             </div>
+
+            {/* Tablet & Mobile "More Filters" Button matching Figma 1153:25185 / 1153:25300 */}
+            <button
+              type="button"
+              className={styles.moreFiltersBtn}
+              onClick={() => setIsFilterModalOpen(true)}
+              aria-label="Open filter options"
+            >
+              <IconSliders />
+              <span>More Filters</span>
+              {(priceRange !== "all" || sortOption !== "relevance") && (
+                <span className={styles.activeFilterDot} />
+              )}
+            </button>
           </div>
 
-          {/* 5-Column Product Grid matching Figma 893:100536 */}
+          {/* Subcategory Pills matching Figma 893:100955 / 1181:53858 / 946:103108 */}
+          <div className={styles.categoryPillsWrapper} data-node-id="893:100955">
+            <ProductCategoryList
+              categories={subcategories}
+              selected={selectedSubcategory}
+              onSelect={setSelectedSubcategory}
+              backgroundColor="#f9f9f9"
+              ariaLabel="Filter by product category"
+            />
+          </div>
+
+          {/* Product Grid matching Figma 893:100536 / 964:107956 / 1153:22891 / 1153:23404 */}
           {displayedProducts.length > 0 ? (
             <div className={styles.productGrid} data-node-id="893:100536" data-name="product lists">
               {displayedProducts.slice(0, visibleCount).map(product => (
@@ -581,6 +696,8 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
                 onClick={() => {
                   setSelectedSubcategory("All Products");
                   setInStoreQuery("");
+                  setPriceRange("all");
+                  setSortOption("relevance");
                 }}
               >
                 Reset in-store filters
@@ -588,7 +705,7 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
             </div>
           )}
 
-          {/* Load More Button matching Figma 893:101002 */}
+          {/* Load More Button matching Figma 893:101002 / 964:107965 / 964:107966 */}
           {displayedProducts.length > visibleCount && (
             <div className={styles.loadMoreWrapper} data-node-id="893:101002" data-name="button">
               <button
@@ -733,6 +850,89 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
           </div>
         )}
       </dialog>
+
+      {/* More Filters Dialog for Tablet and Mobile (matching Figma 1153:25185 / 1153:25300) */}
+      {isFilterModalOpen && (
+        <dialog open className={styles.dialogBackdrop} onClose={() => setIsFilterModalOpen(false)}>
+          <div className={styles.dialogHeader}>
+            <h2>Filters & Sort</h2>
+            <button
+              type="button"
+              className={styles.dialogCloseBtn}
+              onClick={() => setIsFilterModalOpen(false)}
+              aria-label="Close filters"
+            >
+              ×
+            </button>
+          </div>
+          <div className={styles.filterModalBody}>
+            <div className={styles.filterModalSection}>
+              <label className={styles.filterModalLabel}>Price Range</label>
+              <div className={styles.filterModalOptions}>
+                {[
+                  { value: "all", label: "All Price Range" },
+                  { value: "under-500", label: "Under Rs. 500" },
+                  { value: "500-1000", label: "Rs. 500 - Rs. 1,000" },
+                  { value: "1000-2500", label: "Rs. 1,000 - Rs. 2,500" },
+                  { value: "above-2500", label: "Above Rs. 2,500" },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`${styles.filterOptionPill} ${priceRange === opt.value ? styles.filterOptionPillActive : ""}`}
+                    onClick={() => setPriceRange(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.filterModalSection}>
+              <label className={styles.filterModalLabel}>Sort by</label>
+              <div className={styles.filterModalOptions}>
+                {[
+                  { value: "relevance", label: "Relevance" },
+                  { value: "price-asc", label: "Price: Low to High" },
+                  { value: "price-desc", label: "Price: High to Low" },
+                  { value: "discount", label: "Highest Discount" },
+                  { value: "newest", label: "Newest Arrivals" },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`${styles.filterOptionPill} ${sortOption === opt.value ? styles.filterOptionPillActive : ""}`}
+                    onClick={() => setSortOption(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.dialogActions}>
+              <button
+                type="button"
+                className={styles.mapButton}
+                onClick={() => {
+                  setPriceRange("all");
+                  setSortOption("relevance");
+                  setIsFilterModalOpen(false);
+                }}
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                className={styles.messageButton}
+                onClick={() => setIsFilterModalOpen(false)}
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
 
       {/* Side-pop Reviews Drawer (View-only) */}
       <StoreReviewsDrawer

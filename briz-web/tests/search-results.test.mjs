@@ -791,3 +791,61 @@ test("store reviews experience displays Avatar, Username, Given Star, Tags, max 
   assert.match(storeDetailPageTsx, /onClick=\{\(\)\s*=>\s*setIsReviewsDrawerOpen\(true\)\}/);
 });
 
+test("seller design page implements all 3 responsive Figma designs (Desktop 964:107194, Tablet 1152:21303, Mobile 1153:23352)", () => {
+  const storeDetailPageTsx = readFileSync(new URL("../src/components/store-detail-page.tsx", import.meta.url), "utf8");
+  const storeDetailPageCss = readFileSync(new URL("../src/components/store-detail-page.module.css", import.meta.url), "utf8");
+
+  // 1. Desktop Figma Design (node 964:107194 - Laptop 1440px)
+  assert.match(storeDetailPageCss, /\.container\s*\{[^}]*padding:\s*0\s*120px/); // 120px margins
+  assert.match(storeDetailPageCss, /\.coverImageWrapper\s*\{[^}]*height:\s*420px/); // 420px cover
+  assert.match(storeDetailPageCss, /\.coverGradient\s*\{[^}]*height:\s*340px/); // 340px bottom gradient
+  assert.match(storeDetailPageCss, /\.profilePictureFrame\s*\{[^}]*width:\s*80px;[^}]*height:\s*80px/); // 80x80 frame
+  assert.match(storeDetailPageCss, /\.profilePictureInner\s*\{[^}]*width:\s*72px;[^}]*height:\s*72px/); // 72x72 inner
+  assert.match(storeDetailPageCss, /\.productGrid\s*\{[^}]*grid-template-columns:\s*repeat\(5/); // 5-column grid
+  assert.match(storeDetailPageCss, /\.searchInputWrapper\s*\{[^}]*width:\s*340px/); // 340px search bar
+  assert.match(storeDetailPageCss, /\.desktopFilterControls\s*\{[^}]*display:\s*flex/); // Desktop filter toolbar
+  assert.match(storeDetailPageCss, /\.loadMoreBtn\s*\{[^}]*height:\s*48px/); // Load more button
+
+  // Desktop JSX elements
+  assert.match(storeDetailPageTsx, /className=\{styles\.titleWithVerified\}/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.distanceBadge\}/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.actionsCluster\}/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.desktopFilterControls\}/);
+  assert.match(storeDetailPageTsx, /Filter by/);
+  assert.match(storeDetailPageTsx, /All Price Range/);
+  assert.match(storeDetailPageTsx, /Sort by/);
+  assert.match(storeDetailPageTsx, /Relevance/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.categoryPillsWrapper\}/);
+  assert.match(storeDetailPageTsx, /Load More Products/);
+
+  // 2. Tablet Figma Design (node 1152:21303 - Tablet 744px)
+  const tabletMedia = storeDetailPageCss.split("@media (max-width: 1024px)")[1].split("@media (max-width: 768px)")[0];
+  assert.match(tabletMedia, /padding-left:\s*32px;\s*padding-right:\s*32px;/); // 32px margins
+  assert.match(tabletMedia, /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/); // 3-col grid
+  assert.match(tabletMedia, /\.searchInputWrapper\s*\{[^}]*width:\s*320px/); // 320px search
+  assert.match(tabletMedia, /\.desktopFilterControls\s*\{[^}]*display:\s*none/);
+  assert.match(tabletMedia, /\.moreFiltersBtn\s*\{[^}]*display:\s*inline-flex/);
+
+  // 3. Mobile Figma Design (node 1153:23352 - Phone 393px)
+  const mobileMedia = storeDetailPageCss.split("@media (max-width: 768px)")[1];
+  assert.match(mobileMedia, /padding-left:\s*16px;\s*padding-right:\s*16px;/); // 16px margins
+  assert.match(mobileMedia, /\.coverImageWrapper\s*\{[^}]*height:\s*146px/); // 146px cover
+  assert.match(mobileMedia, /\.coverGradient\s*\{[^}]*height:\s*101px/); // 101px gradient
+  assert.match(mobileMedia, /\.profilePictureFrame\s*\{[^}]*width:\s*56px;\s*height:\s*56px/); // 56x56 profile
+  assert.match(mobileMedia, /\.profilePictureInner\s*\{[^}]*width:\s*52px;\s*height:\s*52px/); // 52x52 inner
+  assert.match(mobileMedia, /\.storeInfoTitleBlock\s*\{[^}]*justify-content:\s*space-between/); // title left, distance right
+  assert.match(mobileMedia, /\.actionsCluster\s*\{[^}]*display:\s*none/); // hide desktop actions
+  assert.match(mobileMedia, /\.mobileActionsCluster\s*\{[^}]*display:\s*flex/); // mobile actions bar
+  assert.match(mobileMedia, /\.infoClusters\s*\{[^}]*flex-direction:\s*column/); // 4 stacked lines
+  assert.match(mobileMedia, /\.clusterDot\s*\{[^}]*display:\s*none/); // hide dots
+  assert.match(mobileMedia, /\.productGrid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/); // 2-col grid
+
+  // Mobile JSX elements & interactive filter modal
+  assert.match(storeDetailPageTsx, /className=\{styles\.mobileActionsCluster\}/);
+  assert.match(storeDetailPageTsx, /data-node-id="1181:53223"/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.moreFiltersBtn\}/);
+  assert.match(storeDetailPageTsx, /setIsFilterModalOpen\(true\)/);
+  assert.match(storeDetailPageTsx, /className=\{styles\.filterModalBody\}/);
+  assert.match(storeDetailPageTsx, /styles\.filterOptionPill/);
+});
+

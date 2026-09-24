@@ -1,0 +1,212 @@
+/* Request Product Launcher Widget Styles */
+
+.widgetWrapper {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* Base button properties shared between collapsed and expanded states */
+.widgetButton {
+  display: flex;
+  align-items: center;
+  background-color: var(--card, #ffffff);
+  border: 1px solid var(--border, #ebebeb);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: var(--foreground, #202020);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease;
+}
+
+.widgetButton:hover {
+  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
+  border-color: rgba(62, 99, 221, 0.28);
+}
+
+.widgetButton:focus-visible {
+  outline: 2px solid var(--primary, #3e63dd);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(62, 99, 221, 0.15), 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+}
+
+/* Collapsed initial state: 56 x 56px icon launcher */
+.widgetButtonCollapsed {
+  width: 56px;
+  height: 56px;
+  min-height: 56px;
+  padding: 0;
+  border-radius: 18px;
+  justify-content: center;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+/* Expanded state: horizontal descriptive marketplace card */
+.widgetButtonExpanded {
+  width: 312px;
+  min-height: 80px;
+  padding: 12px 14px 12px 12px;
+  border-radius: 22px;
+  gap: 12px;
+  justify-content: flex-start;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+/* 1. Animated Visual Zone */
+.mascotContainer {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f4f7fe 0%, #ebf2fe 100%);
+  border: 1px solid rgba(62, 99, 221, 0.1);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 1px 3px rgba(62, 99, 221, 0.06);
+}
+
+.mascotContainerCollapsed {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* 2. Message Zone */
+.contentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.headline {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.2px;
+  color: var(--foreground, #202020);
+  display: block;
+}
+
+.description {
+  font-size: 12.5px;
+  font-weight: 450;
+  line-height: 16px;
+  letter-spacing: -0.1px;
+  color: var(--muted-foreground, #646464);
+  display: block;
+}
+
+/* Responsive copy swapping */
+.desktopText {
+  display: inline;
+}
+
+.mobileText {
+  display: none;
+}
+
+/* 3. Action Affordance Zone */
+.actionAffordance {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--muted, #f1f1f1);
+  color: var(--foreground, #202020);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.22s ease, color 0.22s ease;
+}
+
+.widgetButton:hover .actionAffordance {
+  background-color: var(--primary-container, #eff4ff);
+  color: var(--primary, #3e63dd);
+}
+
+/* Mobile responsive constraints (< 640px) */
+@media (max-width: 639px) {
+  .widgetWrapper {
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+
+  .widgetButtonCollapsed {
+    width: 52px;
+    height: 52px;
+    min-height: 52px;
+    border-radius: 16px;
+  }
+
+  .widgetButtonExpanded {
+    width: min(300px, calc(100vw - 32px));
+    min-height: 68px;
+    padding: 10px 12px 10px 10px;
+    gap: 10px;
+    border-radius: 18px;
+  }
+
+  .mascotContainer {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  .mascotContainerCollapsed {
+    width: 48px;
+    height: 48px;
+  }
+
+  .headline {
+    font-size: 13.5px;
+    line-height: 17px;
+  }
+
+  .description {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .desktopText {
+    display: none;
+  }
+
+  .mobileText {
+    display: inline;
+  }
+
+  .actionAffordance {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Accessibility: User prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .widgetButton {
+    transition: none !important;
+  }
+
+  .actionAffordance {
+    transition: none !important;
+  }
+}
