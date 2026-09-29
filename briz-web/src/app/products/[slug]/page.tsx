@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { BrizHeader } from "@/components/briz-header";
 import { BrizFooter } from "@/components/briz-footer";
 import { ProductDetailPage } from "@/components/product-detail/product-detail-page";
 import { getProductBySlug, MAIN_PRODUCT, formatPriceNPR } from "@/data/product-detail-data";
+import { SystemState } from "@/components/system-state/system-state";
 
 interface ProductRouteProps {
   params: Promise<{ slug: string }>;
@@ -41,28 +41,25 @@ export default async function ProductRoute({ params }: ProductRouteProps) {
     return (
       <>
         <BrizHeader />
-        <main className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
-          <div className="max-w-md flex flex-col items-center gap-4">
-            <span className="text-5xl">🔍</span>
-            <h1 className="text-2xl font-bold text-[#202020]">Product not found</h1>
-            <p className="text-sm text-[#646464] leading-relaxed">
-              We couldn’t find the product you’re looking for. It may have been removed or the link might be broken.
-            </p>
-            <div className="flex items-center gap-3 pt-2">
-              <Link
-                href="/category?category=Home+%26+Kitchen"
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#3e63dd] px-6 text-sm font-semibold text-white shadow-sm hover:bg-[#3354c7] transition"
-              >
-                Browse products
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#ebebeb] bg-white px-5 text-sm font-semibold text-[#202020] hover:bg-slate-50 transition"
-              >
-                Back to Home
-              </Link>
-            </div>
-          </div>
+        <main id="main-content" aria-label="Product not found">
+          <SystemState
+            variant="neutral"
+            iconName="PackageX"
+            eyebrow="404"
+            title="Product not found"
+            description="We couldn’t find the product you’re looking for. It may have been removed or the link might be broken."
+            fullPage
+            primaryAction={{
+              label: "Browse products",
+              href: "/category?category=Home+%26+Kitchen",
+              variant: "primary",
+            }}
+            secondaryAction={{
+              label: "Back to Home",
+              href: "/",
+              variant: "secondary",
+            }}
+          />
         </main>
         <BrizFooter />
       </>

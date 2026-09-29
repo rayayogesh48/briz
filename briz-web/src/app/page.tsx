@@ -43,6 +43,20 @@ const REDIRECTION_PAGES = [
     cta: "Go to Product Detail",
     icon: "🍶",
   },
+  {
+    title: "Product Image Previewer",
+    description: "Full-screen lightbox previewer with 6-image packshot, #3E63DD active thumbnail border, loop navigation, touch swipe, keyboard arrows, and error/loading states.",
+    href: "/previewer",
+    cta: "Open Image Previewer",
+    icon: "🔍",
+  },
+  {
+    title: "System States & Error Experience",
+    description: "Interactive preview gallery for all 28+ system states: 404, 500, Offline, Maintenance, 403, 429, no-results, uploads, forms & skeletons.",
+    href: "/dev/states",
+    cta: "Open States Gallery",
+    icon: "⚡",
+  },
 ];
 
 export default function Home() {

@@ -7,6 +7,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import { DESIGN_PRODUCTS, DESIGN_STORES, INITIAL_RECENT, searchCatalog, type Product, type Store } from "./search-data";
 import { ProductRow, StoreRow, SearchIcon, SearchSection, RecentSearches, Suggestions, RequestBanner, ResultsFooter, SkeletonResults, OperatingHours } from "./search-parts";
+import { safeJsonParse } from "@/lib/safe-json";
 import styles from "./navbar-search.module.css";
 
 function RequestProduct({ query, location, onClose }: { query: string; location: string; onClose: () => void }) {
@@ -23,7 +24,7 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
       event.preventDefault();
       if (!name.trim()) return;
       try {
-        const previous = JSON.parse(localStorage.getItem("briz-product-requests") || "[]");
+        const previous = safeJsonParse<Record<string, unknown>[]>(localStorage.getItem("briz-product-requests"), []);
         localStorage.setItem("briz-product-requests", JSON.stringify([...(Array.isArray(previous) ? previous : []), { name: name.trim(), details, location, createdAt: new Date().toISOString() }]));
         setSaved(true);
       } catch { setError("This browser couldn’t save your request. Please try again."); }

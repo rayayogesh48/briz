@@ -82,6 +82,7 @@ export const MAIN_PRODUCT: DetailedProduct = {
     "/products/bottle-detail.svg",
     "/products/bottle-lifestyle.svg",
     "/products/bottle-outdoor.svg",
+    "/products/bottle-dimensions.svg",
   ],
   seller: {
     id: "s-urban-essentials",

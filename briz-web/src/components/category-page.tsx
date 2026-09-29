@@ -10,6 +10,7 @@ import { getSearchResults, money, PRODUCT_SORTS, STORE_SORTS } from "./search-re
 import { CategorySidebar } from "./category-sidebar";
 import { CategoryToolbar } from "./category-toolbar";
 import { ProductCard, StoreCard } from "./catalog-cards";
+import { safeJsonParse } from "@/lib/safe-json";
 import styles from "./category-page.module.css";
 
 export function CategoryPage() {
@@ -103,7 +104,7 @@ export function CategoryPage() {
   function saveRequest() {
     if (!selected) return;
     try {
-      const old = JSON.parse(localStorage.getItem("briz-product-requests") || "[]");
+      const old = safeJsonParse<Record<string, unknown>[]>(localStorage.getItem("briz-product-requests"), []);
       localStorage.setItem(
         "briz-product-requests",
         JSON.stringify([

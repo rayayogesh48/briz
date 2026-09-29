@@ -10,6 +10,9 @@ import { SearchFilters } from "./search-filters";
 import { ProductCard, StoreCard } from "./catalog-cards";
 import { SortDropdown } from "./sort-dropdown";
 import { SlidersHorizontal } from "lucide-react";
+import { SystemState } from "./system-state/system-state";
+import { openBrizRequest } from "./request-product-widget";
+import { safeJsonParse } from "@/lib/safe-json";
 import styles from "./search-results.module.css";
 
 export function SearchResults() {
@@ -70,7 +73,7 @@ export function SearchResults() {
   function saveRequest() {
     if (!selected) return;
     try {
-      const old = JSON.parse(localStorage.getItem("briz-product-requests") || "[]");
+      const old = safeJsonParse<Record<string, unknown>[]>(localStorage.getItem("briz-product-requests"), []);
       localStorage.setItem(
         "briz-product-requests",
         JSON.stringify([
@@ -353,35 +356,34 @@ export function SearchResults() {
                 )}
               </>
             ) : (
-              /* Empty State Card matching Figma 822:39564 & 836:32569 */
+              /* Empty State Card with Briz SystemState */
               <div
                 className={styles.emptyStateCard}
                 data-node-id={query ? "822:39564" : "836:32569"}
               >
-                <div className={styles.emptyIllustration}>
-                  <Image
-                    src="/figma/results/empty-state-illustration.png"
-                    width={180}
-                    height={180}
-                    alt=""
-                    unoptimized
-                  />
-                </div>
-                <div className={styles.emptyText}>
-                  <h2 className={styles.emptyHeading}>No results found</h2>
-                  <p className={styles.emptySubheading}>
-                    We couldn’t find any products or stores that match what you’re looking for.
-                  </p>
-                </div>
-                {activeCount > 0 ? (
-                  <button type="button" className={styles.clearFiltersButton} onClick={clearFilters}>
-                    Clear all filters
-                  </button>
-                ) : (
-                  <Link className={styles.exploreButton} href="/search">
-                    Explore all products
-                  </Link>
-                )}
+                <SystemState
+                  variant="neutral"
+                  iconName="Search"
+                  eyebrow={query ? "Search" : "Catalog"}
+                  title="We couldn't find that product"
+                  description="Try another search, or request it from nearby sellers."
+                  compact
+                  primaryAction={{
+                    label: "Request this product",
+                    onClick: () =>
+                      openBrizRequest({
+                        itemName: query || undefined,
+                        categoryId: category || undefined,
+                      }),
+                    variant: "primary",
+                  }}
+                  secondaryAction={{
+                    label: activeCount > 0 ? "Clear all filters" : "Clear search",
+                    onClick: clearFilters,
+                    variant: "secondary",
+                  }}
+                  dataTestId="no-search-results-state"
+                />
               </div>
             )}
           </section>

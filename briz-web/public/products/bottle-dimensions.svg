@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" fill="none">
+  <defs>
+    <radialGradient id="bgGlowDim" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </radialGradient>
+    <linearGradient id="bodyGradDim" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0b1a3a"/>
+      <stop offset="20%" stop-color="#163268"/>
+      <stop offset="42%" stop-color="#2d5bb8"/>
+      <stop offset="60%" stop-color="#467ae4"/>
+      <stop offset="72%" stop-color="#22458a"/>
+      <stop offset="100%" stop-color="#0d1f44"/>
+    </linearGradient>
+    <linearGradient id="metalRingDim" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="30%" stop-color="#f1f5f9"/>
+      <stop offset="50%" stop-color="#cbd5e1"/>
+      <stop offset="75%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <radialGradient id="shadowDim" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(15, 23, 42, 0.25)"/>
+      <stop offset="60%" stop-color="rgba(15, 23, 42, 0.06)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#bgGlowDim)"/>
+
+  <!-- Perspective Shadow -->
+  <ellipse cx="400" cy="710" rx="170" ry="24" fill="url(#shadowDim)"/>
+
+  <!-- Bottle Silhouette -->
+  <!-- Carry Loop Handle -->
+  <path d="M375 140 C360 85, 440 85, 425 140" stroke="#1e293b" stroke-width="26" stroke-linecap="round"/>
+  <path d="M375 140 C360 100, 440 100, 425 140" stroke="url(#metalRingDim)" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Cap -->
+  <rect x="350" y="140" width="100" height="48" rx="8" fill="#1e293b"/>
+  <rect x="348" y="188" width="104" height="12" rx="3" fill="url(#metalRingDim)"/>
+
+  <!-- Neck -->
+  <path d="M352 200 L352 245 C352 270, 310 300, 310 340 L310 680 C310 695, 325 705, 345 705 L455 705 C475 705, 490 695, 490 680 L490 340 C490 300, 448 270, 448 245 L448 200 Z" fill="url(#bodyGradDim)"/>
+
+  <!-- Stainless Steel Base Trim -->
+  <path d="M310 660 L310 680 C310 695, 325 705, 345 705 L455 705 C475 705, 490 695, 490 680 L490 660 Z" fill="url(#metalRingDim)" opacity="0.3"/>
+
+  <!-- Dimension line: Height (Right side) -->
+  <line x1="550" y1="100" x2="550" y2="705" stroke="#3e63dd" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="540" y1="100" x2="560" y2="100" stroke="#3e63dd" stroke-width="2"/>
+  <line x1="540" y1="705" x2="560" y2="705" stroke="#3e63dd" stroke-width="2"/>
+  <rect x="565" y="380" width="95" height="36" rx="8" fill="#3e63dd"/>
+  <text x="612" y="403" fill="#ffffff" font-family="Inter, sans-serif" font-size="15" font-weight="600" text-anchor="middle">280 mm</text>
+
+  <!-- Dimension line: Width (Bottom) -->
+  <line x1="310" y1="745" x2="490" y2="745" stroke="#3e63dd" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="310" y1="735" x2="310" y2="755" stroke="#3e63dd" stroke-width="2"/>
+  <line x1="490" y1="735" x2="490" y2="755" stroke="#3e63dd" stroke-width="2"/>
+  <rect x="360" y="755" width="80" height="30" rx="6" fill="#3e63dd"/>
+  <text x="400" y="775" fill="#ffffff" font-family="Inter, sans-serif" font-size="14" font-weight="600" text-anchor="middle">76 mm</text>
+
+  <!-- Spec Callout Left 1: Vacuum Insulation -->
+  <circle cx="310" cy="460" r="5" fill="#3e63dd"/>
+  <line x1="310" y1="460" x2="210" y2="440" stroke="#3e63dd" stroke-width="1.5"/>
+  <rect x="70" y="415" width="135" height="50" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="137" y="437" fill="#0f172a" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle">Double Wall</text>
+  <text x="137" y="453" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500" text-anchor="middle">Copper Vacuum</text>
+
+  <!-- Spec Callout Left 2: Volume 750ml -->
+  <circle cx="310" cy="560" r="5" fill="#3e63dd"/>
+  <line x1="310" y1="560" x2="210" y2="580" stroke="#3e63dd" stroke-width="1.5"/>
+  <rect x="80" y="555" width="125" height="50" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="142" y="577" fill="#0f172a" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle">750 ml</text>
+  <text x="142" y="593" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500" text-anchor="middle">25.4 fl oz</text>
+
+  <!-- Spec Callout Top Left: 18/8 Steel -->
+  <circle cx="350" cy="200" r="5" fill="#3e63dd"/>
+  <line x1="350" y1="200" x2="230" y2="200" stroke="#3e63dd" stroke-width="1.5"/>
+  <rect x="75" y="175" width="150" height="50" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="150" y="197" fill="#0f172a" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle">18/8 Steel</text>
+  <text x="150" y="213" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500" text-anchor="middle">Food-Grade Stainless</text>
+</svg>

@@ -17,6 +17,8 @@ const EMPTY_CART: CartItem[] = [];
 let cachedRawCart: string | null = null;
 let cachedCartList: CartItem[] = EMPTY_CART;
 
+import { safeJsonParse } from "@/lib/safe-json";
+
 function getCartSnapshot(): CartItem[] {
   if (typeof window === "undefined") return EMPTY_CART;
   try {
@@ -25,7 +27,7 @@ function getCartSnapshot(): CartItem[] {
       return cachedCartList;
     }
     cachedRawCart = raw;
-    cachedCartList = raw ? JSON.parse(raw) : EMPTY_CART;
+    cachedCartList = safeJsonParse<CartItem[]>(raw, EMPTY_CART);
     return cachedCartList;
   } catch {
     return EMPTY_CART;

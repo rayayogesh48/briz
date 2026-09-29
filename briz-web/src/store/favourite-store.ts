@@ -8,6 +8,8 @@ const EMPTY_FAVOURITES: string[] = [];
 let cachedRawFavourites: string | null = null;
 let cachedFavouritesList: string[] = EMPTY_FAVOURITES;
 
+import { safeJsonParse } from "@/lib/safe-json";
+
 function getFavouritesSnapshot(): string[] {
   if (typeof window === "undefined") return EMPTY_FAVOURITES;
   try {
@@ -16,7 +18,7 @@ function getFavouritesSnapshot(): string[] {
       return cachedFavouritesList;
     }
     cachedRawFavourites = raw;
-    cachedFavouritesList = raw ? JSON.parse(raw) : EMPTY_FAVOURITES;
+    cachedFavouritesList = safeJsonParse<string[]>(raw, EMPTY_FAVOURITES);
     return cachedFavouritesList;
   } catch {
     return EMPTY_FAVOURITES;

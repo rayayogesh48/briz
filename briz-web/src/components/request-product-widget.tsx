@@ -1321,6 +1321,23 @@ export function RequestProductWidget({
     }
   }, [isScanning]);
 
+  // Global event listener for triggering Request Product flow with prefilled query
+  useEffect(() => {
+    const handleOpenEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ itemName?: string; categoryId?: string }>;
+      if (customEvent.detail) {
+        setDraft((prev) => ({
+          ...prev,
+          itemName: customEvent.detail?.itemName !== undefined ? customEvent.detail.itemName : prev.itemName,
+          categoryId: customEvent.detail?.categoryId !== undefined ? customEvent.detail.categoryId : prev.categoryId,
+        }));
+      }
+      setIsOpen(true);
+    };
+    window.addEventListener("briz:open-request", handleOpenEvent);
+    return () => window.removeEventListener("briz:open-request", handleOpenEvent);
+  }, []);
+
   const handleClick = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setIsOpen(true);
@@ -1475,6 +1492,14 @@ export function RequestProductWidget({
   );
 }
 
+// Helper function to programmatically open the floating Request a Product widget
+export function openBrizRequest(options?: { itemName?: string; categoryId?: string }) {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("briz:open-request", { detail: options }));
+  }
+}
+
 // Re-export mascot, panel, and flow data for composability
 export { RequestMascot } from "./request-mascot";
 export * from "./request-flow-data";
+

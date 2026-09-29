@@ -9,6 +9,7 @@ import { ProductCategoryList } from "./product-category-list";
 import { money } from "./search-results-model";
 import { getInitialStoreReviews } from "@/data/store-reviews-data";
 import { StoreReviewsDrawer } from "./store-reviews-drawer";
+import { safeJsonParse } from "@/lib/safe-json";
 import styles from "./store-detail-page.module.css";
 
 interface StoreDetailPageProps {
@@ -128,7 +129,7 @@ function getFavStoreIds(): string[] {
       return cachedFavouritesList;
     }
     cachedRawFavourites = raw;
-    cachedFavouritesList = raw ? JSON.parse(raw) : EMPTY_FAVOURITES;
+    cachedFavouritesList = safeJsonParse<string[]>(raw, EMPTY_FAVOURITES);
     return cachedFavouritesList;
   } catch {
     return EMPTY_FAVOURITES;
@@ -240,7 +241,7 @@ export function StoreDetailPage({ storeId, initialTab = "products", initialOpenR
     e.preventDefault();
     if (!messageText.trim()) return;
     try {
-      const msgs = JSON.parse(localStorage.getItem("briz-seller-messages") || "[]");
+      const msgs = safeJsonParse<Record<string, unknown>[]>(localStorage.getItem("briz-seller-messages"), []);
       msgs.push({
         storeId: store.id,
         storeName: store.name,
