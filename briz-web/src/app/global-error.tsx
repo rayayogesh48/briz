@@ -17,8 +17,8 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, -apple-system, sans-serif", backgroundColor: "#f9f9f9" }}>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning style={{ margin: 0, fontFamily: "system-ui, -apple-system, sans-serif", backgroundColor: "#f9f9f9" }}>
         <main id="main-content" aria-label="System Error">
           <SystemState
             variant="error"

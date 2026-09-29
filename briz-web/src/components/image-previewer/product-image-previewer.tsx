@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useRef,
   useCallback,
-  useSyncExternalStore,
   type TouchEvent as ReactTouchEvent,
 } from "react";
 import { createPortal } from "react-dom";
@@ -16,8 +15,6 @@ import {
 } from "./image-previewer.types";
 import styles from "./product-image-previewer.module.css";
 
-const subscribeNoop = () => () => {};
-
 export function ProductImagePreviewer({
   images: rawImages,
   initialIndex = 0,
@@ -27,7 +24,6 @@ export function ProductImagePreviewer({
   productName = "Product",
   triggerRef,
 }: ProductImagePreviewerProps) {
-  const isClient = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const images = normalizePreviewImages(rawImages, productName);
   const totalCount = images.length;
   const hasMultiple = totalCount > 1;
@@ -56,6 +52,12 @@ export function ProductImagePreviewer({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const thumbnailListRef = useRef<HTMLDivElement>(null);
   const activeThumbnailRef = useRef<HTMLButtonElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPortalContainer(document.body);
+  }, []);
 
   // Adjust state during render when initialIndex or isOpen changes
   const [prevInitialIndex, setPrevInitialIndex] = useState(initialIndex);
@@ -238,7 +240,7 @@ export function ProductImagePreviewer({
     setRetryKey((prev) => prev + 1);
   };
 
-  if (!isOpen || !isClient || totalCount === 0) {
+  if (!isOpen || !portalContainer || totalCount === 0) {
     return null;
   }
 
@@ -458,5 +460,5 @@ export function ProductImagePreviewer({
     </div>
   );
 
-  return createPortal(content, document.body);
+  return createPortal(content, portalContainer);
 }

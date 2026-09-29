@@ -17,7 +17,16 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
   const [details, setDetails] = useState("");
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
-  useEffect(() => { ref.current?.showModal(); }, []);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setContainer(document.body);
+    ref.current?.showModal();
+  }, []);
+
+  if (!container) return null;
+
   return createPortal(<dialog ref={ref} className={styles.request} aria-labelledby={id} onKeyDown={event => event.stopPropagation()} onCancel={event => event.stopPropagation()} onClose={event => { event.stopPropagation(); onClose(); }}>
     <div className={styles.requestHeading}><h2 id={id}>{saved ? "Request saved" : "Request a Product"}</h2><button aria-label="Close request" onClick={() => ref.current?.close()}>×</button></div>
     {saved ? <><p>Your request is saved on this device. Seller notifications aren’t connected in this demo.</p><button className={styles.primary} onClick={() => ref.current?.close()}>Done</button></> : <form onSubmit={event => {
@@ -36,7 +45,7 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
       {error && <p role="alert">{error}</p>}
       <div className={styles.requestActions}><button type="button" className={styles.secondary} onClick={() => ref.current?.close()}>Cancel</button><button className={styles.primary} disabled={!name.trim()}>Save request</button></div>
     </form>}
-  </dialog>, document.body);
+  </dialog>, container);
 }
 
 export type SearchState = "idle" | "focused" | "loading" | "results" | "filled" | "empty-history" | "no-results";

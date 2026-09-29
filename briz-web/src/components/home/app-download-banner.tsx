@@ -35,6 +35,7 @@ export function AppDownloadBanner() {
                   alt="Download on the App Store"
                   width={140}
                   height={42}
+                  style={{ width: "auto", height: "auto" }}
                 />
               </a>
               <a
@@ -48,6 +49,7 @@ export function AppDownloadBanner() {
                   alt="Get it on Google Play"
                   width={140}
                   height={42}
+                  style={{ width: "auto", height: "auto" }}
                 />
               </a>
             </div>
