@@ -1,0 +1,221 @@
+/* Featured Toolbar Styles */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0 16px 0;
+  flex-wrap: wrap;
+}
+
+.countArea {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.countText {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.countLocation {
+  color: #3e63dd;
+  font-weight: 700;
+}
+
+.controlsArea {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile Filters Trigger */
+.mobileFilterTrigger {
+  display: none;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.filterBadge {
+  background: #3e63dd;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Sort dropdown container */
+.sortWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortLabel {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sortDropdownTrigger {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.sortDropdownTrigger:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.sortDropdownTrigger:focus {
+  outline: none;
+  border-color: #3e63dd;
+  box-shadow: 0 0 0 2px rgba(62, 99, 221, 0.15);
+}
+
+.sortMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 50;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
+  min-width: 200px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeInDown 0.15s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sortMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease;
+}
+
+.sortMenuItem:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.sortMenuItemActive {
+  background: #eff6ff;
+  color: #3e63dd;
+  font-weight: 600;
+}
+
+/* View Mode Toggles */
+.viewModeGroup {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.viewModeBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.viewModeBtn:hover {
+  color: #0f172a;
+}
+
+.viewModeBtnActive {
+  background: #ffffff;
+  color: #3e63dd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 900px) {
+  .mobileFilterTrigger {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .controlsArea {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .sortLabel {
+    display: none;
+  }
+
+  .sortDropdownTrigger {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}

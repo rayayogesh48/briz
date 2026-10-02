@@ -1,0 +1,337 @@
+/* Featured Store Card Styles */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.09);
+  border-color: #cbd5e1;
+}
+
+/* Cover Image Container */
+.coverWrapper {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  overflow: hidden;
+}
+
+.coverImage {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.25s ease;
+}
+
+.card:hover .coverImage {
+  transform: scale(1.04);
+}
+
+.coverOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+}
+
+/* Badges on cover */
+.coverBadges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+.featuredBadge {
+  background: #3e63dd;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  backdrop-filter: blur(4px);
+}
+
+.statusOpen {
+  background: rgba(16, 185, 129, 0.9);
+  color: #ffffff;
+}
+
+.statusClosed {
+  background: rgba(100, 116, 139, 0.85);
+  color: #ffffff;
+}
+
+/* Logo overlapping cover */
+.logoWrapper {
+  position: absolute;
+  top: 110px;
+  left: 16px;
+  z-index: 3;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoImage {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Card Body */
+.cardBody {
+  padding: 32px 16px 16px 16px; /* 32px top to make room for logo */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.storeTitleLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.storeTitle {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s ease;
+}
+
+.storeTitle:hover {
+  color: #3e63dd;
+}
+
+.verifiedIcon {
+  color: #3e63dd;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.categoryTag {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* Rating badge in header */
+.ratingPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.reviewCount {
+  font-size: 11px;
+  font-weight: 400;
+  color: #b45309;
+}
+
+/* Description */
+.description {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #475569;
+  margin: 6px 0 10px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 38px;
+}
+
+/* Meta: Location, distance, shopping options */
+.storeMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.locationRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #334155;
+  font-weight: 500;
+}
+
+.optionsRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #0284c7;
+}
+
+/* Product previews strip */
+.previewsSection {
+  margin-bottom: 14px;
+}
+
+.previewsLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.previewsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.previewThumbWrapper {
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.previewThumbWrapper:hover {
+  transform: scale(1.05);
+  border-color: #cbd5e1;
+}
+
+.previewThumb {
+  object-fit: contain;
+  width: 85%;
+  height: 85%;
+}
+
+/* Action button */
+.cardActions {
+  margin-top: auto;
+}
+
+.visitStoreBtn {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 8px;
+  background: #3e63dd;
+  color: #ffffff;
+  border: 1px solid #3e63dd;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.visitStoreBtn:hover {
+  background: #3354c7;
+  border-color: #3354c7;
+  box-shadow: 0 4px 12px rgba(62, 99, 221, 0.2);
+}
+
+.visitStoreBtn:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 640px) {
+  .coverWrapper {
+    height: 120px;
+  }
+
+  .logoWrapper {
+    top: 92px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .cardBody {
+    padding: 26px 14px 14px 14px;
+  }
+
+  .storeTitle {
+    font-size: 15px;
+  }
+
+  .description {
+    font-size: 12.5px;
+    min-height: auto;
+  }
+
+  .previewsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

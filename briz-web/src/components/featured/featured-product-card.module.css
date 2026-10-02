@@ -1,0 +1,392 @@
+/* Featured Product Card Styles */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.08);
+  border-color: #d1d5db;
+}
+
+/* Image Container */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.productLink {
+  display: contents;
+  text-decoration: none;
+  color: inherit;
+}
+
+.productImage {
+  object-fit: contain;
+  width: 82%;
+  height: 82%;
+  transition: transform 0.25s ease;
+  user-select: none;
+}
+
+.card:hover .productImage {
+  transform: scale(1.05);
+}
+
+/* Badges on top of image */
+.badgeContainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.featuredBadge {
+  background: #3e63dd;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(62, 99, 221, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.discountBadge {
+  background: #e54d2e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(229, 77, 46, 0.25);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Favourite button (top right) */
+.favouriteButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0;
+}
+
+.favouriteButton:hover {
+  background: #ffffff;
+  color: #e54d2e;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.favouriteActive {
+  color: #e54d2e;
+  background: #fff5f5;
+  border-color: #fed7d7;
+}
+
+.favouriteActive svg {
+  fill: #e54d2e;
+  transform: scale(1.1);
+  animation: heartPop 0.25s ease-out;
+}
+
+@keyframes heartPop {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1.1); }
+}
+
+/* Card Body */
+.cardBody {
+  padding: 14px 14px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.titleRow {
+  margin-bottom: 8px;
+}
+
+.productTitle {
+  font-family: var(--font-inter), "Inter", sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #0f172a;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 38px;
+  transition: color 0.15s ease;
+}
+
+.productTitle:hover {
+  color: #3e63dd;
+}
+
+/* Rating */
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #f59e0b;
+}
+
+.ratingValue {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.reviewCount {
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Price block */
+.priceSection {
+  margin-bottom: 10px;
+}
+
+.currentPrice {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.originalPriceRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.originalPrice {
+  font-size: 12.5px;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.discountPercent {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e54d2e;
+}
+
+/* Store & Distance */
+.storeMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #475569;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+  margin-bottom: 8px;
+}
+
+.storeName {
+  font-weight: 600;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.distance {
+  color: #64748b;
+  font-size: 11.5px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Delivery / Pickup label */
+.deliveryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #0284c7;
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+
+/* Actions */
+.cardActions {
+  margin-top: auto;
+}
+
+.addToCartBtn {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 8px;
+  background: #3e63dd;
+  color: #ffffff;
+  border: 1px solid #3e63dd;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.addToCartBtn:hover {
+  background: #3354c7;
+  border-color: #3354c7;
+  box-shadow: 0 4px 12px rgba(62, 99, 221, 0.2);
+}
+
+.addToCartBtn:active {
+  transform: scale(0.98);
+}
+
+.addedState {
+  background: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.addedState:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+/* List view variant */
+.listCard {
+  flex-direction: row;
+  align-items: stretch;
+  max-height: 200px;
+}
+
+.listCard .imageWrapper {
+  width: 200px;
+  aspect-ratio: auto;
+  flex-shrink: 0;
+}
+
+.listCard .cardBody {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 18px 20px;
+  align-items: center;
+}
+
+.listCard .productTitle {
+  font-size: 16px;
+  min-height: auto;
+  -webkit-line-clamp: 2;
+}
+
+.listCard .cardActions {
+  width: 160px;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid #f1f5f9;
+  padding-left: 16px;
+}
+
+@media (max-width: 640px) {
+  .cardBody {
+    padding: 10px 10px 12px 10px;
+  }
+
+  .productTitle {
+    font-size: 13px;
+    min-height: 34px;
+  }
+
+  .currentPrice {
+    font-size: 15px;
+  }
+
+  .addToCartBtn {
+    font-size: 12.5px;
+    min-height: 40px;
+    padding: 6px 8px;
+  }
+
+  .listCard {
+    flex-direction: column;
+    max-height: none;
+  }
+
+  .listCard .imageWrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .listCard .cardBody {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .listCard .cardActions {
+    width: 100%;
+    border-left: none;
+    padding-left: 0;
+    margin-top: 10px;
+  }
+}

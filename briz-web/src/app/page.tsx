@@ -51,6 +51,20 @@ const REDIRECTION_PAGES = [
     icon: "🔍",
   },
   {
+    title: "Featured Products",
+    description: "Curated selection of popular picks from Kathmandu merchants with category, price, and distance filters.",
+    href: "/featured-products",
+    cta: "Explore Featured Products",
+    icon: "✨",
+  },
+  {
+    title: "Featured Stores",
+    description: "Discover trusted and verified local merchants across Kathmandu with operating status and ratings.",
+    href: "/featured-stores",
+    cta: "Explore Featured Stores",
+    icon: "🏪",
+  },
+  {
     title: "System States & Error Experience",
     description: "Interactive preview gallery for all 28+ system states: 404, 500, Offline, Maintenance, 403, 429, no-results, uploads, forms & skeletons.",
     href: "/dev/states",

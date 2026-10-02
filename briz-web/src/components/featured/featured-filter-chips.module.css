@@ -1,0 +1,84 @@
+/* Featured Filter Chips Styles */
+.chipsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 0 16px 0;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.chipsList {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.chip:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.chipText {
+  user-select: none;
+}
+
+.removeChipBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  transition: all 0.15s ease;
+}
+
+.removeChipBtn:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+.clearAllLink {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #3e63dd;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.clearAllLink:hover {
+  background: #eff6ff;
+  color: #2563eb;
+  text-decoration: underline;
+}
