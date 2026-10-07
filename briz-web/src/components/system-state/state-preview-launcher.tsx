@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Layers, X, ChevronRight, ExternalLink } from "lucide-react";
 import { SYSTEM_STATE_PRESETS, SYSTEM_STATE_CATEGORIES } from "./system-states-data";
+import { SHOPPER_EXPRESSIONS } from "@/components/briz-shopper";
 import styles from "./state-preview-launcher.module.css";
 
 export function StatePreviewLauncher() {
@@ -95,6 +96,15 @@ export function StatePreviewLauncher() {
                 <ExternalLink size={12} />
               </Link>
               <Link
+                href="/dev/mascot"
+                className={styles.fullGalleryLink}
+                onClick={() => setIsOpen(false)}
+                title="Open mascot expressions gallery"
+              >
+                <span>Mascot</span>
+                <ExternalLink size={12} />
+              </Link>
+              <Link
                 href="/dev/states"
                 className={styles.fullGalleryLink}
                 onClick={() => setIsOpen(false)}
@@ -139,6 +149,24 @@ export function StatePreviewLauncher() {
                 </div>
               );
             })}
+
+            {/* Briz shopper mascot: one entry per expression, opening the gallery at that pose */}
+            <div className={styles.categorySection}>
+              <div className={styles.categoryHeading}>Mascot expressions</div>
+              <div className={styles.categoryGrid}>
+                {SHOPPER_EXPRESSIONS.map((expression) => (
+                  <Link
+                    key={expression}
+                    href={`/dev/mascot#${expression}`}
+                    className={styles.stateItem}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className={styles.stateItemName}>{expression}</span>
+                    <ChevronRight size={12} className={styles.itemChevron} />
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
