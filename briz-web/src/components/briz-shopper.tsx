@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, type Variants } from "motion/react";
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 
 export const SHOPPER_EXPRESSIONS = [
   "greeting",
@@ -237,7 +237,7 @@ const bodyVariants: Variants = {
  * and a crossbody bag. One drawing, nine expressions; proportions, clothes and
  * colours are shared so the character stays the same across all of them.
  */
-export function BrizShopper({ expression = "greeting", crop = "full", size = 120, className, title, hideMark = false }: BrizShopperProps) {
+export const BrizShopper = memo(function BrizShopper({ expression = "greeting", crop = "full", size = 120, className, title, hideMark = false }: BrizShopperProps) {
   const reduce = useReducedMotion();
   const face = FACES[expression];
   const arm = ARMS[face.arm];
@@ -355,4 +355,4 @@ export function BrizShopper({ expression = "greeting", crop = "full", size = 120
       </motion.g>
     </svg>
   );
-}
+});

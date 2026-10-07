@@ -396,193 +396,50 @@
   display: contents;
 }
 
-/* ─── Variant: "shopper" — free-standing character with a thought bubble ─── */
+/* ─── Variant: "shopper" — a free-standing character whose thought appears on demand ───
 
-.widgetButton[data-variant="shopper"],
-.widgetButton[data-variant="shopper"]:hover {
+   State is CSS-only. The button sets --on to 1 while it is hovered (pointer
+   devices), keyboard-focused, or showing the touch hint, and every part derives
+   its opacity/scale/offset from --on with a transition. Transitions retarget
+   mid-flight, so rapid hovering can never leave the widget half-animated. */
+
+.widgetButton[data-variant="shopper"] {
+  --on: 0;
+  --press: 1;
+  --rw-ease: cubic-bezier(0.2, 0, 0, 1);
+  --rw-spring: cubic-bezier(0.2, 1.25, 0.35, 1);
+  --rw-duration: 200ms;
   width: auto;
   height: auto;
   min-height: 0;
   padding: 0;
   gap: 0;
-  align-items: center;
   overflow: visible;
   border-color: transparent;
   border-radius: 22px;
   background: transparent;
   box-shadow: none;
+  touch-action: manipulation;
 }
 
-.widgetButton[data-variant="shopper"] .mascotContainer {
-  order: 2;
-  width: auto;
-  height: auto;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+.widgetButton[data-variant="shopper"]:hover {
+  border-color: transparent;
   box-shadow: none;
-  filter: drop-shadow(0 8px 12px rgba(24, 26, 40, 0.2));
 }
 
-/* Thought trail: two dots rising from the character's head toward the bubble.
-   They live on the character so they can pop in before the bubble does. */
-.widgetButton[data-variant="shopper"] .mascotContainer::before,
-.widgetButton[data-variant="shopper"] .mascotContainer::after {
-  content: none;
+@media (hover: hover) {
+  .widgetButton[data-variant="shopper"]:hover {
+    --on: 1;
+  }
 }
 
-.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before,
-.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
-  content: "";
-  position: absolute;
-  inset: auto;
-  border: 1px solid var(--border, #ebebeb);
-  border-radius: 50%;
-  background: var(--card, #ffffff);
-  animation: thought-dot 0.24s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+.widgetButton[data-variant="shopper"]:focus-visible,
+.widgetButton[data-variant="shopper"][data-hint="true"] {
+  --on: 1;
 }
 
-.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before {
-  top: 30px;
-  left: -9px;
-  width: 7px;
-  height: 7px;
-  animation-delay: 0s;
-}
-
-.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
-  top: 18px;
-  left: -23px;
-  width: 12px;
-  height: 12px;
-  animation-delay: 0.05s;
-}
-
-/* Shared timing for this variant. */
-.widgetButton[data-variant="shopper"] {
-  --rw-ease: cubic-bezier(0.2, 0, 0, 1);
-  --rw-spring: cubic-bezier(0.2, 1.25, 0.35, 1);
-  --rw-duration: 200ms;
-}
-
-/* Pose changes (wave → think → excited) settle in rather than snap. One-shot, so keyframes. */
-.shopperPose {
-  display: block;
-  transform-origin: 50% 100%;
-  animation: shopper-settle 260ms var(--rw-spring, ease-out) both;
-}
-
-/* The bubble.
-   - Enter (one-shot) and the idle drift are keyframes on `transform`.
-   - Hover/press are transitions on the separate `translate`/`scale` properties,
-     so they retarget mid-flight and never fight the keyframes. */
-.widgetButton[data-variant="shopper"] .bubble {
-  /* Floats beside the character, so showing it on hover never resizes the launcher. */
-  position: absolute;
-  top: 0;
-  right: calc(100% + 26px);
-  bottom: 0;
-  height: fit-content;
-  margin-block: auto;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 14px 14px 20px;
-  border: 1px solid var(--border, #ebebeb);
-  border-radius: 26px;
-  background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
-  box-shadow:
-    0 14px 32px -10px rgba(24, 26, 40, 0.26),
-    0 2px 6px -1px rgba(24, 26, 40, 0.06),
-    inset 0 1px 0 #ffffff;
-  white-space: nowrap;
-  transform-origin: 100% 60%;
-  animation:
-    thought-bubble-in 320ms var(--rw-spring) 0.08s both,
-    thought-bubble-float 4.4s ease-in-out 0.9s infinite;
-  transition-property: translate, scale, box-shadow, border-color;
-  transition-duration: var(--rw-duration);
-  transition-timing-function: var(--rw-ease);
-}
-
-/* Invisible bridge over the gap, so the pointer can travel from the character
-   to the bubble without the hover dropping. */
-.widgetButton[data-variant="shopper"] .bubble::after {
-  content: "";
-  position: absolute;
-  top: -8px;
-  bottom: -8px;
-  left: 100%;
-  width: 32px;
-}
-
-/* Enter: split the bubble's content and stagger it as the bubble lands. */
-.widgetButton[data-variant="shopper"] .bubble .headline,
-.widgetButton[data-variant="shopper"] .bubble .description,
-.widgetButton[data-variant="shopper"] .bubble .actionAffordance {
-  animation: thought-rise 300ms var(--rw-ease) both;
-}
-
-.widgetButton[data-variant="shopper"] .bubble .headline {
-  font-size: 15px;
-  line-height: 20px;
-  animation-delay: 0.16s;
-}
-
-.widgetButton[data-variant="shopper"] .bubble .description {
-  animation-delay: 0.23s;
-}
-
-.widgetButton[data-variant="shopper"] .bubble .actionAffordance {
-  width: 30px;
-  height: 30px;
-  background-color: var(--primary-container, #eff4ff);
-  color: var(--primary, #3e63dd);
-  animation-delay: 0.3s;
-  transition-property: background-color, color, scale;
-  transition-duration: var(--rw-duration);
-  transition-timing-function: var(--rw-ease);
-}
-
-/* Hover / keyboard focus: the bubble leans in, the arrow becomes the call to action. */
-.widgetButton[data-variant="shopper"]:hover .bubble,
-.widgetButton[data-variant="shopper"]:focus-visible .bubble {
-  translate: -4px -3px;
-  scale: 1.025;
-  border-color: rgba(62, 99, 221, 0.35);
-  box-shadow:
-    0 20px 42px -12px rgba(62, 99, 221, 0.42),
-    0 4px 10px -2px rgba(24, 26, 40, 0.08),
-    inset 0 1px 0 #ffffff;
-}
-
-.widgetButton[data-variant="shopper"]:hover .bubble .actionAffordance,
-.widgetButton[data-variant="shopper"]:focus-visible .bubble .actionAffordance {
-  background-color: var(--primary, #3e63dd);
-  color: #ffffff;
-  scale: 1.08;
-}
-
-/* The thought trail follows the bubble as it leans away. */
-.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before,
-.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
-  transition: translate var(--rw-duration) var(--rw-ease);
-}
-
-.widgetButton[data-variant="shopper"]:hover .mascotContainer::before,
-.widgetButton[data-variant="shopper"]:focus-visible .mascotContainer::before {
-  translate: -1px -1px;
-}
-
-.widgetButton[data-variant="shopper"]:hover .mascotContainer::after,
-.widgetButton[data-variant="shopper"]:focus-visible .mascotContainer::after {
-  translate: -3px -2px;
-}
-
-/* Press: tactile, and released smoothly because it is a transition. */
-.widgetButton[data-variant="shopper"]:active .bubble {
-  scale: 0.96;
-  transition-duration: 110ms;
+.widgetButton[data-variant="shopper"]:active {
+  --press: 0.96;
 }
 
 .widgetButton[data-variant="shopper"]:focus-visible {
@@ -590,61 +447,177 @@
   box-shadow: none;
 }
 
-@keyframes shopper-settle {
-  from {
-    transform: scale(0.94, 1.04);
+.widgetButton[data-variant="shopper"] .mascotContainer {
+  position: relative;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.widgetButton[data-variant="shopper"] .mascotContainer::before {
+  content: none;
+}
+
+/* Two poses stacked in one grid cell; they cross-fade instead of re-rendering. */
+.shopperStage {
+  display: grid;
+  filter: drop-shadow(0 8px 12px rgba(24, 26, 40, 0.2));
+}
+
+.shopperIdle,
+.shopperActive {
+  grid-area: 1 / 1;
+  transform-origin: 50% 100%;
+  transition-property: opacity, scale;
+  transition-duration: 160ms;
+  transition-timing-function: var(--rw-ease);
+}
+
+.shopperIdle {
+  opacity: calc(1 - var(--on));
+}
+
+.shopperActive {
+  opacity: var(--on);
+  scale: calc(0.96 + 0.04 * var(--on));
+}
+
+/* Thought trail: two dots rising from the head toward the bubble. */
+.thoughtDotSmall,
+.thoughtDotLarge {
+  position: absolute;
+  border: 1px solid var(--border, #ebebeb);
+  border-radius: 50%;
+  background: var(--card, #ffffff);
+  box-shadow: 0 3px 8px -2px rgba(24, 26, 40, 0.2);
+  opacity: var(--on);
+  scale: calc(0.2 + 0.8 * var(--on));
+  pointer-events: none;
+  transition-property: opacity, scale;
+  transition-duration: var(--rw-duration);
+  transition-timing-function: var(--rw-spring);
+}
+
+.thoughtDotSmall {
+  top: 30px;
+  left: -9px;
+  width: 7px;
+  height: 7px;
+}
+
+.thoughtDotLarge {
+  top: 18px;
+  left: -23px;
+  width: 12px;
+  height: 12px;
+  transition-delay: calc(var(--on) * 40ms);
+}
+
+/* The bubble floats up and to the left of the head, so the thought dots lead
+   into its lower-right corner. Being out of flow, it never resizes the launcher. */
+.thought {
+  position: absolute;
+  top: -34px;
+  right: calc(100% + 26px);
+  /* max-content: size to the text, not to the 76px character it is anchored to. */
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 14px 14px 20px;
+  border: 1px solid rgba(62, 99, 221, 0.3);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+  box-shadow:
+    0 18px 40px -12px rgba(62, 99, 221, 0.4),
+    0 4px 10px -2px rgba(24, 26, 40, 0.08),
+    inset 0 1px 0 #ffffff;
+  text-align: left;
+  white-space: nowrap;
+  transform-origin: 100% 100%;
+  opacity: var(--on);
+  scale: calc((0.7 + 0.3 * var(--on)) * var(--press));
+  translate: calc((1 - var(--on)) * 10px) calc((1 - var(--on)) * 4px);
+  /* Hidden means hidden: no hover target and nothing for assistive tech to land on. */
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 140ms var(--rw-ease),
+    scale 260ms var(--rw-spring),
+    translate 260ms var(--rw-spring),
+    visibility 0s linear 260ms;
+}
+
+@media (hover: hover) {
+  .widgetButton[data-variant="shopper"]:hover .thought {
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 60ms, 60ms, 60ms, 0s;
   }
 }
 
-@keyframes thought-dot {
-  from {
-    opacity: 0;
-    transform: scale(0.2);
-  }
+.widgetButton[data-variant="shopper"]:focus-visible .thought,
+.widgetButton[data-variant="shopper"][data-hint="true"] .thought {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 60ms, 60ms, 60ms, 0s;
 }
 
-@keyframes thought-bubble-in {
-  from {
-    opacity: 0;
-    transform: scale(0.6) translate(12px, 6px);
-    filter: blur(4px);
-  }
+/* Invisible bridge over the gap, so the pointer can travel from the character
+   to the bubble without the hover dropping. */
+.thought::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: -24px;
+  left: 100%;
+  width: 32px;
 }
 
-@keyframes thought-rise {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-    filter: blur(4px);
-  }
+/* Content rises in just after the bubble; on the way out it leaves with it (no delay). */
+.thoughtLine {
+  opacity: var(--on);
+  translate: 0 calc((1 - var(--on)) * 6px);
+  transition-property: opacity, translate;
+  transition-duration: var(--rw-duration);
+  transition-timing-function: var(--rw-ease);
+  transition-delay: calc(var(--on) * 110ms);
 }
 
-@keyframes thought-bubble-float {
-  50% {
-    transform: translateY(-3px);
-  }
+.thought .headline {
+  font-size: 15px;
+  line-height: 20px;
 }
 
-/* Reduced motion: show the end state at once; keep colour/shadow feedback only. */
+.thought .description {
+  transition-delay: calc(var(--on) * 160ms);
+}
+
+.thoughtArrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--primary, #3e63dd);
+  color: #ffffff;
+  transition-delay: calc(var(--on) * 210ms);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .shopperPose,
-  .widgetButton[data-variant="shopper"] .bubble,
-  .widgetButton[data-variant="shopper"] .bubble .headline,
-  .widgetButton[data-variant="shopper"] .bubble .description,
-  .widgetButton[data-variant="shopper"] .bubble .actionAffordance,
-  .widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before,
-  .widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
-    animation: none !important;
-  }
-
-  .widgetButton[data-variant="shopper"]:hover .bubble,
-  .widgetButton[data-variant="shopper"]:focus-visible .bubble,
-  .widgetButton[data-variant="shopper"]:active .bubble,
-  .widgetButton[data-variant="shopper"]:hover .bubble .actionAffordance,
-  .widgetButton[data-variant="shopper"]:hover .mascotContainer::before,
-  .widgetButton[data-variant="shopper"]:hover .mascotContainer::after {
-    translate: none;
+  .shopperIdle,
+  .shopperActive,
+  .thoughtDotSmall,
+  .thoughtDotLarge,
+  .thought,
+  .thoughtLine {
+    transition: none !important;
     scale: none;
+    translate: none;
   }
 }
 
@@ -705,12 +678,46 @@
     line-height: 15px;
   }
 
-  .widgetButton[data-variant="shopper"] .bubble {
-    right: calc(100% + 22px);
+  /* Shopper on phones: smaller character, a compact bubble that wraps, and the
+     dots pulled in to match. The bubble can never run off the left edge. */
+  .shopperIdle svg,
+  .shopperActive svg {
+    width: 60px;
+    height: auto;
+  }
+
+  .thought {
+    top: -28px;
+    right: calc(100% + 20px);
     gap: 10px;
-    max-width: calc(100vw - 32px - 76px - 22px);
-    padding: 11px 11px 11px 15px;
+    max-width: calc(100vw - 32px - 60px - 20px);
+    padding: 10px 10px 10px 14px;
+    border-radius: 20px;
     white-space: normal;
+  }
+
+  .thought .headline {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .thoughtArrow {
+    width: 26px;
+    height: 26px;
+  }
+
+  .thoughtDotSmall {
+    top: 24px;
+    left: -7px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .thoughtDotLarge {
+    top: 14px;
+    left: -18px;
+    width: 10px;
+    height: 10px;
   }
 
   .desktopText {

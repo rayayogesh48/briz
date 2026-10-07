@@ -12,7 +12,7 @@ import {
 import { RequestMascot } from "./request-mascot";
 import { RequestScanVisual } from "./request-scan-visual";
 import { RequestScoutCharacter } from "./request-scout-character";
-import { BrizShopper } from "./briz-shopper";
+import { ShopperLauncherContent } from "./request-shopper-launcher";
 import { money } from "./search-results-model";
 import {
   type RequestFlowStep,
@@ -30,6 +30,11 @@ import {
 } from "./request-flow-data";
 import styles from "./request-product-widget.module.css";
 import panelStyles from "./request-product-panel.module.css";
+
+/**
+ * How long (ms) the shopper's thought stays up as a hint on touch devices.
+ */
+const TOUCH_HINT_DURATION = 4500;
 
 /**
  * Scroll threshold (in pixels) required to trigger one-way widget expansion.
@@ -1325,7 +1330,7 @@ export function RequestProductWidget({
   const [draft, setDraft] = useState<RequestDraft>(INITIAL_REQUEST_DRAFT);
   const [isScanning, setIsScanning] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
-  const [isEngaged, setIsEngaged] = useState(false);
+  const [showTouchHint, setShowTouchHint] = useState(false);
   const hasTriggeredRef = useRef(initialExpanded);
 
   // Motion scroll listener
@@ -1336,8 +1341,18 @@ export function RequestProductWidget({
       hasTriggeredRef.current = true;
       setExpanded(true);
       setIsScanning(true);
+      // Touch devices cannot hover, so the shopper shows its thought once as a hint.
+      if (variant === "shopper" && window.matchMedia("(hover: none)").matches) {
+        setShowTouchHint(true);
+      }
     }
   });
+
+  useEffect(() => {
+    if (!showTouchHint) return;
+    const timer = setTimeout(() => setShowTouchHint(false), TOUCH_HINT_DURATION);
+    return () => clearTimeout(timer);
+  }, [showTouchHint]);
 
   // Handle page load when browser restores to an already-scrolled position
   useEffect(() => {
@@ -1379,10 +1394,9 @@ export function RequestProductWidget({
     return () => window.removeEventListener("briz:open-request", handleOpenEvent);
   }, []);
 
-  // The shopper stays a lone character and only shows its thought on hover/focus;
-  // every other variant expands once after the scroll threshold.
-  const expanded = variant === "shopper" ? isEngaged : scrollExpanded;
-  const shopperExpression = isEngaged ? "confused" : "searching";
+  // The shopper never expands: it stays a lone character and reveals its thought
+  // through CSS state alone. Every other variant expands once after the scroll threshold.
+  const expanded = variant === "shopper" ? false : scrollExpanded;
 
   const handleClick = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -1430,10 +1444,7 @@ export function RequestProductWidget({
               whileHover={shouldReduceMotion ? undefined : "hover"}
               whileTap={shouldReduceMotion ? { scale: 0.985 } : "tap"}
               onAnimationComplete={() => setHasEntered(true)}
-              onHoverStart={() => setIsEngaged(true)}
-              onHoverEnd={() => setIsEngaged(false)}
-              onFocus={() => setIsEngaged(true)}
-              onBlur={() => setIsEngaged(false)}
+              data-hint={showTouchHint}
               transition={{
                 layout: {
                   type: "spring",
@@ -1458,10 +1469,7 @@ export function RequestProductWidget({
                 data-name="RequestMascot"
               >
                 {variant === "shopper" ? (
-                  // Keyed by pose so each change replays a small settle instead of snapping.
-                  <span key={shopperExpression} className={styles.shopperPose}>
-                    <BrizShopper crop="body" size={76} expression={shopperExpression} hideMark />
-                  </span>
+                  <ShopperLauncherContent />
                 ) : variant === "scout" ? (
                   <RequestScoutCharacter size={expanded ? 48 : 46} isScanning={isScanning} />
                 ) : variant === "scan" ? (
@@ -1474,7 +1482,7 @@ export function RequestProductWidget({
               {/* Zones 2 & 3: Revealed upon scroll expansion */}
               <AnimatePresence>
                 {expanded && (
-                  <motion.div className={styles.bubble} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
+                  <div className={styles.bubble}>
                     {/* Zone 2: Informative Marketplace Copy */}
                     <div className={styles.contentBlock}>
                       {/* Headline: begins ~70ms after expansion starts */}
@@ -1548,7 +1556,7 @@ export function RequestProductWidget({
                         <path d="m12 5 7 7-7 7" />
                       </svg>
                     </motion.div>
-                  </motion.div>
+                  </div>
                 )}
               </AnimatePresence>
             </motion.button>
