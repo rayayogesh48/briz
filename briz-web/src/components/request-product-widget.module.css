@@ -608,6 +608,21 @@
   transition-delay: calc(var(--on) * 210ms);
 }
 
+/* Face character (mascot v2): a square head, so the thought sits a little lower. */
+.widgetButton[data-character="face"] .thought {
+  top: -44px;
+}
+
+.widgetButton[data-character="face"] .thoughtDotSmall {
+  top: 12px;
+  left: -8px;
+}
+
+.widgetButton[data-character="face"] .thoughtDotLarge {
+  top: 0;
+  left: -22px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shopperIdle,
   .shopperActive,
@@ -718,6 +733,20 @@
     left: -18px;
     width: 10px;
     height: 10px;
+  }
+
+  .widgetButton[data-character="face"] .thought {
+    top: -36px;
+  }
+
+  .widgetButton[data-character="face"] .thoughtDotSmall {
+    top: 8px;
+    left: -6px;
+  }
+
+  .widgetButton[data-character="face"] .thoughtDotLarge {
+    top: -2px;
+    left: -17px;
   }
 
   .desktopText {

@@ -17,7 +17,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
         {children}
-        <RequestProductWidget variant="shopper" />
+        <RequestProductWidget variant="sprite" />
         <StatePreviewLauncher />
       </body>
     </html>

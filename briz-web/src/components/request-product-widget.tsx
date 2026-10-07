@@ -13,6 +13,7 @@ import { RequestMascot } from "./request-mascot";
 import { RequestScanVisual } from "./request-scan-visual";
 import { RequestScoutCharacter } from "./request-scout-character";
 import { ShopperLauncherContent } from "./request-shopper-launcher";
+import { useCursorLook } from "./use-cursor-look";
 import { money } from "./search-results-model";
 import {
   type RequestFlowStep,
@@ -41,12 +42,17 @@ const TOUCH_HINT_DURATION = 4500;
  */
 export const EXPAND_SCROLL_THRESHOLD = 120;
 
-export type RequestWidgetVariant = "mascot" | "scan" | "scout" | "shopper";
+export type RequestWidgetVariant = "mascot" | "scan" | "scout" | "shopper" | "face" | "seller" | "sprite";
 
 export interface RequestProductWidgetProps {
   /**
    * Launcher look. "mascot": white card with the searching shopping-bag character.
    * "scan": Briz-blue tile with a product box being scanned, on a layered card.
+   * "sprite": the illustrated v2 character from a nine-direction sprite atlas; the
+   * head follows the cursor. Same interaction as "face".
+   * "seller": the v2 face drawn as a slightly older shopkeeper. Same interaction as "face".
+   * "face": mascot v2 — a face-only character that turns toward the cursor. Same
+   * interaction as "shopper".
    * "shopper": the Briz shopper — a chibi character in a blue hoodie with a phone.
    * "scout": Pinu, a map-pin character with a magnifier monocle hunting for a parcel.
    */
@@ -1330,6 +1336,10 @@ export function RequestProductWidget({
   const [draft, setDraft] = useState<RequestDraft>(INITIAL_REQUEST_DRAFT);
   const [isScanning, setIsScanning] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
+  // "shopper" and "face" are the two character launchers; they share styles and behaviour.
+  const isFace = variant === "face" || variant === "seller" || variant === "sprite";
+  const isCharacter = variant === "shopper" || isFace;
+  const launcherRef = useCursorLook<HTMLButtonElement>(isFace);
   const [showTouchHint, setShowTouchHint] = useState(false);
   const hasTriggeredRef = useRef(initialExpanded);
 
@@ -1342,7 +1352,7 @@ export function RequestProductWidget({
       setExpanded(true);
       setIsScanning(true);
       // Touch devices cannot hover, so the shopper shows its thought once as a hint.
-      if (variant === "shopper" && window.matchMedia("(hover: none)").matches) {
+      if (isCharacter && window.matchMedia("(hover: none)").matches) {
         setShowTouchHint(true);
       }
     }
@@ -1396,7 +1406,7 @@ export function RequestProductWidget({
 
   // The shopper never expands: it stays a lone character and reveals its thought
   // through CSS state alone. Every other variant expands once after the scroll threshold.
-  const expanded = variant === "shopper" ? false : scrollExpanded;
+  const expanded = isCharacter ? false : scrollExpanded;
 
   const handleClick = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -1455,7 +1465,9 @@ export function RequestProductWidget({
                 opacity: { duration: 0.25 },
               }}
               onClick={handleClick}
-              data-variant={variant}
+              ref={launcherRef}
+              data-variant={isCharacter ? "shopper" : variant}
+              data-character={isFace ? "face" : variant}
               data-theme={theme}
               aria-label="Request a product"
               aria-expanded={expanded}
@@ -1468,8 +1480,8 @@ export function RequestProductWidget({
                 }`}
                 data-name="RequestMascot"
               >
-                {variant === "shopper" ? (
-                  <ShopperLauncherContent />
+                {isCharacter ? (
+                  <ShopperLauncherContent character={isFace ? variant : "shopper"} />
                 ) : variant === "scout" ? (
                   <RequestScoutCharacter size={expanded ? 48 : 46} isScanning={isScanning} />
                 ) : variant === "scan" ? (
