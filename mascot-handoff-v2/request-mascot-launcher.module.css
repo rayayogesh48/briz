@@ -1,0 +1,324 @@
+/* Briz "Request a Product" mascot launcher — v2 (sprite character).
+
+   State is CSS-only. The button sets --on to 1 while it is hovered (pointer
+   devices), keyboard-focused, or showing the touch hint, and every part derives
+   its opacity / scale / offset from --on with a transition. Transitions retarget
+   mid-flight, so rapid hovering can never leave the widget half-animated.
+
+   Colour tokens fall back to the Briz values when the variables are not defined. */
+
+.wrapper {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  display: flex;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.launcher {
+  --on: 0;
+  --press: 1;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --spring: cubic-bezier(0.2, 1.25, 0.35, 1);
+  --duration: 200ms;
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  color: var(--foreground, #202020);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Larger hover and tap target: an invisible halo around the character, so the
+   pointer does not have to land exactly on the artwork. */
+.launcher::before {
+  content: "";
+  position: absolute;
+  inset: -22px;
+  border-radius: 40px;
+}
+
+@media (hover: hover) {
+  .launcher:hover {
+    --on: 1;
+  }
+}
+
+.launcher:focus-visible,
+.launcher[data-hint="true"] {
+  --on: 1;
+}
+
+.launcher:active {
+  --press: 0.96;
+}
+
+.launcher:focus-visible {
+  outline: 2px solid var(--primary, #3e63dd);
+  outline-offset: 8px;
+}
+
+/* ---------- Character: two poses in one grid cell, cross-faded ---------- */
+
+.stage {
+  display: grid;
+  /* the sprite cell has an empty strip under the shoulders; pull it off the edge */
+  margin-bottom: -10px;
+  filter: drop-shadow(0 8px 12px rgba(24, 26, 40, 0.2));
+}
+
+.poseIdle,
+.poseActive {
+  grid-area: 1 / 1;
+  transform-origin: 50% 100%;
+  transition-property: opacity, scale;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease);
+}
+
+.poseIdle {
+  opacity: calc(1 - var(--on));
+}
+
+.poseActive {
+  opacity: var(--on);
+  scale: calc(0.96 + 0.04 * var(--on));
+}
+
+/* ---------- Thought trail: two dots rising from the head ---------- */
+
+.dotSmall,
+.dotLarge {
+  position: absolute;
+  border: 1px solid var(--border, #ebebeb);
+  border-radius: 50%;
+  background: var(--card, #ffffff);
+  box-shadow: 0 3px 8px -2px rgba(24, 26, 40, 0.2);
+  opacity: var(--on);
+  scale: calc(0.2 + 0.8 * var(--on));
+  pointer-events: none;
+  transition-property: opacity, scale;
+  transition-duration: var(--duration);
+  transition-timing-function: var(--spring);
+}
+
+/* The head sits in the lower-middle of a larger cell, so the dots and bubble are
+   placed against the head, not the cell edge. */
+.dotSmall {
+  top: 44px;
+  left: 24px;
+  width: 7px;
+  height: 7px;
+}
+
+.dotLarge {
+  top: 30px;
+  left: 9px;
+  width: 12px;
+  height: 12px;
+  transition-delay: calc(var(--on) * 40ms);
+}
+
+/* ---------- Thought bubble ----------
+   Floats up and to the left of the head so the dots lead into its lower-right
+   corner. It is out of flow, so showing it never resizes the launcher. */
+
+.thought {
+  position: absolute;
+  top: -14px;
+  right: calc(100% - 6px);
+  /* max-content: size to the text, not to the character it is anchored to. */
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 14px 14px 20px;
+  border: 1px solid rgba(62, 99, 221, 0.3);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+  box-shadow:
+    0 18px 40px -12px rgba(62, 99, 221, 0.4),
+    0 4px 10px -2px rgba(24, 26, 40, 0.08),
+    inset 0 1px 0 #ffffff;
+  white-space: nowrap;
+  transform-origin: 100% 100%;
+  opacity: var(--on);
+  scale: calc((0.7 + 0.3 * var(--on)) * var(--press));
+  translate: calc((1 - var(--on)) * 10px) calc((1 - var(--on)) * 4px);
+  /* Hidden means hidden: no hover target while invisible. */
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 140ms var(--ease),
+    scale 260ms var(--spring),
+    translate 260ms var(--spring),
+    visibility 0s linear 260ms;
+}
+
+@media (hover: hover) {
+  .launcher:hover .thought {
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 60ms, 60ms, 60ms, 0s;
+  }
+}
+
+.launcher:focus-visible .thought,
+.launcher[data-hint="true"] .thought {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 60ms, 60ms, 60ms, 0s;
+}
+
+/* Invisible bridge over the gap, so the pointer can travel from the character
+   to the bubble without the hover dropping. */
+.thought::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: -24px;
+  left: 100%;
+  width: 32px;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* Content rises in just after the bubble; on the way out it leaves with it (no delay). */
+.line {
+  opacity: var(--on);
+  translate: 0 calc((1 - var(--on)) * 6px);
+  transition-property: opacity, translate;
+  transition-duration: var(--duration);
+  transition-timing-function: var(--ease);
+  transition-delay: calc(var(--on) * 110ms);
+}
+
+.headline {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.2px;
+  color: var(--foreground, #202020);
+}
+
+.description {
+  font-size: 12.5px;
+  font-weight: 450;
+  line-height: 16px;
+  letter-spacing: -0.1px;
+  color: var(--muted-foreground, #646464);
+  transition-delay: calc(var(--on) * 160ms);
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--primary, #3e63dd);
+  color: #ffffff;
+  transition-delay: calc(var(--on) * 210ms);
+}
+
+.mobileText {
+  display: none;
+}
+
+/* ---------- Phones (< 640px) ---------- */
+
+@media (max-width: 639px) {
+  .wrapper {
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+
+  /* Keep the halo inside the 16px page gutter. */
+  .launcher::before {
+    inset: -14px;
+  }
+
+  /* The sprite sets its size inline; shrink it for phones. */
+  .poseIdle > span,
+  .poseActive > span {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  .thought {
+    top: -14px;
+    right: calc(100% - 6px);
+    gap: 10px;
+    /* never run off the left edge: viewport − page gutters − character */
+    max-width: calc(100vw - 32px - 98px);
+    padding: 10px 10px 10px 14px;
+    border-radius: 20px;
+    white-space: normal;
+  }
+
+  .headline {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .description {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .arrow {
+    width: 26px;
+    height: 26px;
+  }
+
+  .dotSmall {
+    top: 36px;
+    left: 20px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .dotLarge {
+    top: 25px;
+    left: 8px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .desktopText {
+    display: none;
+  }
+
+  .mobileText {
+    display: inline;
+  }
+}
+
+/* ---------- Reduced motion: states still change, nothing moves ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .poseIdle,
+  .poseActive,
+  .dotSmall,
+  .dotLarge,
+  .thought,
+  .line {
+    transition: none !important;
+    scale: none;
+    translate: none;
+  }
+}
