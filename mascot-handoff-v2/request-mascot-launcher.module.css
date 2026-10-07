@@ -113,15 +113,15 @@
 /* The bag has a margin inside its image cell, so the dots and bubble are placed
    against the artwork, not the cell edge. */
 .dotSmall {
-  top: 34px;
-  left: 10px;
+  top: 22px;
+  left: -3px;
   width: 7px;
   height: 7px;
 }
 
 .dotLarge {
-  top: 20px;
-  left: -5px;
+  top: 10px;
+  left: -17px;
   width: 12px;
   height: 12px;
   transition-delay: calc(var(--on) * 40ms);
@@ -133,8 +133,8 @@
 
 .thought {
   position: absolute;
-  top: -24px;
-  right: calc(100% + 6px);
+  top: -38px;
+  right: calc(100% + 18px);
   /* max-content: size to the text, not to the character it is anchored to. */
   width: max-content;
   display: flex;
@@ -242,11 +242,11 @@
 /* ---------- Phones (< 640px) ---------- */
 
 @media (max-width: 639px) {
-  /* The image cell has empty margins (17% right, 8% bottom). Offset the launcher
-     by those so the artwork itself sits 16px from the right and bottom. */
+  /* The image cell has empty margins (about 10% right, 8% bottom). Offset the
+     launcher by those so the artwork itself sits 16px from the right and bottom. */
   .wrapper {
-    right: -1px;
-    bottom: max(18px, env(safe-area-inset-bottom, 18px));
+    right: 9px;
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
   }
 
   /* Keep the halo inside the 16px page gutter. */
@@ -257,16 +257,16 @@
   /* The sprite sets its size inline; shrink it for phones. */
   .poseIdle > span,
   .poseActive > span {
-    width: 100px !important;
-    height: 100px !important;
+    width: 76px !important;
+    height: 76px !important;
   }
 
   .thought {
-    top: -20px;
-    right: calc(100% + 6px);
+    top: -32px;
+    right: calc(100% + 14px);
     gap: 10px;
-    /* never run off the left edge: viewport − left gutter − character − gap */
-    max-width: calc(100vw - 16px - 99px - 6px);
+    /* never run off the left edge: viewport − left gutter − right offset − character − gap */
+    max-width: calc(100vw - 16px - 9px - 76px - 14px);
     padding: 10px 10px 10px 14px;
     border-radius: 20px;
     white-space: normal;
@@ -288,15 +288,15 @@
   }
 
   .dotSmall {
-    top: 26px;
-    left: 7px;
+    top: 18px;
+    left: -3px;
     width: 6px;
     height: 6px;
   }
 
   .dotLarge {
-    top: 15px;
-    left: -5px;
+    top: 8px;
+    left: -13px;
     width: 10px;
     height: 10px;
   }

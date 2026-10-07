@@ -10,7 +10,7 @@ import styles from "./request-mascot-launcher.module.css";
 /** Delay (s) before the launcher first appears, so the page can settle. */
 export const ENTRANCE_DELAY = 0.4;
 
-const MASCOT_SIZE = 128;
+const MASCOT_SIZE = 88;
 
 export interface RequestMascotLauncherProps {
   /** Fired on click, Enter or Space — open the Request a Product flow here. */
