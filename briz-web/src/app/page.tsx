@@ -65,6 +65,20 @@ const REDIRECTION_PAGES = [
     icon: "🏪",
   },
   {
+    title: "About Briz",
+    description: "Editorial About page telling the Briz story: nearby discovery, product requests, and visibility for local stores.",
+    href: "/about",
+    cta: "Read About Briz",
+    icon: "📍",
+  },
+  {
+    title: "Send Us Feedback",
+    description: "Lightweight feedback form with Nepal phone input, bottom-sheet type selector, image attachment, inline validation, and success/error states.",
+    href: "/feedback",
+    cta: "Open Feedback Form",
+    icon: "💬",
+  },
+  {
     title: "System States & Error Experience",
     description: "Interactive preview gallery for all 28+ system states: 404, 500, Offline, Maintenance, 403, 429, no-results, uploads, forms & skeletons.",
     href: "/dev/states",
