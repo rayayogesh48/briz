@@ -9,8 +9,8 @@ import styles from "./request-product-widget.module.css";
 const SHOPPER_SIZE = 76;
 const FACE_SIZE = 76;
 
-// The sprite cell keeps empty room above the head for floating symbols, so the
-// box is larger than the character it shows.
+// The sprite cell keeps a margin around the character, so the box is a little
+// larger than the character it shows.
 const SPRITE_SIZE = 128;
 
 export type LauncherCharacter = "shopper" | "face" | "seller" | "sprite";
@@ -69,8 +69,7 @@ export const ShopperLauncherContent = memo(function ShopperLauncherContent({
             <span className={styles.mobileText}>Can’t find it?</span>
           </span>
           <span className={`${styles.description} ${styles.thoughtLine}`}>
-            <span className={styles.desktopText}>Request it from nearby sellers.</span>
-            <span className={styles.mobileText}>Request it from local sellers.</span>
+            Send product request to nearby sellers
           </span>
         </span>
         <span className={`${styles.thoughtArrow} ${styles.thoughtLine}`}>

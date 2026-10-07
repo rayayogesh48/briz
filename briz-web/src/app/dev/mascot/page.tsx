@@ -3,7 +3,7 @@
 // Client page: the expression list is exported from a client module.
 import { BrizShopper, SHOPPER_EXPRESSIONS } from "@/components/briz-shopper";
 import { BrizFace } from "@/components/briz-face";
-import { BrizSprite, SPRITE_DIRECTIONS, SPRITE_HAS_EXPRESSIONS } from "@/components/briz-sprite";
+import { BrizSprite, SPRITE_DIRECTIONS, SPRITE_FACES, SPRITE_HAS_EXPRESSIONS } from "@/components/briz-sprite";
 
 const cell = { display: "grid", justifyItems: "center", gap: 12, padding: 24, border: "1px solid var(--border)", borderRadius: 16, background: "var(--card)" } as const;
 
@@ -13,13 +13,13 @@ export default function MascotGallery() {
       {/* Highlights the expression opened from the States Preview menu (/dev/mascot#name). */}
       <style>{`.mascot-cell{scroll-margin-top:120px}.mascot-cell:target{border-color:var(--primary)!important;box-shadow:0 0 0 4px var(--primary-container)}`}</style>
       <h1 style={{ margin: "0 0 8px", fontSize: 28, letterSpacing: "-0.02em" }}>Briz mascot v2 — illustrated</h1>
-      <p style={{ margin: "0 0 32px", color: "var(--muted-foreground)" }}>The illustrated character: nine expressions, then the nine head directions it uses to follow the cursor.</p>
+      <p style={{ margin: "0 0 32px", color: "var(--muted-foreground)" }}>The illustrated character: its nine faces, then the nine eye directions it uses to follow the cursor.</p>
       {SPRITE_HAS_EXPRESSIONS && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 16, marginBottom: 24 }}>
-          {SHOPPER_EXPRESSIONS.map((expression) => (
-            <figure key={expression} style={{ ...cell, margin: 0 }}>
-              <BrizSprite expression={expression} size={132} title={`Briz illustrated mascot, ${expression}`} />
-              <figcaption style={{ fontSize: 14, fontWeight: 600 }}>{expression}</figcaption>
+          {SPRITE_FACES.map((face) => (
+            <figure key={face} style={{ ...cell, margin: 0 }}>
+              <BrizSprite expression={face} size={132} title={`Briz illustrated mascot, ${face}`} />
+              <figcaption style={{ fontSize: 14, fontWeight: 600 }}>{face}</figcaption>
             </figure>
           ))}
         </div>
