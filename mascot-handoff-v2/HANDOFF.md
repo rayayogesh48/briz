@@ -1,13 +1,14 @@
 # Briz request mascot v2 — developer handoff
 
-A floating "Request a Product" launcher built around the Briz mascot: an
-illustrated character whose head follows the cursor and who looks puzzled, with
-a thought bubble, when hovered. This folder is a self-contained copy of the
-prototype: drop it into a React project and it runs.
+A floating "Request a Product" launcher built around the Briz mascot: a blue
+shopping-bag character whose eyes follow the cursor and who looks puzzled, with
+a thought bubble, when hovered. It also speaks up on its own when the visitor
+goes quiet. This folder is a self-contained copy of the prototype: drop it into
+a React project and it runs.
 
 v1 (the full-body SVG shopper) is in `mascot-handoff/` and at the git tag
-`mascot-v1`. The interaction is the same in both; v2 changes the character and
-adds the head-follow and a larger hit area.
+`mascot-v1`. v2 keeps the same hover interaction and adds the new character,
+eyes that follow the cursor, unprompted hints and a larger hit area.
 
 ## Files
 
@@ -16,15 +17,16 @@ adds the head-follow and a larger hit area.
 | `RequestMascotLauncher.tsx` | The launcher: fixed button, hover/focus/touch behaviour, `onOpen` callback. |
 | `request-mascot-launcher.module.css` | All launcher styles and the whole interaction (CSS module). |
 | `BrizMascot.tsx` | The character: shows one cell of a sprite atlas. Usable on its own. |
-| `useCursorLook.ts` | Hook that points the mascot's head at the pointer. |
-| `assets/briz-v2-directions.webp` | 3×3 atlas, nine head directions (131 KB). |
-| `assets/briz-v2-reactions.webp` | 3×3 atlas, nine expressions (140 KB). |
+| `useCursorLook.ts` | Hook that points the mascot's eyes at the pointer. |
+| `useAttentionHint.ts` | Hook that decides when the thought shows without hovering. |
+| `assets/briz-v2-directions.webp` | 3×3 atlas, nine eye directions (140 KB). |
+| `assets/briz-v2-reactions.webp` | 3×3 atlas, nine faces (148 KB). |
 | `preview-directions.png`, `preview-reactions.png` | The two atlases on a plain background, for reference. |
 | `source/` | The cleaned source sheets and the script used to prepare them. Only needed to rebuild the art. |
 
 ## Setup
 
-1. Copy the four code files into the project.
+1. Copy the five code files into the project.
 2. Copy both files in `assets/` to wherever static files are served, under
    `/mascots/` (for Next.js: `public/mascots/`). To use another folder, pass
    `assetBase`.
@@ -54,41 +56,50 @@ Render it once, near the root layout. It positions itself (`position: fixed`).
 | State | Trigger | What the user sees |
 | --- | --- | --- |
 | Entrance | Page load, after 0.4s | Launcher springs in (opacity 0→1, scale 0.85→1, y 12→0). Once only. |
-| Idle | Default | The character alone. His head turns toward the pointer, snapping between nine directions. |
-| Engaged | Pointer hover (including a 22px halo around him), or keyboard focus | Cross-fade to the confused face; two thought dots pop; bubble grows from its lower-right corner; headline, description and arrow rise in. Whole launcher lifts 3px. |
+| Idle | Default | The bag alone. His eyes follow the pointer, snapping between nine directions. |
+| Engaged | Pointer hover (including a 22px halo around him), or keyboard focus | Cross-fade to the puzzled face; two thought dots pop; bubble grows from its lower-right corner; headline, description and arrow rise in. Whole launcher lifts 3px. |
 | Leave | Pointer out / blur | Everything reverses from wherever it is. No exit delay. |
 | Press | Mouse down / touch | Bubble scales to 0.96, launcher to 0.985. |
 | Activate | Click, Enter, Space | `onOpen()` |
-| Touch hint | Touch device, first scroll past 120px | Engaged state shown for 4.5s, then hides. Once per page load. |
+| Idle hint | No pointer, key, touch, wheel or scroll activity for 8s | Engaged state shown for 4.5s. Repeats every 25s of continued inactivity. |
+| Scroll hint | Touch devices only: 0.9s after first scrolling past 120px | Engaged state shown for 4.5s. Once. |
 
-Scrolling does nothing on pointer devices; the thought appears on hover/focus only.
-On touch devices and with reduced motion the head does not follow anything; he faces forward.
+Hints (idle + scroll together) are capped at **three per page load**; after that
+the mascot waits to be hovered or tapped. No hint shows while the tab is hidden.
+Pass `false` to `useAttentionHint` while the request flow is open.
+
+On touch devices and with reduced motion the eyes do not follow anything; he
+looks straight ahead.
 
 ## Copy
 
 | | Desktop | Phone (< 640px) |
 | --- | --- | --- |
 | Headline | Can’t find a product? | Can’t find it? |
-| Description | Request it from nearby sellers. | Request it from local sellers. |
+| Description | Send product request to nearby sellers | same (wraps to two lines) |
 
 ## Layout
 
 | | Desktop | Phone (< 640px) |
 | --- | --- | --- |
-| Position | `right: 24px; bottom: 24px` | `right: 16px; bottom: max(16px, safe-area)` |
-| Character box | 128 × 128px (the head fills roughly the middle 55%) | 104 × 104px |
+| Launcher position | `right: 24px; bottom: 24px` | `right: -1px; bottom: max(18px, safe-area)` |
+| Where the artwork lands | about 46px from the right, 24px from the bottom | 16px from the right, 16px from the bottom |
+| Character box | 128 × 128px (the bag is about 85 × 90px inside it) | 100 × 100px |
 | Hover / tap halo | 22px beyond the box on every side | 14px |
-| Bubble | to the left of the head, overlapping the empty part of the character box | same, wraps, never wider than the viewport allows |
+| Bubble | up and to the left of the bag, 6px from the box | same, wraps, never wider than the viewport allows |
 | Bubble radius / padding | 26px / 14px 14px 14px 20px | 20px / 10px 10px 10px 14px |
 | Headline | 15/20px, 600 | 14/18px, 600 |
 | Description | 12.5/16px, 450 | 12/15px, 450 |
 | Arrow chip | 30px circle | 26px circle |
 | z-index | 900 | 900 |
 
-The character box is larger than the character because each sprite cell keeps
-empty room above the head for the floating symbols (`?`, `!`, dots). The dots and
-bubble are positioned against the head, not the box edge; if the art changes,
-those offsets (`.dotSmall`, `.dotLarge`, `.thought`) are what to retune.
+The character box is larger than the bag because each sprite cell keeps empty
+room around the artwork: 17% left and right, about 8% underneath, and space
+above the handle for floating symbols (`!`, hearts, dots). That is why the phone
+position looks odd (`right: -1px`): it offsets the launcher by those margins so
+the visible bag sits 16px from the edges. Desktop has not been corrected the
+same way. If the art changes, retune `.wrapper` (phones), `.dotSmall`,
+`.dotLarge` and `.thought`.
 
 ## Colours
 
@@ -118,7 +129,8 @@ The character's colours are in the artwork.
 | Content stagger | headline +110ms, description +160ms, arrow +210ms; each 200ms, rises 6px |
 | Launcher hover | y −3, scale 1.012 (Motion spring 380/24) |
 | Entrance | Motion spring 320/24, mass 0.8, delay 0.4s |
-| Head-follow | full strength at 280px from the character; turns to a neighbouring direction past 34% of that |
+| Eye-follow | full strength at 280px from the character; moves to a neighbouring direction past 34% of that |
+| Hints | idle 8s, repeat 25s, visible 4.5s, max 3; touch scroll hint 0.9s after 120px |
 
 ## How it is built (read this before changing it)
 
@@ -142,17 +154,50 @@ transitions.
 Each atlas is a 3×3 grid of 360px cells. `BrizMascot` shows one cell by setting
 `background-position` on a 300%-sized background.
 
-- With `expression`, it shows that cell of the reactions atlas.
+- With `expression`, it shows a face from the reactions atlas.
 - With `direction`, it shows that cell of the directions atlas.
 - With neither, it reads `--look-col` / `--look-row` (0, 1 or 2) from an
-  ancestor, which is how the idle head follows the cursor.
+  ancestor, which is how the idle eyes follow the cursor.
 
 `useCursorLook` writes those two variables onto the button in a
 `requestAnimationFrame`, so pointer movement never re-renders React.
 
 Cell order — directions: up-left, up, up-right / left, center, right /
-down-left, down, down-right. Expressions: greeting, searching, thinking /
-found, excited, confused / no-results, waiting, success.
+down-left, down, down-right. Faces: smile, wink, laugh / surprised, love,
+puzzled / cool, sleepy, happy.
+
+### Faces and expression names
+
+The bag was drawn with its own nine faces, which are not the nine expression
+names the app uses. `BrizMascot` accepts either, and maps the app names onto the
+closest face:
+
+| App name | Face shown |
+| --- | --- |
+| greeting | smile |
+| searching | happy |
+| thinking | puzzled |
+| found | surprised |
+| excited | laugh |
+| confused | puzzled |
+| no-results | puzzled |
+| waiting | sleepy |
+| success | wink |
+
+`love` and `cool` are only reachable by their own names. There is **no sad face
+and no question-mark face**, so thinking, confused and no-results look the same.
+A real "no results" screen needs a new sheet with a sad face; update
+`MASCOT_FACES` and `EXPRESSION_FACE` in `BrizMascot.tsx` to match it.
+
+### Unprompted hints
+
+`useAttentionHint` returns a boolean that the launcher writes to `data-hint`,
+which turns the CSS state on exactly like hover. It listens for activity
+(pointer, key, wheel, touch, scroll) to restart an idle timer, and on touch
+devices arms a single timer the first time the page is scrolled past the
+threshold. The scroll hint uses a fixed delay on purpose: waiting for scrolling
+to stop never fired in testing, because momentum and layout shifts keep emitting
+scroll events.
 
 ### Other details worth keeping
 
@@ -163,15 +208,17 @@ found, excited, confused / no-results, waiting, success.
 - `.launcher::before` is the invisible halo that enlarges the hit area.
 - Hover rules are inside `@media (hover: hover)` so a tap on a phone cannot
   leave the bubble stuck open.
-- React only re-renders for the touch hint (twice per page load) and once after
-  the entrance.
+- `.wrapper` on phones is offset for the artwork's margins (see Layout).
+- React only re-renders when a hint turns on or off, and once after the entrance.
+  Hover and pointer movement never re-render.
 
 ## The mascot on its own
 
 ```tsx
 import { BrizMascot } from "./BrizMascot";
 
-<BrizMascot expression="no-results" size={160} title="No results found" />
+<BrizMascot expression="success" size={160} title="Request sent" />
+<BrizMascot expression="love" size={120} />
 <BrizMascot direction="left" size={96} />
 ```
 
@@ -186,9 +233,10 @@ const ref = useCursorLook<HTMLDivElement>();
 ## Swapping the character later
 
 The interaction does not depend on this artwork. To change the character, replace
-the two atlases with new ones in the same 3×3 layout and cell order, bump
-`ASSET_VERSION` in `BrizMascot.tsx`, and retune the dot and bubble offsets if the
-head sits differently in its cell.
+the two atlases with new ones in the same 3×3 layout, bump `ASSET_VERSION` in
+`BrizMascot.tsx`, update the face list and mapping if the faces differ, and
+retune the offsets listed under Layout if the character sits differently in its
+cell.
 
 ### Rebuilding the art (optional)
 
@@ -199,9 +247,9 @@ The atlases were made from two AI-drawn sheets on a green background:
 2. `source/prepare_sheet.py <in> <out> --scale-file scale.txt` — cleans green
    spill and re-grids the nine drawings into even cells. Process the
    expressions sheet first, then the directions sheet with the same scale file.
-3. page-mascot's `mascot.py <name> --skip-generate` builds and verifies both
-   atlases (it uses the shoulder anchor; the default face anchor misreads this
-   3D style and resizes heads unevenly).
+3. page-mascot's `build.py <name> --anchor content --no-vignette` builds both
+   atlases, then `verify.py <name>` checks they line up. The flags matter for
+   this character: it is full-body, and the default bottom fade erases the feet.
 
 `source/directions.png` and `source/reactions.png` are already at step 2, so
 only step 3 is needed to rebuild them. Requires Python with Pillow, NumPy, SciPy.
@@ -212,8 +260,8 @@ only step 3 is needed to rebuild them. Requires Python with Pillow, NumPy, SciPy
 - The button's accessible name includes the prompt, so screen-reader users get
   the message without needing hover.
 - Visible focus ring (2px, 8px offset). Keyboard focus shows the bubble.
-- `prefers-reduced-motion`: states still switch, but nothing moves and the head
-  does not follow the pointer.
+- `prefers-reduced-motion`: states still switch, but nothing moves and the eyes
+  do not follow the pointer. Unprompted hints still appear.
 - The mascot is decorative inside the launcher (`aria-hidden`); pass `title`
   when using it on its own.
 
@@ -224,24 +272,30 @@ and WebP: Chrome/Edge 104+, Safari 14.1+, Firefox 85+.
 
 ## Known gaps — this is a prototype
 
-- **Checked:** at desktop width the standalone copy type-checks, lints, renders,
-  follows the pointer, shows the confused face and bubble on hover, and calls
-  `onOpen` on click.
-- **Not checked:** phones, keyboard focus, and how the head-follow feels in motion.
-  Timing was tuned from code and stills, not user-tested.
+- **Checked in the prototype app:** idle and hover states at desktop width; the
+  idle hint firing at about 8s; on a 375px touch viewport, the scroll hint
+  appearing after 0.9s and hiding 4.5s later; the bag landing 17px from the
+  right and bottom edges on phones.
+- **Checked in this standalone copy:** it type-checks, lints and renders; the
+  bubble copy is correct; click calls `onOpen`.
+- **Not checked:** the hover and hint animations in this standalone copy (the
+  preview was in the background, where hints are deliberately suppressed); the
+  25s repeat and the three-hint cap; keyboard focus; a real phone.
 - **No automated tests** for this component.
-- **Head turns snap** between nine poses; there are no in-between frames.
-- **Only two of the nine expressions are used** by the launcher (the
-  directions when idle, `confused` when engaged). The others are ready for
-  empty states, success screens and so on.
-- **Art quirks:** "excited" has one eye closed and reads close to a wink;
-  "waiting" is a calm near-neutral face.
-- **The halo blocks clicks** on anything directly underneath its 22px ring.
-- **Both atlases load on first render** (about 270 KB together), including the
-  expressions sheet that is only seen on hover. Preload or lazy-load as fits.
+- **Three app expressions share one face** (see Faces and expression names).
+- **Hints are per page load**, not per visitor or session. Whether they should
+  be remembered, and how often they may repeat, is a product decision; the
+  original brief warned against a widget that feels like it is begging.
+- **Reduced motion does not disable hints**, only movement.
+- **Eye movement snaps** between nine poses; there are no in-between frames.
+- **The halo blocks clicks** on anything directly underneath its 22px ring, and
+  on phones it extends past the screen edge.
+- **Both atlases load on first render** (about 290 KB together), including the
+  faces sheet that is only seen on hover or hint. Preload or lazy-load as fits.
 - **Touch detection** uses `matchMedia("(hover: none)")`. Hybrid devices report
   hover and get the desktop behaviour.
-- **The hint is once per page load**, not once per user.
+- **Desktop spacing** still places the image box, not the artwork, 24px from
+  the edges.
 - **No dark mode**, **no localisation**, and **the request panel is not
   included** — wire `onOpen` to the real flow.
 - **The artwork is AI-generated.** Confirm it is cleared for brand use.
@@ -254,6 +308,7 @@ Branch `feat/mascot-v2` of `rayayogesh48/briz`:
 
 - `briz-web/src/components/briz-sprite.tsx` (here: `BrizMascot.tsx`)
 - `briz-web/src/components/use-cursor-look.ts`
+- `briz-web/src/components/use-attention-hint.ts`
 - `briz-web/src/components/request-shopper-launcher.tsx`
 - `briz-web/src/components/request-product-widget.tsx` (the `sprite` variant)
 - `briz-web/src/components/request-product-widget.module.css`

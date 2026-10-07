@@ -2,29 +2,56 @@
 
 import { memo, type CSSProperties } from "react";
 
-/** The nine expressions, in the order they sit in the reactions atlas. */
+/** The nine faces the bag was drawn with, in the order they sit in the reactions atlas. */
+export const MASCOT_FACES = [
+  "smile", "wink", "laugh",
+  "surprised", "love", "puzzled",
+  "cool", "sleepy", "happy",
+] as const;
+
+/** App-level expression names. Each maps onto the closest face (see EXPRESSION_FACE). */
 export const MASCOT_EXPRESSIONS = [
   "greeting", "searching", "thinking",
   "found", "excited", "confused",
   "no-results", "waiting", "success",
 ] as const;
 
-/** The nine head directions, in the order they sit in the directions atlas. */
+/** The nine eye directions, in the order they sit in the directions atlas. */
 export const MASCOT_DIRECTIONS = [
   "up-left", "up", "up-right",
   "left", "center", "right",
   "down-left", "down", "down-right",
 ] as const;
 
+export type MascotFace = (typeof MASCOT_FACES)[number];
 export type MascotExpression = (typeof MASCOT_EXPRESSIONS)[number];
 export type MascotDirection = (typeof MASCOT_DIRECTIONS)[number];
 
+// The art has no sad face and no question-mark face, so thinking, confused and
+// no-results all show "puzzled". Replace the sheet to give them their own faces.
+const EXPRESSION_FACE: Record<MascotExpression, MascotFace> = {
+  greeting: "smile",
+  searching: "happy",
+  thinking: "puzzled",
+  found: "surprised",
+  excited: "laugh",
+  confused: "puzzled",
+  "no-results": "puzzled",
+  waiting: "sleepy",
+  success: "wink",
+};
+
+const isFace = (value: string): value is MascotFace => (MASCOT_FACES as readonly string[]).includes(value);
+
 export interface BrizMascotProps {
-  /** Show one expression (facing the viewer). Takes priority over `direction`. */
-  expression?: MascotExpression;
-  /** Show one fixed head direction. Omit both to follow --look-col / --look-row. */
+  /**
+   * Show a face: an app-level expression name, or one of the bag's own faces
+   * (MASCOT_FACES, which adds "love" and "cool"). Takes priority over `direction`.
+   */
+  expression?: MascotExpression | MascotFace;
+  /** Show one fixed eye direction. Omit both to follow --look-col / --look-row. */
   direction?: MascotDirection;
-  /** Width and height in px. The head fills roughly the middle 55% of this box. */
+  /** Width and height in px. The bag fills about 66% of the width and 70% of the height. */
   size?: number;
   /** Folder the two atlases are served from. */
   assetBase?: string;
@@ -34,11 +61,11 @@ export interface BrizMascotProps {
 }
 
 // Bump when the artwork changes, so browsers drop the cached sheets.
-const ASSET_VERSION = "3";
+const ASSET_VERSION = "5";
 
 /**
- * Briz mascot v2. One character in two 3×3 sprite atlases: nine head directions
- * and nine expressions, verified to line up (0px shift between them). Showing a
+ * Briz mascot v2: the shopping bag. One character in two 3×3 sprite atlases, nine
+ * eye directions and nine faces, verified to line up (0px shift between them). Showing a
  * cell is a background-position change, so following the cursor costs no re-render.
  */
 export const BrizMascot = memo(function BrizMascot({
@@ -50,7 +77,7 @@ export const BrizMascot = memo(function BrizMascot({
   title,
 }: BrizMascotProps) {
   const index = expression
-    ? MASCOT_EXPRESSIONS.indexOf(expression)
+    ? MASCOT_FACES.indexOf(isFace(expression) ? expression : EXPRESSION_FACE[expression])
     : direction
     ? MASCOT_DIRECTIONS.indexOf(direction)
     : -1;

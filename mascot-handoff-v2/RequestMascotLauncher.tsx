@@ -1,15 +1,12 @@
 "use client";
 
-import { memo, useEffect, useRef, useState } from "react";
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, type Variants } from "motion/react";
+import { memo, useState } from "react";
+import { motion, useReducedMotion, type Variants } from "motion/react";
 import { BrizMascot } from "./BrizMascot";
+import { useAttentionHint } from "./useAttentionHint";
 import { useCursorLook } from "./useCursorLook";
 import styles from "./request-mascot-launcher.module.css";
 
-/** Scroll distance (px) after which touch devices see the one-time hint. */
-export const HINT_SCROLL_THRESHOLD = 120;
-/** How long (ms) the hint stays up on touch devices. */
-export const HINT_DURATION = 4500;
 /** Delay (s) before the launcher first appears, so the page can settle. */
 export const ENTRANCE_DELAY = 0.4;
 
@@ -50,7 +47,7 @@ const LauncherContent = memo(function LauncherContent({ assetBase }: { assetBase
   return (
     <>
       <span className={styles.stage}>
-        {/* Idle: follows the cursor through the nine head directions. */}
+        {/* Idle: the eyes follow the cursor through nine directions. */}
         <span className={styles.poseIdle}>
           <BrizMascot size={MASCOT_SIZE} assetBase={assetBase} />
         </span>
@@ -70,8 +67,7 @@ const LauncherContent = memo(function LauncherContent({ assetBase }: { assetBase
             <span className={styles.mobileText}>Can’t find it?</span>
           </span>
           <span className={`${styles.description} ${styles.line}`}>
-            <span className={styles.desktopText}>Request it from nearby sellers.</span>
-            <span className={styles.mobileText}>Request it from local sellers.</span>
+            Send product request to nearby sellers
           </span>
         </span>
         <span className={`${styles.arrow} ${styles.line}`}>
@@ -97,9 +93,10 @@ const LauncherContent = memo(function LauncherContent({ assetBase }: { assetBase
 /**
  * Floating "Request a Product" launcher with the Briz mascot (v2).
  *
- * Idle: the character's head follows the cursor.
- * Hover / keyboard focus: confused face + thought bubble with the prompt.
- * Touch: the thought shows once for HINT_DURATION after the first scroll.
+ * Idle: the bag's eyes follow the cursor.
+ * Hover / keyboard focus: puzzled face + thought bubble with the prompt.
+ * Unprompted: the thought also shows when the visitor goes quiet, and on touch
+ * devices shortly after the first scroll (see useAttentionHint).
  * Activate: calls onOpen.
  */
 export function RequestMascotLauncher({
@@ -110,25 +107,9 @@ export function RequestMascotLauncher({
 }: RequestMascotLauncherProps) {
   const shouldReduceMotion = useReducedMotion();
   const [hasEntered, setHasEntered] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const hintShownRef = useRef(false);
   const launcherRef = useCursorLook<HTMLButtonElement>();
-
-  const { scrollY } = useScroll();
-
-  // Touch devices cannot hover, so the thought is shown once as a hint.
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest > HINT_SCROLL_THRESHOLD && !hintShownRef.current) {
-      hintShownRef.current = true;
-      if (window.matchMedia("(hover: none)").matches) setShowHint(true);
-    }
-  });
-
-  useEffect(() => {
-    if (!showHint) return;
-    const timer = setTimeout(() => setShowHint(false), HINT_DURATION);
-    return () => clearTimeout(timer);
-  }, [showHint]);
+  // Pass false while the request flow is open so the mascot stays quiet.
+  const showHint = useAttentionHint(true);
 
   const handleEntered = () => setHasEntered(true);
 
@@ -148,7 +129,7 @@ export function RequestMascotLauncher({
         whileTap={shouldReduceMotion ? REDUCED_TAP : "tap"}
         onAnimationComplete={handleEntered}
         onClick={onOpen}
-        aria-label="Request a product. Can’t find a product? Request it from nearby sellers."
+        aria-label="Request a product. Can’t find a product? Send product request to nearby sellers."
       >
         <LauncherContent assetBase={assetBase} />
       </motion.button>
