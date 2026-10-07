@@ -3,13 +3,15 @@
 import { memo } from "react";
 import { BrizFace } from "./briz-face";
 import { BrizShopper } from "./briz-shopper";
-import { BrizSprite } from "./briz-sprite";
+import { BrizSprite, SPRITE_HAS_EXPRESSIONS } from "./briz-sprite";
 import styles from "./request-product-widget.module.css";
 
 const SHOPPER_SIZE = 76;
 const FACE_SIZE = 76;
 
-const SPRITE_SIZE = 92;
+// The sprite cell keeps empty room above the head for floating symbols, so the
+// box is larger than the character it shows.
+const SPRITE_SIZE = 128;
 
 export type LauncherCharacter = "shopper" | "face" | "seller" | "sprite";
 
@@ -42,8 +44,13 @@ export const ShopperLauncherContent = memo(function ShopperLauncherContent({
         </span>
         <span className={styles.shopperActive}>
           {character === "sprite" ? (
-            // Engaged: the puzzled face.
-            <BrizSprite size={SPRITE_SIZE} expression="confused" />
+            // Engaged: the puzzled face, or a glance up at the thought bubble until
+            // the character's expressions sheet exists.
+            SPRITE_HAS_EXPRESSIONS ? (
+              <BrizSprite size={SPRITE_SIZE} expression="confused" />
+            ) : (
+              <BrizSprite size={SPRITE_SIZE} direction="up-left" />
+            )
           ) : character !== "shopper" ? (
             <BrizFace size={FACE_SIZE} persona={character === "seller" ? "seller" : "shopper"} expression="confused" hideMark />
           ) : (

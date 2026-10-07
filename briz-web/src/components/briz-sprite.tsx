@@ -25,8 +25,12 @@ interface BrizSpriteProps {
 
 // Two 3×3 atlases built with the page-mascot skill and verified to line up
 // (0px shift between them). Expressions are in SHOPPER_EXPRESSIONS order.
-const DIRECTIONS_ATLAS = "/mascots/briz-v2-directions.webp";
-const REACTIONS_ATLAS = "/mascots/briz-v2-reactions.webp";
+// Bump the version when the artwork changes, so browsers drop the cached sheet.
+const DIRECTIONS_ATLAS = "/mascots/briz-v2-directions.webp?v=3";
+const REACTIONS_ATLAS = "/mascots/briz-v2-reactions.webp?v=3";
+// Set to false while a character has only its head-directions sheet: expressions
+// then fall back to the face-forward direction cell.
+export const SPRITE_HAS_EXPRESSIONS = true;
 
 /**
  * Briz mascot v2 (illustrated): one character drawn in nine head directions and
@@ -34,8 +38,11 @@ const REACTIONS_ATLAS = "/mascots/briz-v2-reactions.webp";
  * the cursor costs no re-render.
  */
 export const BrizSprite = memo(function BrizSprite({ expression, direction, size = 96, className, title }: BrizSpriteProps) {
-  const index = expression
+  const showExpression = Boolean(expression) && SPRITE_HAS_EXPRESSIONS;
+  const index = showExpression && expression
     ? SHOPPER_EXPRESSIONS.indexOf(expression)
+    : expression
+    ? SPRITE_DIRECTIONS.indexOf("center")
     : direction
     ? SPRITE_DIRECTIONS.indexOf(direction)
     : -1;
@@ -46,7 +53,7 @@ export const BrizSprite = memo(function BrizSprite({ expression, direction, size
     display: "block",
     width: size,
     height: size,
-    backgroundImage: `url(${expression ? REACTIONS_ATLAS : DIRECTIONS_ATLAS})`,
+    backgroundImage: `url(${showExpression ? REACTIONS_ATLAS : DIRECTIONS_ATLAS})`,
     backgroundSize: "300% 300%",
     backgroundRepeat: "no-repeat",
     backgroundPosition: `calc(${column} * 50%) calc(${row} * 50%)`,

@@ -1467,7 +1467,7 @@ export function RequestProductWidget({
               onClick={handleClick}
               ref={launcherRef}
               data-variant={isCharacter ? "shopper" : variant}
-              data-character={isFace ? "face" : variant}
+              data-character={variant === "sprite" ? "sprite" : isFace ? "face" : variant}
               data-theme={theme}
               aria-label="Request a product"
               aria-expanded={expanded}

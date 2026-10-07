@@ -623,6 +623,28 @@
   left: -22px;
 }
 
+/* Illustrated sprite (mascot v2): the head sits in the lower-middle of a larger
+   cell, so the dots and bubble are placed against the head, not the cell edge. */
+.widgetButton[data-character="sprite"] .thought {
+  top: -14px;
+  right: calc(100% - 6px);
+}
+
+.widgetButton[data-character="sprite"] .thoughtDotSmall {
+  top: 44px;
+  left: 24px;
+}
+
+.widgetButton[data-character="sprite"] .thoughtDotLarge {
+  top: 30px;
+  left: 9px;
+}
+
+.widgetButton[data-character="sprite"] .shopperStage {
+  /* pull the empty strip under the shoulders off the bottom edge */
+  margin-bottom: -10px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shopperIdle,
   .shopperActive,
@@ -737,6 +759,28 @@
 
   .widgetButton[data-character="face"] .thought {
     top: -36px;
+  }
+
+  .widgetButton[data-character="sprite"] .shopperIdle > span,
+  .widgetButton[data-character="sprite"] .shopperActive > span {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  .widgetButton[data-character="sprite"] .thought {
+    top: -14px;
+    right: calc(100% - 6px);
+    max-width: calc(100vw - 32px - 98px);
+  }
+
+  .widgetButton[data-character="sprite"] .thoughtDotSmall {
+    top: 36px;
+    left: 20px;
+  }
+
+  .widgetButton[data-character="sprite"] .thoughtDotLarge {
+    top: 25px;
+    left: 8px;
   }
 
   .widgetButton[data-character="face"] .thoughtDotSmall {
