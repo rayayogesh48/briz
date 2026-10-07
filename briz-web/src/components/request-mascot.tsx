@@ -142,6 +142,22 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
         },
       };
 
+  // Eyes dart left, right, back to centre, then blink — the "searching" tell.
+  const eyeTimes = [0, 0.12, 0.3, 0.42, 0.6, 0.72, 0.8, 0.88];
+  const eyeLoop = { duration: 3.4, times: eyeTimes, repeat: Infinity, repeatDelay: 1.8, ease: "easeInOut" as const };
+  const eyeAnimation = shouldReduceMotion
+    ? undefined
+    : isScanning
+    ? { x: [0, -1.8, 1.8, 0], transition: { duration: 0.85, ease: "easeInOut" as const } }
+    : { x: [0, -1.6, -1.6, 1.6, 1.6, 0, 0, 0], scaleY: [1, 1, 1, 1, 1, 1, 0.1, 1], transition: eyeLoop };
+
+  // The eye seen through the lens is magnified, so it travels a little further.
+  const magnifiedEyeAnimation = shouldReduceMotion
+    ? undefined
+    : isScanning
+    ? { x: [0, -2.4, 2.4, 0], transition: { duration: 0.85, ease: "easeInOut" as const } }
+    : { x: [0, -2.2, -2.2, 2.2, 2.2, 0, 0, 0], scaleY: [1, 1, 1, 1, 1, 1, 0.1, 1], transition: eyeLoop };
+
   return (
     <div
       className={className}
@@ -169,7 +185,7 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
           cy="46"
           rx="14"
           ry="2.5"
-          fill="#3e63dd"
+          fill="var(--mascot-accent, #3e63dd)"
           fillOpacity="0.08"
         />
 
@@ -182,7 +198,7 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
           {/* Bag Handles */}
           <path
             d="M18 16 V11 C18 8 20.2 6 24 6 C27.8 6 30 8 30 11 V16"
-            stroke="#3e63dd"
+            stroke="var(--mascot-accent, #3e63dd)"
             strokeWidth="2.25"
             strokeLinecap="round"
             fill="none"
@@ -195,8 +211,8 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
             width="26"
             height="27"
             rx="7"
-            fill="#ffffff"
-            stroke="#3e63dd"
+            fill="var(--mascot-bag, #ffffff)"
+            stroke="var(--mascot-accent, #3e63dd)"
             strokeWidth="2"
             strokeLinejoin="round"
           />
@@ -204,23 +220,25 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
           {/* Subtle interior depth / fold line */}
           <path
             d="M12 21.5 C16 23 32 23 36 21.5"
-            stroke="#eff4ff"
+            stroke="var(--mascot-fold, #eff4ff)"
             strokeWidth="1.5"
             strokeLinecap="round"
           />
 
-          {/* Friendly subtle character eyes */}
-          <circle cx="20" cy="26" r="1.6" fill="#202020" />
-          <circle cx="28" cy="26" r="1.6" fill="#202020" />
+          {/* Left eye — looks around and blinks. The right eye lives inside the lens. */}
+          <motion.g animate={eyeAnimation}>
+            <circle cx="19.5" cy="27" r="1.7" fill="#202020" />
+            <circle cx="20" cy="26.5" r="0.5" fill="#ffffff" />
+          </motion.g>
 
-          {/* Eye sparkle highlights */}
-          <circle cx="20.5" cy="25.5" r="0.5" fill="#ffffff" />
-          <circle cx="28.5" cy="25.5" r="0.5" fill="#ffffff" />
+          {/* Soft cheeks */}
+          <circle cx="16.2" cy="31" r="1.7" fill="#e54666" fillOpacity="0.22" />
+          <circle cx="31" cy="33.5" r="1.7" fill="#e54666" fillOpacity="0.22" />
 
           {/* Warm discovery mouth */}
           <path
-            d="M22.5 30.5 C23.5 31.8 24.5 31.8 25.5 30.5"
-            stroke="#3e63dd"
+            d="M21 32 C22.2 33.6 24.2 33.6 25.4 32"
+            stroke="var(--mascot-accent, #3e63dd)"
             strokeWidth="1.5"
             strokeLinecap="round"
             fill="none"
@@ -236,12 +254,12 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
           {/* Handle */}
           <path
             d="M36.5 25.5 L43 32"
-            stroke="#202020"
+            stroke="var(--mascot-glass, #202020)"
             strokeWidth="2.75"
             strokeLinecap="round"
           />
           {/* Rim connector */}
-          <circle cx="36.5" cy="25.5" r="1.25" fill="#202020" />
+          <circle cx="36.5" cy="25.5" r="1.25" fill="var(--mascot-glass, #202020)" />
 
           {/* Glass Lens (translucent with crisp border) */}
           <circle
@@ -250,14 +268,20 @@ export function RequestMascot({ className, size = 48, isScanning = false }: Requ
             r="7.5"
             fill="#ffffff"
             fillOpacity="0.88"
-            stroke="#202020"
+            stroke="var(--mascot-glass, #202020)"
             strokeWidth="2"
           />
+
+          {/* Magnified eye, seen through the lens */}
+          <motion.g animate={magnifiedEyeAnimation}>
+            <circle cx="31.5" cy="22" r="2.9" fill="#202020" />
+            <circle cx="32.5" cy="21" r="0.95" fill="#ffffff" />
+          </motion.g>
 
           {/* Lens reflection highlight */}
           <path
             d="M28.5 17.5 C30 16 32.5 16 34 17"
-            stroke="#3e63dd"
+            stroke="var(--mascot-accent, #3e63dd)"
             strokeWidth="1.25"
             strokeLinecap="round"
             strokeOpacity="0.75"

@@ -58,34 +58,56 @@
 .widgetButtonExpanded {
   width: 312px;
   min-height: 80px;
-  padding: 12px 14px 12px 12px;
+  padding: 12px;
   border-radius: 22px;
-  gap: 12px;
+  /* Asymmetric shape: a full capsule end around the visual, a softer corner by the arrow. */
+  border-top-left-radius: 40px;
+  border-bottom-left-radius: 40px;
+  gap: 10px;
   justify-content: flex-start;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
 }
 
-/* 1. Animated Visual Zone */
+/* 1. Animated Visual Zone — a circular stage, slightly larger than the text rows */
 .mascotContainer {
+  position: relative;
   flex-shrink: 0;
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #f4f7fe 0%, #ebf2fe 100%);
-  border: 1px solid rgba(62, 99, 221, 0.1);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f4f7fe 0%, #e8effe 100%);
+  border: 1px solid rgba(62, 99, 221, 0.12);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 1px 3px rgba(62, 99, 221, 0.06);
+}
+
+/* Soft highlight behind the mascot only — the widget itself never glows. */
+.mascotContainer::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 68%);
+  pointer-events: none;
+}
+
+.mascotContainer > * {
+  position: relative;
 }
 
 .mascotContainerCollapsed {
   width: 52px;
   height: 52px;
-  border-radius: 16px;
   background: transparent;
   border: none;
   box-shadow: none;
+}
+
+.mascotContainerCollapsed::before {
+  inset: 6px;
+  background: radial-gradient(circle at 42% 40%, rgba(62, 99, 221, 0.13), rgba(62, 99, 221, 0) 70%);
 }
 
 /* 2. Message Zone */
@@ -127,8 +149,8 @@
 /* 3. Action Affordance Zone */
 .actionAffordance {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background-color: var(--muted, #f1f1f1);
   color: var(--foreground, #202020);
@@ -141,6 +163,489 @@
 .widgetButton:hover .actionAffordance {
   background-color: var(--primary-container, #eff4ff);
   color: var(--primary, #3e63dd);
+}
+
+/* ─── Variant: "scan" — Briz-blue launcher tile on a layered card ─── */
+
+.widgetButton[data-variant="scan"].widgetButtonCollapsed {
+  background-color: var(--primary, #3e63dd);
+  border-color: transparent;
+  box-shadow: 0 8px 20px -6px rgba(62, 99, 221, 0.55), 0 2px 6px -1px rgba(0, 0, 0, 0.08);
+}
+
+.widgetButton[data-variant="scan"].widgetButtonExpanded {
+  border-top-left-radius: 22px;
+  border-bottom-left-radius: 22px;
+}
+
+.widgetButton[data-variant="scan"] .mascotContainer {
+  border: 0;
+  border-radius: 16px;
+  background: var(--primary, #3e63dd);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 14px -6px rgba(62, 99, 221, 0.6);
+}
+
+.widgetButton[data-variant="scan"] .mascotContainer::before {
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 62%);
+}
+
+.widgetButton[data-variant="scan"] .mascotContainerCollapsed {
+  background: transparent;
+  box-shadow: none;
+}
+
+.widgetButton[data-variant="scan"] .actionAffordance {
+  background-color: var(--primary-container, #eff4ff);
+  color: var(--primary, #3e63dd);
+}
+
+.widgetButton[data-variant="scan"]:hover .actionAffordance {
+  background-color: var(--primary, #3e63dd);
+  color: #fff;
+}
+
+/* A single offset sheet behind the expanded card — depth, not a notification stack. */
+.widgetWrapper[data-variant="scan"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(62, 99, 221, 0.16);
+  border-radius: 22px;
+  background: var(--primary-container, #eff4ff);
+  opacity: 0;
+  transform: translate(0, 0);
+  transition: opacity 0.3s ease 0.35s, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
+  pointer-events: none;
+}
+
+.widgetWrapper[data-variant="scan"][data-expanded="true"]::before {
+  opacity: 1;
+  transform: translate(6px, 6px);
+}
+
+/* ─── Variant: "scout" — Pinu the map-pin character on an organic blob stage ─── */
+
+.widgetButton[data-variant="scout"] .mascotContainer {
+  border: 0;
+  border-radius: 58% 42% 55% 45% / 48% 56% 44% 52%;
+  background: linear-gradient(150deg, #eef3ff 0%, #dfe8fd 100%);
+  box-shadow: none;
+}
+
+.widgetButton[data-variant="scout"] .mascotContainerCollapsed {
+  background: transparent;
+}
+
+/* ─── Dark theme (theme="dark") ─── */
+
+.widgetButton[data-theme="dark"] {
+  --card: #1b1c21;
+  --border: rgba(255, 255, 255, 0.12);
+  --foreground: #f5f5f6;
+  --muted-foreground: #a9abb3;
+  --muted: rgba(255, 255, 255, 0.1);
+  --primary: #8da4ef;
+  --primary-container: rgba(141, 164, 239, 0.2);
+  /* The bag stays light so the face reads; outlines switch to light tones. */
+  --mascot-accent: #8da4ef;
+  --mascot-bag: #f7f8fc;
+  --mascot-fold: #dfe6fb;
+  --mascot-glass: #eceef5;
+  box-shadow: 0 10px 30px -6px rgba(0, 0, 0, 0.55), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+}
+
+.widgetButton[data-theme="dark"]:hover {
+  border-color: rgba(141, 164, 239, 0.45);
+  box-shadow: 0 14px 36px -6px rgba(0, 0, 0, 0.6), 0 4px 12px -2px rgba(0, 0, 0, 0.45);
+}
+
+.widgetButton[data-theme="dark"]:focus-visible {
+  box-shadow: 0 0 0 4px rgba(141, 164, 239, 0.25), 0 10px 30px -6px rgba(0, 0, 0, 0.55);
+}
+
+.widgetButton[data-theme="dark"] .mascotContainer {
+  background: linear-gradient(135deg, #2a2f44 0%, #20243a 100%);
+  border-color: rgba(141, 164, 239, 0.22);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.widgetButton[data-theme="dark"] .mascotContainer::before {
+  background: radial-gradient(circle at 38% 32%, rgba(141, 164, 239, 0.28), rgba(141, 164, 239, 0) 68%);
+}
+
+.widgetButton[data-theme="dark"] .mascotContainerCollapsed {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.widgetButton[data-theme="dark"]:hover .actionAffordance {
+  background-color: #8da4ef;
+  color: #14151a;
+}
+
+/* ─── Dark theme: aurora background + travelling border light ─── */
+
+@property --request-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.widgetButton[data-theme="dark"] {
+  --muted-foreground: rgba(255, 255, 255, 0.84);
+  --muted: rgba(255, 255, 255, 0.14);
+  background-color: #12131a;
+  border-color: transparent;
+  box-shadow: 0 14px 34px -10px rgba(62, 99, 221, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.45);
+}
+
+/* Keep the content above the two decorative layers. */
+.widgetButton[data-theme="dark"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Layer 1: slow-drifting colour glows (Briz blue, violet, a hint of green). */
+.widgetButton[data-theme="dark"]::before {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  z-index: 0;
+  background:
+    radial-gradient(38% 46% at 24% 34%, rgba(62, 99, 221, 0.9), transparent 70%),
+    radial-gradient(34% 44% at 76% 68%, rgba(124, 92, 255, 0.72), transparent 70%),
+    radial-gradient(28% 38% at 64% 22%, rgba(48, 164, 108, 0.34), transparent 70%);
+  filter: blur(14px);
+  pointer-events: none;
+  animation: request-aurora 9s ease-in-out infinite alternate;
+}
+
+/* Layer 2: a light that travels around the border. */
+.widgetButton[data-theme="dark"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--request-angle),
+    rgba(141, 164, 239, 0.18) 0deg,
+    #9db1f5 70deg,
+    #c3adff 120deg,
+    rgba(141, 164, 239, 0.18) 200deg,
+    rgba(141, 164, 239, 0.18) 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  animation: request-ring 6s linear infinite;
+}
+
+.widgetButton[data-theme="dark"]:hover {
+  border-color: transparent;
+  box-shadow: 0 18px 42px -10px rgba(92, 110, 240, 0.75), 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+}
+
+.widgetButton[data-theme="dark"]:hover::before {
+  animation-duration: 4.5s;
+}
+
+/* Glassy stage so the glows show through behind the mascot. */
+.widgetButton[data-theme="dark"] .mascotContainer {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+.widgetButton[data-theme="dark"] .mascotContainerCollapsed {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+@keyframes request-aurora {
+  from {
+    transform: translate(-7%, -5%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(7%, 5%) rotate(20deg);
+  }
+}
+
+@keyframes request-ring {
+  to {
+    --request-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .widgetButton[data-theme="dark"]::before,
+  .widgetButton[data-theme="dark"]::after {
+    animation: none;
+  }
+}
+
+/* Copy + arrow wrapper. Invisible to layout except in the shopper variant. */
+.bubble {
+  display: contents;
+}
+
+/* ─── Variant: "shopper" — free-standing character with a thought bubble ─── */
+
+.widgetButton[data-variant="shopper"],
+.widgetButton[data-variant="shopper"]:hover {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  gap: 0;
+  align-items: center;
+  overflow: visible;
+  border-color: transparent;
+  border-radius: 22px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.widgetButton[data-variant="shopper"] .mascotContainer {
+  order: 2;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 8px 12px rgba(24, 26, 40, 0.2));
+}
+
+/* Thought trail: two dots rising from the character's head toward the bubble.
+   They live on the character so they can pop in before the bubble does. */
+.widgetButton[data-variant="shopper"] .mascotContainer::before,
+.widgetButton[data-variant="shopper"] .mascotContainer::after {
+  content: none;
+}
+
+.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before,
+.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
+  content: "";
+  position: absolute;
+  inset: auto;
+  border: 1px solid var(--border, #ebebeb);
+  border-radius: 50%;
+  background: var(--card, #ffffff);
+  animation: thought-dot 0.24s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before {
+  top: 30px;
+  left: -9px;
+  width: 7px;
+  height: 7px;
+  animation-delay: 0s;
+}
+
+.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
+  top: 18px;
+  left: -23px;
+  width: 12px;
+  height: 12px;
+  animation-delay: 0.05s;
+}
+
+/* Shared timing for this variant. */
+.widgetButton[data-variant="shopper"] {
+  --rw-ease: cubic-bezier(0.2, 0, 0, 1);
+  --rw-spring: cubic-bezier(0.2, 1.25, 0.35, 1);
+  --rw-duration: 200ms;
+}
+
+/* Pose changes (wave → think → excited) settle in rather than snap. One-shot, so keyframes. */
+.shopperPose {
+  display: block;
+  transform-origin: 50% 100%;
+  animation: shopper-settle 260ms var(--rw-spring, ease-out) both;
+}
+
+/* The bubble.
+   - Enter (one-shot) and the idle drift are keyframes on `transform`.
+   - Hover/press are transitions on the separate `translate`/`scale` properties,
+     so they retarget mid-flight and never fight the keyframes. */
+.widgetButton[data-variant="shopper"] .bubble {
+  /* Floats beside the character, so showing it on hover never resizes the launcher. */
+  position: absolute;
+  top: 0;
+  right: calc(100% + 26px);
+  bottom: 0;
+  height: fit-content;
+  margin-block: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 14px 14px 20px;
+  border: 1px solid var(--border, #ebebeb);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+  box-shadow:
+    0 14px 32px -10px rgba(24, 26, 40, 0.26),
+    0 2px 6px -1px rgba(24, 26, 40, 0.06),
+    inset 0 1px 0 #ffffff;
+  white-space: nowrap;
+  transform-origin: 100% 60%;
+  animation:
+    thought-bubble-in 320ms var(--rw-spring) 0.08s both,
+    thought-bubble-float 4.4s ease-in-out 0.9s infinite;
+  transition-property: translate, scale, box-shadow, border-color;
+  transition-duration: var(--rw-duration);
+  transition-timing-function: var(--rw-ease);
+}
+
+/* Invisible bridge over the gap, so the pointer can travel from the character
+   to the bubble without the hover dropping. */
+.widgetButton[data-variant="shopper"] .bubble::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  left: 100%;
+  width: 32px;
+}
+
+/* Enter: split the bubble's content and stagger it as the bubble lands. */
+.widgetButton[data-variant="shopper"] .bubble .headline,
+.widgetButton[data-variant="shopper"] .bubble .description,
+.widgetButton[data-variant="shopper"] .bubble .actionAffordance {
+  animation: thought-rise 300ms var(--rw-ease) both;
+}
+
+.widgetButton[data-variant="shopper"] .bubble .headline {
+  font-size: 15px;
+  line-height: 20px;
+  animation-delay: 0.16s;
+}
+
+.widgetButton[data-variant="shopper"] .bubble .description {
+  animation-delay: 0.23s;
+}
+
+.widgetButton[data-variant="shopper"] .bubble .actionAffordance {
+  width: 30px;
+  height: 30px;
+  background-color: var(--primary-container, #eff4ff);
+  color: var(--primary, #3e63dd);
+  animation-delay: 0.3s;
+  transition-property: background-color, color, scale;
+  transition-duration: var(--rw-duration);
+  transition-timing-function: var(--rw-ease);
+}
+
+/* Hover / keyboard focus: the bubble leans in, the arrow becomes the call to action. */
+.widgetButton[data-variant="shopper"]:hover .bubble,
+.widgetButton[data-variant="shopper"]:focus-visible .bubble {
+  translate: -4px -3px;
+  scale: 1.025;
+  border-color: rgba(62, 99, 221, 0.35);
+  box-shadow:
+    0 20px 42px -12px rgba(62, 99, 221, 0.42),
+    0 4px 10px -2px rgba(24, 26, 40, 0.08),
+    inset 0 1px 0 #ffffff;
+}
+
+.widgetButton[data-variant="shopper"]:hover .bubble .actionAffordance,
+.widgetButton[data-variant="shopper"]:focus-visible .bubble .actionAffordance {
+  background-color: var(--primary, #3e63dd);
+  color: #ffffff;
+  scale: 1.08;
+}
+
+/* The thought trail follows the bubble as it leans away. */
+.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before,
+.widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
+  transition: translate var(--rw-duration) var(--rw-ease);
+}
+
+.widgetButton[data-variant="shopper"]:hover .mascotContainer::before,
+.widgetButton[data-variant="shopper"]:focus-visible .mascotContainer::before {
+  translate: -1px -1px;
+}
+
+.widgetButton[data-variant="shopper"]:hover .mascotContainer::after,
+.widgetButton[data-variant="shopper"]:focus-visible .mascotContainer::after {
+  translate: -3px -2px;
+}
+
+/* Press: tactile, and released smoothly because it is a transition. */
+.widgetButton[data-variant="shopper"]:active .bubble {
+  scale: 0.96;
+  transition-duration: 110ms;
+}
+
+.widgetButton[data-variant="shopper"]:focus-visible {
+  outline-offset: 8px;
+  box-shadow: none;
+}
+
+@keyframes shopper-settle {
+  from {
+    transform: scale(0.94, 1.04);
+  }
+}
+
+@keyframes thought-dot {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@keyframes thought-bubble-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translate(12px, 6px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes thought-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+}
+
+@keyframes thought-bubble-float {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Reduced motion: show the end state at once; keep colour/shadow feedback only. */
+@media (prefers-reduced-motion: reduce) {
+  .shopperPose,
+  .widgetButton[data-variant="shopper"] .bubble,
+  .widgetButton[data-variant="shopper"] .bubble .headline,
+  .widgetButton[data-variant="shopper"] .bubble .description,
+  .widgetButton[data-variant="shopper"] .bubble .actionAffordance,
+  .widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::before,
+  .widgetButton[data-variant="shopper"].widgetButtonExpanded .mascotContainer::after {
+    animation: none !important;
+  }
+
+  .widgetButton[data-variant="shopper"]:hover .bubble,
+  .widgetButton[data-variant="shopper"]:focus-visible .bubble,
+  .widgetButton[data-variant="shopper"]:active .bubble,
+  .widgetButton[data-variant="shopper"]:hover .bubble .actionAffordance,
+  .widgetButton[data-variant="shopper"]:hover .mascotContainer::before,
+  .widgetButton[data-variant="shopper"]:hover .mascotContainer::after {
+    translate: none;
+    scale: none;
+  }
 }
 
 /* Mobile responsive constraints (< 640px) */
@@ -163,12 +668,26 @@
     padding: 10px 12px 10px 10px;
     gap: 10px;
     border-radius: 18px;
+    border-top-left-radius: 34px;
+    border-bottom-left-radius: 34px;
   }
 
   .mascotContainer {
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .widgetWrapper[data-variant="scan"]::before {
+    border-radius: 18px;
+  }
+
+  .widgetButton[data-variant="scan"].widgetButtonExpanded {
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+  }
+
+  .widgetButton[data-variant="scan"] .mascotContainer {
+    border-radius: 14px;
   }
 
   .mascotContainerCollapsed {
@@ -184,6 +703,14 @@
   .description {
     font-size: 12px;
     line-height: 15px;
+  }
+
+  .widgetButton[data-variant="shopper"] .bubble {
+    right: calc(100% + 22px);
+    gap: 10px;
+    max-width: calc(100vw - 32px - 76px - 22px);
+    padding: 11px 11px 11px 15px;
+    white-space: normal;
   }
 
   .desktopText {
@@ -207,6 +734,10 @@
   }
 
   .actionAffordance {
+    transition: none !important;
+  }
+
+  .widgetWrapper[data-variant="scan"]::before {
     transition: none !important;
   }
 }

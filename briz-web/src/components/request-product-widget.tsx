@@ -10,6 +10,9 @@ import {
   type Variants,
 } from "motion/react";
 import { RequestMascot } from "./request-mascot";
+import { RequestScanVisual } from "./request-scan-visual";
+import { RequestScoutCharacter } from "./request-scout-character";
+import { BrizShopper } from "./briz-shopper";
 import { money } from "./search-results-model";
 import {
   type RequestFlowStep,
@@ -33,7 +36,20 @@ import panelStyles from "./request-product-panel.module.css";
  */
 export const EXPAND_SCROLL_THRESHOLD = 120;
 
+export type RequestWidgetVariant = "mascot" | "scan" | "scout" | "shopper";
+
 export interface RequestProductWidgetProps {
+  /**
+   * Launcher look. "mascot": white card with the searching shopping-bag character.
+   * "scan": Briz-blue tile with a product box being scanned, on a layered card.
+   * "shopper": the Briz shopper — a chibi character in a blue hoodie with a phone.
+   * "scout": Pinu, a map-pin character with a magnifier monocle hunting for a parcel.
+   */
+  variant?: RequestWidgetVariant;
+  /**
+   * Launcher colour theme. "dark" is designed for the mascot variant.
+   */
+  theme?: "light" | "dark";
   /**
    * Callback fired when user activates the launcher.
    * Prepares hooks for the future 360–400px request popover dialog.
@@ -62,23 +78,43 @@ export interface RequestProductWidgetProps {
   initialOpen?: boolean;
 }
 
-// Initial entrance spring animation variants
+/**
+ * Delay (in seconds) before the launcher first appears, so the page can settle.
+ */
+export const ENTRANCE_DELAY = 0.4;
+
+// Launcher variants. The labels (hover, tap) propagate to the mascot layers and
+// the arrow, so one gesture moves every part together.
 export const widgetEntranceVariants: Variants = {
   initial: {
     opacity: 0,
-    scale: 0.86,
-    y: 8,
+    scale: 0.85,
+    y: 12,
   },
-  animate: {
+  // `custom` carries the entrance delay; it is 0 once the launcher has entered.
+  animate: (delay: number = 0) => ({
     opacity: 1,
     scale: 1,
     y: 0,
     transition: {
       type: "spring",
-      stiffness: 340,
-      damping: 26,
+      stiffness: 320,
+      damping: 24,
       mass: 0.8,
+      delay,
     },
+  }),
+  hover: {
+    y: -3,
+    scale: 1.012,
+    transition: {
+      type: "spring",
+      stiffness: 380,
+      damping: 24,
+    },
+  },
+  tap: {
+    scale: 0.985,
   },
 };
 
@@ -1274,6 +1310,8 @@ export function RequestProductPanel({
  * 4. User clicks -> smoothly expands into the interactive Request Product prototype panel.
  */
 export function RequestProductWidget({
+  variant = "mascot",
+  theme = "light",
   onOpen,
   className,
   layoutId = "briz-request-widget",
@@ -1282,10 +1320,12 @@ export function RequestProductWidget({
   initialOpen = false,
 }: RequestProductWidgetProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [expanded, setExpanded] = useState(initialExpanded);
+  const [scrollExpanded, setExpanded] = useState(initialExpanded);
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [draft, setDraft] = useState<RequestDraft>(INITIAL_REQUEST_DRAFT);
   const [isScanning, setIsScanning] = useState(false);
+  const [hasEntered, setHasEntered] = useState(false);
+  const [isEngaged, setIsEngaged] = useState(false);
   const hasTriggeredRef = useRef(initialExpanded);
 
   // Motion scroll listener
@@ -1308,6 +1348,7 @@ export function RequestProductWidget({
     ) {
       hasTriggeredRef.current = true;
       setExpanded(true);
+      setIsScanning(true);
     }
   }, [scrollThreshold]);
 
@@ -1338,6 +1379,11 @@ export function RequestProductWidget({
     return () => window.removeEventListener("briz:open-request", handleOpenEvent);
   }, []);
 
+  // The shopper stays a lone character and only shows its thought on hover/focus;
+  // every other variant expands once after the scroll threshold.
+  const expanded = variant === "shopper" ? isEngaged : scrollExpanded;
+  const shopperExpression = isEngaged ? "confused" : "searching";
+
   const handleClick = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setIsOpen(true);
@@ -1367,6 +1413,8 @@ export function RequestProductWidget({
             className={`${styles.widgetWrapper} ${className || ""}`.trim()}
             aria-label="Product Request Assistant"
             data-testid="briz-request-widget"
+            data-variant={variant}
+            data-expanded={expanded}
           >
             <motion.button
               type="button"
@@ -1376,10 +1424,16 @@ export function RequestProductWidget({
                 expanded ? styles.widgetButtonExpanded : styles.widgetButtonCollapsed
               }`}
               variants={shouldReduceMotion ? undefined : widgetEntranceVariants}
+              custom={hasEntered ? 0 : ENTRANCE_DELAY}
               initial={shouldReduceMotion ? { opacity: 1, scale: 1, y: 0 } : "initial"}
               animate={shouldReduceMotion ? { opacity: 1, scale: 1, y: 0 } : "animate"}
-              whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.012 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={shouldReduceMotion ? undefined : "hover"}
+              whileTap={shouldReduceMotion ? { scale: 0.985 } : "tap"}
+              onAnimationComplete={() => setHasEntered(true)}
+              onHoverStart={() => setIsEngaged(true)}
+              onHoverEnd={() => setIsEngaged(false)}
+              onFocus={() => setIsEngaged(true)}
+              onBlur={() => setIsEngaged(false)}
               transition={{
                 layout: {
                   type: "spring",
@@ -1390,6 +1444,8 @@ export function RequestProductWidget({
                 opacity: { duration: 0.25 },
               }}
               onClick={handleClick}
+              data-variant={variant}
+              data-theme={theme}
               aria-label="Request a product"
               aria-expanded={expanded}
             >
@@ -1401,13 +1457,24 @@ export function RequestProductWidget({
                 }`}
                 data-name="RequestMascot"
               >
-                <RequestMascot size={expanded ? 46 : 42} isScanning={isScanning} />
+                {variant === "shopper" ? (
+                  // Keyed by pose so each change replays a small settle instead of snapping.
+                  <span key={shopperExpression} className={styles.shopperPose}>
+                    <BrizShopper crop="body" size={76} expression={shopperExpression} hideMark />
+                  </span>
+                ) : variant === "scout" ? (
+                  <RequestScoutCharacter size={expanded ? 48 : 46} isScanning={isScanning} />
+                ) : variant === "scan" ? (
+                  <RequestScanVisual size={expanded ? 42 : 44} isScanning={isScanning} />
+                ) : (
+                  <RequestMascot size={expanded ? 46 : 42} isScanning={isScanning} />
+                )}
               </motion.div>
 
               {/* Zones 2 & 3: Revealed upon scroll expansion */}
               <AnimatePresence>
                 {expanded && (
-                  <>
+                  <motion.div className={styles.bubble} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
                     {/* Zone 2: Informative Marketplace Copy */}
                     <div className={styles.contentBlock}>
                       {/* Headline: begins ~70ms after expansion starts */}
@@ -1481,7 +1548,7 @@ export function RequestProductWidget({
                         <path d="m12 5 7 7-7 7" />
                       </svg>
                     </motion.div>
-                  </>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </motion.button>
