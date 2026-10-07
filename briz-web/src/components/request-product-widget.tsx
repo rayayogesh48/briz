@@ -13,6 +13,7 @@ import { RequestMascot } from "./request-mascot";
 import { RequestScanVisual } from "./request-scan-visual";
 import { RequestScoutCharacter } from "./request-scout-character";
 import { ShopperLauncherContent } from "./request-shopper-launcher";
+import { useAttentionHint } from "./use-attention-hint";
 import { useCursorLook } from "./use-cursor-look";
 import { money } from "./search-results-model";
 import {
@@ -31,11 +32,6 @@ import {
 } from "./request-flow-data";
 import styles from "./request-product-widget.module.css";
 import panelStyles from "./request-product-panel.module.css";
-
-/**
- * How long (ms) the shopper's thought stays up as a hint on touch devices.
- */
-const TOUCH_HINT_DURATION = 4500;
 
 /**
  * Scroll threshold (in pixels) required to trigger one-way widget expansion.
@@ -1340,7 +1336,9 @@ export function RequestProductWidget({
   const isFace = variant === "face" || variant === "seller" || variant === "sprite";
   const isCharacter = variant === "shopper" || isFace;
   const launcherRef = useCursorLook<HTMLButtonElement>(isFace);
-  const [showTouchHint, setShowTouchHint] = useState(false);
+  // The character shows its thought unprompted when the visitor goes quiet, and on
+  // touch devices (which cannot hover) after the first scroll.
+  const showHint = useAttentionHint(isCharacter && !isOpen);
   const hasTriggeredRef = useRef(initialExpanded);
 
   // Motion scroll listener
@@ -1351,18 +1349,10 @@ export function RequestProductWidget({
       hasTriggeredRef.current = true;
       setExpanded(true);
       setIsScanning(true);
-      // Touch devices cannot hover, so the shopper shows its thought once as a hint.
-      if (isCharacter && window.matchMedia("(hover: none)").matches) {
-        setShowTouchHint(true);
-      }
     }
   });
 
-  useEffect(() => {
-    if (!showTouchHint) return;
-    const timer = setTimeout(() => setShowTouchHint(false), TOUCH_HINT_DURATION);
-    return () => clearTimeout(timer);
-  }, [showTouchHint]);
+
 
   // Handle page load when browser restores to an already-scrolled position
   useEffect(() => {
@@ -1454,7 +1444,7 @@ export function RequestProductWidget({
               whileHover={shouldReduceMotion ? undefined : "hover"}
               whileTap={shouldReduceMotion ? { scale: 0.985 } : "tap"}
               onAnimationComplete={() => setHasEntered(true)}
-              data-hint={showTouchHint}
+              data-hint={showHint}
               transition={{
                 layout: {
                   type: "spring",

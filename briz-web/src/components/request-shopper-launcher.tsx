@@ -69,8 +69,7 @@ export const ShopperLauncherContent = memo(function ShopperLauncherContent({
             <span className={styles.mobileText}>Can’t find it?</span>
           </span>
           <span className={`${styles.description} ${styles.thoughtLine}`}>
-            <span className={styles.desktopText}>Request it from nearby sellers.</span>
-            <span className={styles.mobileText}>Request it from local sellers.</span>
+            Send product request to nearby sellers
           </span>
         </span>
         <span className={`${styles.thoughtArrow} ${styles.thoughtLine}`}>
