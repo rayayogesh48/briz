@@ -427,6 +427,15 @@
   box-shadow: none;
 }
 
+/* Larger hover and tap target: an invisible halo around the character, so the
+   pointer does not have to land exactly on the artwork. */
+.widgetButton[data-variant="shopper"]::before {
+  content: "";
+  position: absolute;
+  inset: -22px;
+  border-radius: 40px;
+}
+
 @media (hover: hover) {
   .widgetButton[data-variant="shopper"]:hover {
     --on: 1;
@@ -608,6 +617,43 @@
   transition-delay: calc(var(--on) * 210ms);
 }
 
+/* Face character (mascot v2): a square head, so the thought sits a little lower. */
+.widgetButton[data-character="face"] .thought {
+  top: -44px;
+}
+
+.widgetButton[data-character="face"] .thoughtDotSmall {
+  top: 12px;
+  left: -8px;
+}
+
+.widgetButton[data-character="face"] .thoughtDotLarge {
+  top: 0;
+  left: -22px;
+}
+
+/* Illustrated sprite (mascot v2): the head sits in the lower-middle of a larger
+   cell, so the dots and bubble are placed against the head, not the cell edge. */
+.widgetButton[data-character="sprite"] .thought {
+  top: -14px;
+  right: calc(100% - 6px);
+}
+
+.widgetButton[data-character="sprite"] .thoughtDotSmall {
+  top: 44px;
+  left: 24px;
+}
+
+.widgetButton[data-character="sprite"] .thoughtDotLarge {
+  top: 30px;
+  left: 9px;
+}
+
+.widgetButton[data-character="sprite"] .shopperStage {
+  /* pull the empty strip under the shoulders off the bottom edge */
+  margin-bottom: -10px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shopperIdle,
   .shopperActive,
@@ -678,6 +724,11 @@
     line-height: 15px;
   }
 
+  /* Keep the halo inside the 16px page gutter on phones. */
+  .widgetButton[data-variant="shopper"]::before {
+    inset: -14px;
+  }
+
   /* Shopper on phones: smaller character, a compact bubble that wraps, and the
      dots pulled in to match. The bubble can never run off the left edge. */
   .shopperIdle svg,
@@ -718,6 +769,42 @@
     left: -18px;
     width: 10px;
     height: 10px;
+  }
+
+  .widgetButton[data-character="face"] .thought {
+    top: -36px;
+  }
+
+  .widgetButton[data-character="sprite"] .shopperIdle > span,
+  .widgetButton[data-character="sprite"] .shopperActive > span {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  .widgetButton[data-character="sprite"] .thought {
+    top: -14px;
+    right: calc(100% - 6px);
+    max-width: calc(100vw - 32px - 98px);
+  }
+
+  .widgetButton[data-character="sprite"] .thoughtDotSmall {
+    top: 36px;
+    left: 20px;
+  }
+
+  .widgetButton[data-character="sprite"] .thoughtDotLarge {
+    top: 25px;
+    left: 8px;
+  }
+
+  .widgetButton[data-character="face"] .thoughtDotSmall {
+    top: 8px;
+    left: -6px;
+  }
+
+  .widgetButton[data-character="face"] .thoughtDotLarge {
+    top: -2px;
+    left: -17px;
   }
 
   .desktopText {

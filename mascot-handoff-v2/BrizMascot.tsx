@@ -1,0 +1,79 @@
+"use client";
+
+import { memo, type CSSProperties } from "react";
+
+/** The nine expressions, in the order they sit in the reactions atlas. */
+export const MASCOT_EXPRESSIONS = [
+  "greeting", "searching", "thinking",
+  "found", "excited", "confused",
+  "no-results", "waiting", "success",
+] as const;
+
+/** The nine head directions, in the order they sit in the directions atlas. */
+export const MASCOT_DIRECTIONS = [
+  "up-left", "up", "up-right",
+  "left", "center", "right",
+  "down-left", "down", "down-right",
+] as const;
+
+export type MascotExpression = (typeof MASCOT_EXPRESSIONS)[number];
+export type MascotDirection = (typeof MASCOT_DIRECTIONS)[number];
+
+export interface BrizMascotProps {
+  /** Show one expression (facing the viewer). Takes priority over `direction`. */
+  expression?: MascotExpression;
+  /** Show one fixed head direction. Omit both to follow --look-col / --look-row. */
+  direction?: MascotDirection;
+  /** Width and height in px. The head fills roughly the middle 55% of this box. */
+  size?: number;
+  /** Folder the two atlases are served from. */
+  assetBase?: string;
+  className?: string;
+  /** Accessible name. Leave empty when the mascot is decorative. */
+  title?: string;
+}
+
+// Bump when the artwork changes, so browsers drop the cached sheets.
+const ASSET_VERSION = "3";
+
+/**
+ * Briz mascot v2. One character in two 3×3 sprite atlases: nine head directions
+ * and nine expressions, verified to line up (0px shift between them). Showing a
+ * cell is a background-position change, so following the cursor costs no re-render.
+ */
+export const BrizMascot = memo(function BrizMascot({
+  expression,
+  direction,
+  size = 128,
+  assetBase = "/mascots",
+  className,
+  title,
+}: BrizMascotProps) {
+  const index = expression
+    ? MASCOT_EXPRESSIONS.indexOf(expression)
+    : direction
+    ? MASCOT_DIRECTIONS.indexOf(direction)
+    : -1;
+  // In a 300% background, 0% / 50% / 100% select the first, middle and last cell.
+  const column = index < 0 ? "var(--look-col, 1)" : String(index % 3);
+  const row = index < 0 ? "var(--look-row, 1)" : String(Math.floor(index / 3));
+  const atlas = `${assetBase}/briz-v2-${expression ? "reactions" : "directions"}.webp?v=${ASSET_VERSION}`;
+  const style: CSSProperties = {
+    display: "block",
+    width: size,
+    height: size,
+    backgroundImage: `url(${atlas})`,
+    backgroundSize: "300% 300%",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: `calc(${column} * 50%) calc(${row} * 50%)`,
+  };
+  return (
+    <span
+      className={className}
+      style={style}
+      role={title ? "img" : undefined}
+      aria-label={title || undefined}
+      aria-hidden={title ? undefined : true}
+    />
+  );
+});

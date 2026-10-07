@@ -1,10 +1,19 @@
 "use client";
 
 import { memo } from "react";
+import { BrizFace } from "./briz-face";
 import { BrizShopper } from "./briz-shopper";
+import { BrizSprite, SPRITE_HAS_EXPRESSIONS } from "./briz-sprite";
 import styles from "./request-product-widget.module.css";
 
 const SHOPPER_SIZE = 76;
+const FACE_SIZE = 76;
+
+// The sprite cell keeps empty room above the head for floating symbols, so the
+// box is larger than the character it shows.
+const SPRITE_SIZE = 128;
+
+export type LauncherCharacter = "shopper" | "face" | "seller" | "sprite";
 
 /**
  * Contents of the "shopper" launcher: the character and its thought bubble.
@@ -14,15 +23,39 @@ const SHOPPER_SIZE = 76;
  * between them — so hovering never re-renders React or restarts an animation,
  * and rapid in/out simply retargets the transitions.
  */
-export const ShopperLauncherContent = memo(function ShopperLauncherContent() {
+export const ShopperLauncherContent = memo(function ShopperLauncherContent({
+  character = "shopper",
+}: {
+  /** Which mascot to show. The interaction is identical for both. */
+  character?: LauncherCharacter;
+}) {
   return (
     <>
       <span className={styles.shopperStage}>
         <span className={styles.shopperIdle}>
-          <BrizShopper crop="body" size={SHOPPER_SIZE} expression="searching" hideMark />
+          {character === "sprite" ? (
+            // Idle: follows the cursor through the nine head directions.
+            <BrizSprite size={SPRITE_SIZE} />
+          ) : character !== "shopper" ? (
+            <BrizFace size={FACE_SIZE} persona={character === "seller" ? "seller" : "shopper"} expression="searching" hideMark />
+          ) : (
+            <BrizShopper crop="body" size={SHOPPER_SIZE} expression="searching" hideMark />
+          )}
         </span>
         <span className={styles.shopperActive}>
-          <BrizShopper crop="body" size={SHOPPER_SIZE} expression="confused" hideMark />
+          {character === "sprite" ? (
+            // Engaged: the puzzled face, or a glance up at the thought bubble until
+            // the character's expressions sheet exists.
+            SPRITE_HAS_EXPRESSIONS ? (
+              <BrizSprite size={SPRITE_SIZE} expression="confused" />
+            ) : (
+              <BrizSprite size={SPRITE_SIZE} direction="up-left" />
+            )
+          ) : character !== "shopper" ? (
+            <BrizFace size={FACE_SIZE} persona={character === "seller" ? "seller" : "shopper"} expression="confused" hideMark />
+          ) : (
+            <BrizShopper crop="body" size={SHOPPER_SIZE} expression="confused" hideMark />
+          )}
         </span>
       </span>
 
