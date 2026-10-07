@@ -9,8 +9,8 @@ import styles from "./request-product-widget.module.css";
 const SHOPPER_SIZE = 76;
 const FACE_SIZE = 76;
 
-// The sprite cell keeps empty room above the head for floating symbols, so the
-// box is larger than the character it shows.
+// The sprite cell keeps a margin around the character, so the box is a little
+// larger than the character it shows.
 const SPRITE_SIZE = 128;
 
 export type LauncherCharacter = "shopper" | "face" | "seller" | "sprite";

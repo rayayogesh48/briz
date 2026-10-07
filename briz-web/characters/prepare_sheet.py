@@ -5,7 +5,8 @@
 Expects the green background to be removed already (page-mascot's key.py). Then:
 
 1. Despill: the character has no green of its own, so any green-dominant pixel
-   left at the edges is key spill and is pulled back to neutral.
+   left at the edges is key spill and is pulled back to neutral. Enclosed
+   pockets of key colour (inside a handle, under an arm) are made transparent.
 2. Re-grid: image models rarely space the nine drawings evenly, and an even 3x3
    cut then slices through heads. Each drawing is found as a connected blob
    (floating symbols are attached to the nearest one) and placed in its own even
@@ -34,6 +35,10 @@ scale_file = sys.argv[sys.argv.index('--scale-file') + 1] if '--scale-file' in s
 pixels = np.array(Image.open(source).convert('RGBA')).astype(np.int16)
 red, green, blue = pixels[..., 0], pixels[..., 1], pixels[..., 2]
 limit = np.maximum(red, blue)
+# key.py keeps key-coloured areas that the character encloses (the gap inside a
+# bag handle, between an arm and the body). Nothing here is meant to be green,
+# so clear them instead of letting the despill turn them into dark patches.
+pixels[..., 3] = np.where((green > limit + 70) & (green > 140), 0, pixels[..., 3])
 pixels[..., 1] = np.where(green > limit + 6, limit, green)
 pixels = pixels.astype(np.uint8)
 
