@@ -12,7 +12,7 @@ const legal = ["Privacy Policy", "Terms of Use", "Return Policy"];
 const description = "Find what you need from local sellers near you. Request products, compare offers, and chat directly with nearby stores.";
 
 function FooterLinks({ items, onSelect }: { items: string[]; onSelect: (label: string) => void }) {
-  return items.map(item => <button key={item} onClick={() => onSelect(item)}>{item}</button>);
+  return items.map(item => item === "About Briz" ? <Link key={item} href="/about">{item}</Link> : <button key={item} onClick={() => onSelect(item)}>{item}</button>);
 }
 
 export function BrizFooter() {

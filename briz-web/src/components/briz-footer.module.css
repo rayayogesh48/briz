@@ -90,7 +90,8 @@
     height: 24px;
 }
 
-.desktop>button {
+.desktop>button,
+.desktop>a {
     display: block;
     min-height: 24px;
     margin-bottom: 8px;
