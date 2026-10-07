@@ -28,7 +28,8 @@ export type MascotExpression = (typeof MASCOT_EXPRESSIONS)[number];
 export type MascotDirection = (typeof MASCOT_DIRECTIONS)[number];
 
 // The art has no sad face and no question-mark face, so thinking, confused and
-// no-results all show "puzzled". Replace the sheet to give them their own faces.
+// no-results all show "puzzled" — which in this sheet is a cheerful thinking face
+// with three dots. Replace the sheet to give them their own faces.
 const EXPRESSION_FACE: Record<MascotExpression, MascotFace> = {
   greeting: "smile",
   searching: "happy",
@@ -51,7 +52,7 @@ export interface BrizMascotProps {
   expression?: MascotExpression | MascotFace;
   /** Show one fixed eye direction. Omit both to follow --look-col / --look-row. */
   direction?: MascotDirection;
-  /** Width and height in px. The bag fills about 66% of the width and 70% of the height. */
+  /** Width and height in px. The bag fills about 81% of the width and 86% of the height. */
   size?: number;
   /** Folder the two atlases are served from. */
   assetBase?: string;
@@ -61,7 +62,7 @@ export interface BrizMascotProps {
 }
 
 // Bump when the artwork changes, so browsers drop the cached sheets.
-const ASSET_VERSION = "5";
+const ASSET_VERSION = "7";
 
 /**
  * Briz mascot v2: the shopping bag. One character in two 3×3 sprite atlases, nine
@@ -71,7 +72,7 @@ const ASSET_VERSION = "5";
 export const BrizMascot = memo(function BrizMascot({
   expression,
   direction,
-  size = 128,
+  size = 88,
   assetBase = "/mascots",
   className,
   title,

@@ -11,7 +11,7 @@ const FACE_SIZE = 76;
 
 // The sprite cell keeps a margin around the character, so the box is a little
 // larger than the character it shows.
-const SPRITE_SIZE = 128;
+const SPRITE_SIZE = 88;
 
 export type LauncherCharacter = "shopper" | "face" | "seller" | "sprite";
 

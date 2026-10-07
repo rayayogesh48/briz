@@ -55,8 +55,8 @@ interface BrizSpriteProps {
 // Two 3×3 atlases built with the page-mascot skill and verified to line up
 // (0px shift between them). Faces are in SPRITE_FACES order.
 // Bump the version when the artwork changes, so browsers drop the cached sheet.
-const DIRECTIONS_ATLAS = "/mascots/briz-v2-directions.webp?v=5";
-const REACTIONS_ATLAS = "/mascots/briz-v2-reactions.webp?v=5";
+const DIRECTIONS_ATLAS = "/mascots/briz-v2-directions.webp?v=7";
+const REACTIONS_ATLAS = "/mascots/briz-v2-reactions.webp?v=7";
 // Set to false while a character has only its head-directions sheet: expressions
 // then fall back to the face-forward direction cell.
 export const SPRITE_HAS_EXPRESSIONS = true;

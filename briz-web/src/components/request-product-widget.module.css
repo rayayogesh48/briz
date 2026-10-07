@@ -635,18 +635,18 @@
 /* Illustrated sprite (mascot v2): the character has a margin inside its cell, so
    the dots and bubble are placed against the artwork, not the cell edge. */
 .widgetButton[data-character="sprite"] .thought {
-  top: -24px;
-  right: calc(100% + 6px);
+  top: -38px;
+  right: calc(100% + 18px);
 }
 
 .widgetButton[data-character="sprite"] .thoughtDotSmall {
-  top: 34px;
-  left: 10px;
+  top: 22px;
+  left: -3px;
 }
 
 .widgetButton[data-character="sprite"] .thoughtDotLarge {
-  top: 20px;
-  left: -5px;
+  top: 10px;
+  left: -17px;
 }
 
 .widgetButton[data-character="sprite"] .shopperStage {
@@ -775,33 +775,33 @@
     top: -36px;
   }
 
-  /* The sprite's image cell has empty margins (17% right, 8% bottom). Offset the
-     launcher by those so the artwork itself sits 16px from the right and bottom. */
+  /* The sprite's image cell has empty margins (about 10% right, 8% bottom). Offset
+     the launcher by those so the artwork itself sits 16px from the right and bottom. */
   .widgetWrapper[data-variant="sprite"] {
-    right: -1px;
-    bottom: max(18px, env(safe-area-inset-bottom, 18px));
+    right: 9px;
+    bottom: max(20px, env(safe-area-inset-bottom, 20px));
   }
 
   .widgetButton[data-character="sprite"] .shopperIdle > span,
   .widgetButton[data-character="sprite"] .shopperActive > span {
-    width: 100px !important;
-    height: 100px !important;
+    width: 76px !important;
+    height: 76px !important;
   }
 
   .widgetButton[data-character="sprite"] .thought {
-    top: -20px;
-    right: calc(100% + 6px);
-    max-width: calc(100vw - 16px - 99px - 6px);
+    top: -32px;
+    right: calc(100% + 14px);
+    max-width: calc(100vw - 16px - 9px - 76px - 14px);
   }
 
   .widgetButton[data-character="sprite"] .thoughtDotSmall {
-    top: 26px;
-    left: 7px;
+    top: 18px;
+    left: -3px;
   }
 
   .widgetButton[data-character="sprite"] .thoughtDotLarge {
-    top: 15px;
-    left: -5px;
+    top: 8px;
+    left: -13px;
   }
 
   .widgetButton[data-character="face"] .thoughtDotSmall {

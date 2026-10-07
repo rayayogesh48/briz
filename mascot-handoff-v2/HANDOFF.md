@@ -1,8 +1,8 @@
 # Briz request mascot v2 — developer handoff
 
 A floating "Request a Product" launcher built around the Briz mascot: a blue
-shopping-bag character whose eyes follow the cursor and who looks puzzled, with
-a thought bubble, when hovered. It also speaks up on its own when the visitor
+shopping-bag character with a white face panel, whose eyes follow the cursor and
+who shows a thinking face, with a thought bubble, when hovered. It also speaks up on its own when the visitor
 goes quiet. This folder is a self-contained copy of the prototype: drop it into
 a React project and it runs.
 
@@ -19,8 +19,8 @@ eyes that follow the cursor, unprompted hints and a larger hit area.
 | `BrizMascot.tsx` | The character: shows one cell of a sprite atlas. Usable on its own. |
 | `useCursorLook.ts` | Hook that points the mascot's eyes at the pointer. |
 | `useAttentionHint.ts` | Hook that decides when the thought shows without hovering. |
-| `assets/briz-v2-directions.webp` | 3×3 atlas, nine eye directions (140 KB). |
-| `assets/briz-v2-reactions.webp` | 3×3 atlas, nine faces (148 KB). |
+| `assets/briz-v2-directions.webp` | 3×3 atlas, nine eye directions (169 KB). |
+| `assets/briz-v2-reactions.webp` | 3×3 atlas, nine faces (180 KB). |
 | `preview-directions.png`, `preview-reactions.png` | The two atlases on a plain background, for reference. |
 | `source/` | The cleaned source sheets and the script used to prepare them. Only needed to rebuild the art. |
 
@@ -56,8 +56,8 @@ Render it once, near the root layout. It positions itself (`position: fixed`).
 | State | Trigger | What the user sees |
 | --- | --- | --- |
 | Entrance | Page load, after 0.4s | Launcher springs in (opacity 0→1, scale 0.85→1, y 12→0). Once only. |
-| Idle | Default | The bag alone. His eyes follow the pointer, snapping between nine directions. |
-| Engaged | Pointer hover (including a 22px halo around him), or keyboard focus | Cross-fade to the puzzled face; two thought dots pop; bubble grows from its lower-right corner; headline, description and arrow rise in. Whole launcher lifts 3px. |
+| Idle | Default | The bag alone. His eyes follow the pointer across nine directions (the movement in this artwork is subtle). |
+| Engaged | Pointer hover (including a 22px halo around him), or keyboard focus | Cross-fade to the thinking face (three dots); two thought dots pop; bubble grows from its lower-right corner; headline, description and arrow rise in. Whole launcher lifts 3px. |
 | Leave | Pointer out / blur | Everything reverses from wherever it is. No exit delay. |
 | Press | Mouse down / touch | Bubble scales to 0.96, launcher to 0.985. |
 | Activate | Click, Enter, Space | `onOpen()` |
@@ -82,11 +82,11 @@ looks straight ahead.
 
 | | Desktop | Phone (< 640px) |
 | --- | --- | --- |
-| Launcher position | `right: 24px; bottom: 24px` | `right: -1px; bottom: max(18px, safe-area)` |
-| Where the artwork lands | about 46px from the right, 24px from the bottom | 16px from the right, 16px from the bottom |
-| Character box | 128 × 128px (the bag is about 85 × 90px inside it) | 100 × 100px |
+| Launcher position | `right: 24px; bottom: 24px` | `right: 9px; bottom: max(20px, safe-area)` |
+| Where the artwork lands | about 32px from the right, 21px from the bottom | 16px from the right, 16px from the bottom |
+| Character box | 88 × 88px (the bag is about 71 × 76px inside it) | 76 × 76px (bag about 61 × 65px) |
 | Hover / tap halo | 22px beyond the box on every side | 14px |
-| Bubble | up and to the left of the bag, 6px from the box | same, wraps, never wider than the viewport allows |
+| Bubble | up and to the left of the bag, 18px from the box | same at 14px, wraps, never wider than the viewport allows |
 | Bubble radius / padding | 26px / 14px 14px 14px 20px | 20px / 10px 10px 10px 14px |
 | Headline | 15/20px, 600 | 14/18px, 600 |
 | Description | 12.5/16px, 450 | 12/15px, 450 |
@@ -94,10 +94,11 @@ looks straight ahead.
 | z-index | 900 | 900 |
 
 The character box is larger than the bag because each sprite cell keeps empty
-room around the artwork: 17% left and right, about 8% underneath, and space
-above the handle for floating symbols (`!`, hearts, dots). That is why the phone
-position looks odd (`right: -1px`): it offsets the launcher by those margins so
-the visible bag sits 16px from the edges. Desktop has not been corrected the
+room around the artwork: about 10% left and right, 8% underneath and 6% above,
+which is also where the floating symbols (`!`, hearts, dots) sit, beside the
+handle. That is why the phone position is not simply 16px (`right: 9px`,
+`bottom: 20px`): it offsets the launcher by those margins so the visible bag
+sits 16px from the edges. Desktop has not been corrected the
 same way. If the art changes, retune `.wrapper` (phones), `.dotSmall`,
 `.dotLarge` and `.thought`.
 
@@ -186,6 +187,8 @@ closest face:
 
 `love` and `cool` are only reachable by their own names. There is **no sad face
 and no question-mark face**, so thinking, confused and no-results look the same.
+The face labelled `puzzled` is in fact cheerful in this artwork: a small smile,
+eyes glancing up, three dots. It reads as "let me think", not as confusion.
 A real "no results" screen needs a new sheet with a sad face; update
 `MASCOT_FACES` and `EXPRESSION_FACE` in `BrizMascot.tsx` to match it.
 
@@ -272,25 +275,28 @@ and WebP: Chrome/Edge 104+, Safari 14.1+, Firefox 85+.
 
 ## Known gaps — this is a prototype
 
-- **Checked in the prototype app:** idle and hover states at desktop width; the
-  idle hint firing at about 8s; on a 375px touch viewport, the scroll hint
-  appearing after 0.9s and hiding 4.5s later; the bag landing 17px from the
-  right and bottom edges on phones.
-- **Checked in this standalone copy:** it type-checks, lints and renders; the
-  bubble copy is correct; click calls `onOpen`.
-- **Not checked:** the hover and hint animations in this standalone copy (the
-  preview was in the background, where hints are deliberately suppressed); the
-  25s repeat and the three-hint cap; keyboard focus; a real phone.
+- **Checked in the prototype app, at the previous 108px size:** idle and hover
+  states at desktop width; on a 375px touch viewport, the scroll hint appearing
+  with the bubble on screen and the bag landing 17px from the right and 19px
+  from the bottom.
+- **Checked earlier with the previous bag artwork:** the idle hint firing at
+  about 8s, and the scroll hint appearing after 0.9s and hiding 4.5s later.
+- **Checked in this standalone copy:** it type-checks, lints and serves.
+- **Not checked:** the current 88px / 76px sizing on screen (positions were
+  scaled from the verified 108px layout); the hover and hint animations in this
+  standalone copy; the 25s repeat and the three-hint cap; keyboard focus; a
+  real phone.
 - **No automated tests** for this component.
 - **Three app expressions share one face** (see Faces and expression names).
 - **Hints are per page load**, not per visitor or session. Whether they should
   be remembered, and how often they may repeat, is a product decision; the
   original brief warned against a widget that feels like it is begging.
 - **Reduced motion does not disable hints**, only movement.
-- **Eye movement snaps** between nine poses; there are no in-between frames.
+- **Eye movement is barely visible** in this artwork: the pupils shift only
+  slightly between the nine poses, so "follows the cursor" is easy to miss.
 - **The halo blocks clicks** on anything directly underneath its 22px ring, and
   on phones it extends past the screen edge.
-- **Both atlases load on first render** (about 290 KB together), including the
+- **Both atlases load on first render** (about 350 KB together), including the
   faces sheet that is only seen on hover or hint. Preload or lazy-load as fits.
 - **Touch detection** uses `matchMedia("(hover: none)")`. Hybrid devices report
   hover and get the desktop behaviour.
