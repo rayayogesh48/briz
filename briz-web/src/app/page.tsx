@@ -72,6 +72,13 @@ const REDIRECTION_PAGES = [
     icon: "📍",
   },
   {
+    title: "Authentication Prototype",
+    description: "Frontend-only auth flow: phone and OTP, Google and Apple hand-offs, errors and success, with a Preview states switcher.",
+    href: "/auth",
+    cta: "Open Auth Prototype",
+    icon: "🔐",
+  },
+  {
     title: "Send Us Feedback",
     description: "Lightweight feedback form with Nepal phone input, bottom-sheet type selector, image attachment, inline validation, and success/error states.",
     href: "/feedback",
