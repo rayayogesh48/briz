@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { RequestProductWidget } from "@/components/request-product-widget";
 import { StatePreviewLauncher } from "@/components/system-state/state-preview-launcher";
+import { NavbarPreviewControl } from "@/components/navbar-preview-control";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <RequestProductWidget variant="sprite" />
         <StatePreviewLauncher />
+        <NavbarPreviewControl />
       </body>
     </html>
   );
