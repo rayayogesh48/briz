@@ -1,0 +1,369 @@
+/* Saved page. Uses the shared product/store grids and cards; this file only adds
+   the page frame, tabs, empty/unavailable states and the toast. */
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 32px 0;
+  color: var(--foreground);
+}
+
+.header h1 {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 650;
+  line-height: 36px;
+  letter-spacing: -0.5px;
+}
+
+.header p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Tabs: text with an underline on the active one, on a hairline. */
+.tabs {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 15px;
+  font-weight: 550;
+  letter-spacing: -0.1px;
+  transition: color 150ms ease;
+}
+
+.tab::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background-color 150ms ease;
+}
+
+.tab[aria-selected="true"] {
+  color: var(--foreground);
+  font-weight: 650;
+}
+
+.tab[aria-selected="true"]::after {
+  background: var(--primary);
+}
+
+.count {
+  min-width: 24px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.tab[aria-selected="true"] .count {
+  background: var(--primary-container);
+  color: var(--primary-hover);
+}
+
+.panel {
+  padding-top: 12px;
+  min-height: 320px;
+}
+
+/* Grid cell wrapper for the removal animation; cards keep their own height rules. */
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+.cell > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Empty and error ---------- */
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: 360px;
+  margin: 56px auto 24px;
+  text-align: center;
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.emptyIcon[data-tone="error"] {
+  background: #fdeef1;
+  color: #cd2b4b;
+}
+
+.empty h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
+}
+
+.empty p {
+  margin: 0 0 14px;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.1px;
+  text-decoration: none;
+}
+
+.primaryButton {
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.secondaryButton {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--foreground);
+}
+
+.textButton {
+  min-height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ---------- Unavailable items ---------- */
+
+.unavailable {
+  display: flex;
+  flex-direction: column;
+  border: 1px dashed #d4d4d4;
+  border-radius: 14px;
+  background: #fafafa;
+  overflow: hidden;
+}
+
+.unavailableImage {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--muted);
+}
+
+.unavailableImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+
+.unavailableBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #202020;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.unavailableBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+}
+
+.unavailableBody h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: -0.1px;
+}
+
+.unavailableBody p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.unavailableActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.unavailableStore {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+}
+
+.unavailableStore .unavailableBody {
+  padding: 0;
+}
+
+.unavailableStoreIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* ---------- Toast ---------- */
+
+.toastRegion {
+  position: fixed;
+  right: 0;
+  bottom: 28px;
+  left: 0;
+  z-index: 950;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #202020;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 550;
+  box-shadow: 0 12px 28px -10px rgba(20, 20, 30, 0.5);
+  animation: toast-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------- Dev preview control: third pill in the corner stack ---------- */
+
+.previewOffset {
+  bottom: 124px;
+}
+
+.previewMenu {
+  width: 300px;
+  max-height: min(60vh, 520px);
+  overflow-y: auto;
+}
+
+.previewGroup + .previewGroup {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+@media (hover: hover) {
+  .tab:hover {
+    color: var(--foreground);
+  }
+
+  .primaryButton:hover {
+    background: var(--primary-hover);
+  }
+
+  .secondaryButton:hover,
+  .textButton:hover {
+    background: #f4f4f4;
+  }
+}
+
+@media (max-width: 1024px) {
+  .page {
+    padding: 24px 24px 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px 16px 0;
+  }
+
+  .header h1 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .previewOffset {
+    bottom: 120px;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+
+  .tab,
+  .tab::after {
+    transition: none;
+  }
+}

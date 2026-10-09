@@ -45,6 +45,28 @@
 }
 
 /* Badges on cover */
+/* Saved heart (Saved page): same 44px target and colours as the product card's. */
+.savedButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #fed7d7;
+  border-radius: 50%;
+  background: #fff5f5;
+  color: #e54d2e;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.savedButton:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
 .coverBadges {
   position: absolute;
   top: 10px;
