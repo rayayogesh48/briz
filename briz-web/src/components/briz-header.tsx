@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import NavbarSearch from "./navbar-search";
 import { useCart } from "@/store/cart-store";
+import { navbarPreview, useNavbarPreview } from "@/store/navbar-preview-store";
+import { AuthDialog } from "./auth/auth-preview";
+import { NavbarAccount, useNavbarPopoverDismiss } from "./navbar-account";
 import styles from "./briz-header.module.css";
 type Panel = "location" | "search" | "menu" | "orders" | "cart" | "account" | "seller" | "download";
 type Props = { variant?: "signed-in" | "download"; searchQuery?: string; categoryContext?: string };
@@ -17,6 +20,10 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const { totalCount, items } = useCart();
+  // Phase 2 prototype: mock account state. Guests see Log in; the mock signed-in user gets the account utilities.
+  const { userState, authOpen } = useNavbarPreview();
+  const authenticated = userState === "authenticated";
+  useNavbarPopoverDismiss();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,18 +43,26 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
     <div className={styles.searchColumn}><NavbarSearch key={`${searchQuery}-${categoryContext}`} location={location} initialQuery={searchQuery} categoryContext={categoryContext} /></div>
     <nav className={styles.actions} aria-label="Main navigation">
       {variant === "signed-in" ? <>
-        <button className={styles.navAction} onClick={() => setPanel("orders")}><Icon name="orders" /><span>My Orders</span></button>
+        {!authenticated && <button className={styles.navAction} onClick={() => setPanel("orders")}><Icon name="orders" /><span>My Orders</span></button>}
         <button className={styles.navAction} onClick={() => setPanel("cart")} aria-label={`Your Cart, ${totalCount} items`}>
           <Icon name="cart" />
           <span>Your Cart{totalCount > 0 ? ` (${totalCount})` : ""}</span>
         </button>
-        <button className={styles.avatar} aria-label="Your account" onClick={() => setPanel("account")}><Image src="/figma/avatar.png" alt="" width={48} height={48} /></button>
+        <NavbarAccount layout="desktop" onOpenPanel={setPanel} />
       </> : <>
-        <button className={styles.secondary} onClick={() => setPanel("seller")}><Icon name="store" />Become a Seller</button>
-        <button className={styles.primary} onClick={() => setPanel("download")}><Icon name="download" />Download App</button>
+        {!authenticated && <>
+          <button className={styles.secondary} onClick={() => setPanel("seller")}><Icon name="store" />Become a Seller</button>
+          <button className={styles.primary} onClick={() => setPanel("download")}><Icon name="download" />Download App</button>
+        </>}
+        <NavbarAccount layout="desktop" onOpenPanel={setPanel} />
       </>}
     </nav>
-    <div className={styles.compactActions}><button aria-label="Open search" onClick={() => setPanel("search")}><Icon name="search-mobile" /></button><button aria-label="Open navigation menu" onClick={() => setPanel("menu")}><Icon name="menu" /></button></div>
+    <div className={styles.compactActions}>
+      <button aria-label="Open search" onClick={() => setPanel("search")}><Icon name="search-mobile" /></button>
+      {/* Signed in, the avatar menu takes over from the hamburger and carries its Orders and Cart entries. */}
+      {!authenticated && <button aria-label="Open navigation menu" onClick={() => setPanel("menu")}><Icon name="menu" /></button>}
+      <div className={styles.accountSlot}><NavbarAccount layout="compact" onOpenPanel={setPanel} /></div>
+    </div>
     <dialog ref={dialog} className={`${styles.dialog} ${panel === "search" ? styles.searchDialog : ""}`} aria-labelledby={titleId} onCancel={() => setPanel(null)} onClose={() => setPanel(null)} onClick={event => { if (event.target === dialog.current) { const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) setPanel(null); } }}>
       {panel !== "search" && (
         <div className={styles.dialogHeading}><h2 id={titleId}>{panel ? titles[panel] : "Briz"}</h2><button aria-label="Close dialog" onClick={() => setPanel(null)}>×</button></div>
@@ -57,7 +72,7 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
       )}
       {panel === "location" && <><p>Choose where you’re shopping from.</p><div className={styles.options}>{locations.map(item => <button key={item} aria-pressed={item === location} onClick={() => { setLocation(item); setPanel(null); }}>{item}{item === location && <span>Selected</span>}</button>)}</div></>}
       {panel === "search" && <NavbarSearch key={`${searchQuery}-${categoryContext}`} location={location} initialQuery={searchQuery} categoryContext={categoryContext} embedded onNavigate={() => setPanel(null)} onClose={() => setPanel(null)} />}
-      {panel === "menu" && <div className={styles.options}>{(variant === "signed-in" ? ["orders", "cart", "account"] as const : ["seller", "download"] as const).map(item => <button key={item} onClick={() => setPanel(item)}>{titles[item]}</button>)}</div>}
+      {panel === "menu" && <div className={styles.options}>{(variant === "signed-in" ? ["orders", "cart"] as const : ["seller", "download"] as const).map(item => <button key={item} onClick={() => setPanel(item)}>{titles[item]}</button>)}</div>}
       {panel === "orders" && <p>You don’t have any orders yet.</p>}
       {panel === "cart" && (
         <div>
@@ -85,5 +100,6 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
       {panel === "seller" && <p>Seller registration will be available once Briz’s seller portal is connected.</p>}
       {panel === "download" && <p>App Store and Google Play links haven’t been configured for this preview yet.</p>}
     </dialog>
+    <AuthDialog open={authOpen} onOpenChange={navbarPreview.setAuthOpen} onComplete={navbarPreview.logIn} />
   </header>;
 }

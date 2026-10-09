@@ -12,18 +12,24 @@ import styles from "./featured-product-card.module.css";
 interface FeaturedProductCardProps {
   product: FeaturedProduct;
   viewMode?: "grid" | "list";
+  /**
+   * When provided, the heart is controlled by the parent instead of the
+   * favourites store: it shows as saved and clicking it calls this.
+   */
+  onRemoveSaved?: () => void;
 }
 
 export function FeaturedProductCard({
   product,
   viewMode = "grid",
+  onRemoveSaved,
 }: FeaturedProductCardProps) {
   const { isFavourited, toggleFavourite } = useFavourites();
   const { addToCart, isItemInCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const isFav = isFavourited(product.id);
+  const isFav = onRemoveSaved ? true : isFavourited(product.id);
   const isInCart = isItemInCart(product.id);
 
   const formattedPrice = `Rs. ${product.price.toLocaleString("en-IN")}`;
@@ -34,6 +40,10 @@ export function FeaturedProductCard({
   const handleFavouriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (onRemoveSaved) {
+      onRemoveSaved();
+      return;
+    }
     toggleFavourite(product.id);
   };
 
@@ -101,8 +111,14 @@ export function FeaturedProductCard({
           type="button"
           onClick={handleFavouriteClick}
           className={`${styles.favouriteButton} ${isFav ? styles.favouriteActive : ""}`}
-          aria-label={isFav ? `Remove ${product.name} from favourites` : `Save ${product.name} to favourites`}
-          title={isFav ? "Saved to favourites" : "Add to favourites"}
+          aria-label={
+            onRemoveSaved
+              ? `Remove product from saved: ${product.name}`
+              : isFav
+              ? `Remove ${product.name} from favourites`
+              : `Save ${product.name} to favourites`
+          }
+          title={onRemoveSaved ? "Remove from saved" : isFav ? "Saved to favourites" : "Add to favourites"}
         >
           <Heart size={18} aria-hidden="true" />
         </button>

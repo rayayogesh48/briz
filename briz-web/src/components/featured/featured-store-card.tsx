@@ -3,15 +3,17 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, ShieldCheck, MapPin, ShoppingBag, ArrowRight, Sparkles, Clock } from "lucide-react";
+import { Star, ShieldCheck, MapPin, ShoppingBag, ArrowRight, Sparkles, Clock, Heart } from "lucide-react";
 import type { FeaturedStore } from "@/data/featured-data";
 import styles from "./featured-store-card.module.css";
 
 interface FeaturedStoreCardProps {
   store: FeaturedStore;
+  /** When provided, the card shows a filled heart that removes the store from Saved. */
+  onRemoveSaved?: () => void;
 }
 
-export function FeaturedStoreCard({ store }: FeaturedStoreCardProps) {
+export function FeaturedStoreCard({ store, onRemoveSaved }: FeaturedStoreCardProps) {
   const [coverError, setCoverError] = useState(false);
   const [logoError, setLogoError] = useState(false);
 
@@ -52,6 +54,18 @@ export function FeaturedStoreCard({ store }: FeaturedStoreCardProps) {
             {store.statusLabel}
           </span>
         </div>
+
+        {onRemoveSaved && (
+          <button
+            type="button"
+            className={styles.savedButton}
+            onClick={onRemoveSaved}
+            aria-label={`Remove store from saved: ${store.name}`}
+            title="Remove from saved"
+          >
+            <Heart size={18} fill="currentColor" aria-hidden="true" />
+          </button>
+        )}
       </div>
 
       {/* Overlapping Store Logo */}

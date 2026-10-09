@@ -146,6 +146,16 @@
     display: none;
 }
 
+.accountSlot {
+    display: flex;
+    align-items: center;
+}
+
+/* Where the Phase 2 account popovers pin as sheets on phones: just under the header. */
+.header {
+    --navbar-sheet-top: 95px;
+}
+
 .header button {
     transition: background-color 150ms ease;
 }
@@ -153,7 +163,7 @@
 .navAction:hover,
 .location:hover,
 .secondary:hover,
-.compactActions button:hover {
+.compactActions > button:hover {
     background: #f8f8f8;
 }
 
@@ -262,7 +272,7 @@
         padding-right: 24px;
     }
 
-    .compactActions button {
+    .compactActions > button {
         width: 44px;
         height: 44px;
         display: grid;
@@ -310,12 +320,14 @@
 
 @media (max-width: 540px) {
     .header {
+        --navbar-sheet-top: 141px;
         height: 133px;
         transition: height 200ms ease;
     }
 
     .header[data-scrolled="true"] {
         height: 68px;
+        --navbar-sheet-top: 76px;
     }
 
     .header[data-scrolled="true"] .location {
