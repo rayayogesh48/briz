@@ -144,30 +144,9 @@ test("RequestProductPanel interactive prototype flow, 12 preview states, ambigui
   assert.equal(fallbackMatches.length, 1);
   assert.equal(fallbackMatches[0].id, "general");
 
-  // 3. Panel header & prototype state switcher
+  // 3. Panel header. Preview states live in the external dev control, not in the panel.
   assert.match(widgetTsx, /Request a product/);
-  assert.match(widgetTsx, /Tell nearby sellers what you’re looking for\./);
-  assert.match(widgetTsx, /Preview states/);
-  assert.match(widgetTsx, /data-testid="request-preview-states"/);
-
-  // All 12 prototype states present in the switcher
-  const requiredStates = [
-    "form-empty",
-    "form-filled",
-    "validation-error",
-    "image-uploading",
-    "image-attached",
-    "matching",
-    "ambiguity",
-    "ambiguity-selected",
-    "review",
-    "submitting",
-    "success",
-    "error",
-  ];
-  for (const s of requiredStates) {
-    assert.ok(widgetTsx.includes(`"${s}"`), `Preview states must include "${s}"`);
-  }
+  assert.doesNotMatch(widgetTsx, /data-testid="request-preview-states"/);
 
   // 4. Form fields & controls
   assert.match(widgetTsx, /data-testid="request-item-name"/);
@@ -188,14 +167,14 @@ test("RequestProductPanel interactive prototype flow, 12 preview states, ambigui
   // 6. Review step
   assert.match(widgetTsx, /Review your request/);
   assert.match(widgetTsx, /data-testid="request-send"/);
-  assert.match(widgetTsx, /Send request/);
-  assert.match(widgetTsx, /Nearby sellers will review your request/);
+  assert.match(widgetTsx, /Submit request/);
+  assert.match(widgetTsx, /Your request will be active for 24 hours\./);
 
   // 7. Success state
-  assert.match(widgetTsx, /Request sent/);
-  assert.match(widgetTsx, /We’ll let you know when local sellers respond with offers\./);
-  assert.match(widgetTsx, /Create another/);
-  assert.match(widgetTsx, /Done/);
+  assert.match(widgetTsx, /Request submitted!/);
+  assert.match(widgetTsx, /We’ll show you the offers as sellers respond\./);
+  assert.match(widgetTsx, /View request/);
+  assert.match(widgetTsx, /My requests/);
 
   // 8. Accessibility & Keyboard controls
   assert.match(widgetTsx, /role="dialog"/);

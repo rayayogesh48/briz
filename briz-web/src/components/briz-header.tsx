@@ -2,9 +2,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { ClipboardList } from "lucide-react";
 import NavbarSearch from "./navbar-search";
 import { useCart } from "@/store/cart-store";
 import { navbarPreview, useNavbarPreview } from "@/store/navbar-preview-store";
+import { useUnreadOffers } from "@/store/requests-store";
+import { badgeLabel } from "./requests/request-data";
 import { AuthDialog } from "./auth/auth-preview";
 import { NavbarAccount, useNavbarPopoverDismiss } from "./navbar-account";
 import styles from "./briz-header.module.css";
@@ -24,6 +27,9 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
   const { userState, authOpen } = useNavbarPreview();
   const authenticated = userState === "authenticated";
   useNavbarPopoverDismiss();
+  // Requests badge: unread seller offers, derived from the shared request data.
+  const unreadOffers = useUnreadOffers();
+  const requestsLabel = unreadOffers > 0 ? `Requests, ${unreadOffers} unread ${unreadOffers === 1 ? "offer" : "offers"}` : "Requests";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,6 +49,10 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
     <div className={styles.searchColumn}><NavbarSearch key={`${searchQuery}-${categoryContext}`} location={location} initialQuery={searchQuery} categoryContext={categoryContext} /></div>
     <nav className={styles.actions} aria-label="Main navigation">
       {variant === "signed-in" ? <>
+        <Link className={styles.navAction} href="/requests" aria-label={requestsLabel}>
+          <span className={styles.badgeAnchor}><ClipboardList size={20} strokeWidth={1.6} aria-hidden="true" />{unreadOffers > 0 && <span className={styles.navBadge} aria-hidden="true">{badgeLabel(unreadOffers)}</span>}</span>
+          <span>Requests</span>
+        </Link>
         {!authenticated && <button className={styles.navAction} onClick={() => setPanel("orders")}><Icon name="orders" /><span>My Orders</span></button>}
         <button className={styles.navAction} onClick={() => setPanel("cart")} aria-label={`Your Cart, ${totalCount} items`}>
           <Icon name="cart" />
@@ -59,6 +69,9 @@ export function BrizHeader({ variant = "signed-in", searchQuery = "", categoryCo
     </nav>
     <div className={styles.compactActions}>
       <button aria-label="Open search" onClick={() => setPanel("search")}><Icon name="search-mobile" /></button>
+      {variant === "signed-in" && <Link className={styles.compactLink} href="/requests" aria-label={requestsLabel}>
+        <span className={styles.badgeAnchor}><ClipboardList size={22} strokeWidth={1.6} aria-hidden="true" />{unreadOffers > 0 && <span className={styles.navBadge} aria-hidden="true">{badgeLabel(unreadOffers)}</span>}</span>
+      </Link>}
       {/* Signed in, the avatar menu takes over from the hamburger and carries its Orders and Cart entries. */}
       {!authenticated && <button aria-label="Open navigation menu" onClick={() => setPanel("menu")}><Icon name="menu" /></button>}
       <div className={styles.accountSlot}><NavbarAccount layout="compact" onOpenPanel={setPanel} /></div>

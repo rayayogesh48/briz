@@ -1,0 +1,696 @@
+/* Profile page (Figma: Briz Web, node 2526:108456). Rows are a 280px intro column
+   beside a 520px content column; they stack on narrow screens. */
+
+.page {
+  --destructive: #dc2626;
+  --input: #e4e4e4;
+  --success: #16a34a;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 120px 48px;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.section {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 24px 0;
+}
+
+.section + .section {
+  border-top: 1px solid var(--border);
+}
+
+.intro {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 280px;
+}
+
+.intro h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.198px;
+}
+
+.intro p,
+.hint {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.fieldError {
+  margin: 0;
+  color: var(--destructive);
+  font-weight: 450;
+}
+
+/* ---------- Profile photo ---------- */
+
+.photo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatar {
+  position: relative;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--muted);
+}
+
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarBusy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--primary);
+}
+
+.photoControls {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.photoActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 20px;
+}
+
+.photoStatus {
+  color: var(--muted-foreground);
+  font-weight: 650;
+}
+
+.linkButton {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 650;
+  letter-spacing: -0.1px;
+}
+
+/* 20px tall text link: widen the tap target without moving the layout. */
+.linkButton::after {
+  content: "";
+  position: absolute;
+  inset: -12px -6px;
+}
+
+.linkMuted {
+  color: var(--muted-foreground);
+}
+
+/* ---------- Personal details ---------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 520px;
+  max-width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.field label,
+.confirmField {
+  font-weight: 650;
+}
+
+.required {
+  color: var(--destructive);
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  height: 40px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--foreground);
+  font-weight: 450;
+  letter-spacing: -0.1px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+input.input:focus-visible {
+  border-color: var(--primary);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(62, 99, 221, 0.18);
+}
+
+input.input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+input.input[aria-invalid="true"]:focus-visible {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
+}
+
+input.input:disabled {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.inputLocked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--muted);
+}
+
+.inputLocked input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--foreground);
+  opacity: 0.6;
+  cursor: default;
+}
+
+.inputLocked:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+.alert svg {
+  flex: none;
+}
+
+/* ---------- Buttons ---------- */
+
+.primaryButton,
+.dangerButton,
+.logoutButton,
+.deleteButton,
+.outlineButton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-weight: 650;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  transition: background-color 150ms ease, border-color 150ms ease, scale 120ms ease;
+}
+
+.primaryButton {
+  background: var(--primary);
+  color: #fff;
+}
+
+.dangerButton {
+  background: var(--destructive);
+  color: #fff;
+}
+
+/* Figma disabled button: --input fill, muted label at 40%. */
+.primaryButton:disabled,
+.dangerButton:disabled {
+  background: var(--input);
+  color: rgba(100, 100, 100, 0.4);
+  cursor: not-allowed;
+}
+
+.logoutButton,
+.outlineButton {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
+}
+
+.outlineButton {
+  height: 36px;
+  border-radius: 8px;
+}
+
+.outlineButton[data-size="large"] {
+  height: 44px;
+  border-radius: 10px;
+}
+
+.outlineButton:disabled {
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+}
+
+.deleteButton {
+  background: transparent;
+  color: var(--destructive);
+}
+
+.primaryButton:not(:disabled):active,
+.dangerButton:not(:disabled):active,
+.logoutButton:active,
+.deleteButton:active,
+.outlineButton:not(:disabled):active {
+  scale: 0.97;
+}
+
+.spinner {
+  flex: none;
+  animation: spin 800ms linear infinite;
+}
+
+/* ---------- Link account ---------- */
+
+.providers {
+  width: 520px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  list-style: none;
+}
+
+.provider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+}
+
+.provider + .provider {
+  border-top: 1px solid var(--border);
+}
+
+.providerIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--background);
+}
+
+.providerText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.providerText .hint {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.providerName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 650;
+}
+
+.badge {
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--secondary-container);
+  color: #18794e;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+/* ---------- Account ---------- */
+
+.accountActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Page-level messages ---------- */
+
+.message {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: 360px;
+  margin: 72px auto 48px;
+  text-align: center;
+}
+
+.messageIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.messageIcon[data-tone="error"] {
+  background: #fef2f2;
+  color: var(--destructive);
+}
+
+.message h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.198px;
+}
+
+.message p {
+  margin: 0 0 14px;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+/* ---------- Skeleton ---------- */
+
+.bone {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ececec 25%, #f5f5f5 37%, #ececec 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.boneBlock {
+  width: 520px;
+  border-radius: 12px;
+}
+
+/* ---------- Dialogs ---------- */
+
+.dialog {
+  width: min(420px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 24px 60px -20px rgba(20, 20, 30, 0.45);
+}
+
+.dialog::backdrop {
+  background: rgba(20, 20, 30, 0.45);
+}
+
+.dialog[open] {
+  animation: dialog-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.dialogBody h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.198px;
+}
+
+.dialogBody > p:not(.alert) {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.confirmField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ---------- Toast ---------- */
+
+.toastRegion {
+  position: fixed;
+  right: 0;
+  bottom: 28px;
+  left: 0;
+  z-index: 950;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #202020;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 550;
+  box-shadow: 0 12px 28px -10px rgba(20, 20, 30, 0.5);
+  animation: toast-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------- Dev preview control: third pill in the corner stack ---------- */
+
+.previewOffset.previewOffset {
+  bottom: 124px;
+}
+
+.previewMenu.previewMenu {
+  width: 280px;
+  max-height: min(64vh, 560px);
+  overflow-y: auto;
+}
+
+.previewGroup + .previewGroup {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.previewLabel {
+  margin: 0;
+  padding: 6px 10px 2px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+@media (hover: hover) {
+  .primaryButton:not(:disabled):hover {
+    background: var(--primary-hover);
+  }
+
+  .dangerButton:not(:disabled):hover {
+    background: #b91c1c;
+  }
+
+  .logoutButton:hover,
+  .outlineButton:not(:disabled):hover {
+    background: #f6f6f6;
+  }
+
+  .deleteButton:hover {
+    background: #fef2f2;
+  }
+
+  .linkButton:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 1100px) {
+  .page {
+    padding: 16px 32px 48px;
+  }
+}
+
+@media (max-width: 900px) {
+  .section {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .intro {
+    width: 100%;
+  }
+
+  .form,
+  .providers,
+  .boneBlock {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 8px 16px 40px;
+  }
+
+  /* 16px text stops iOS zooming the page when a field is focused. */
+  .input,
+  .inputLocked input {
+    font-size: 16px;
+  }
+
+  .primaryButton {
+    width: 100%;
+  }
+
+  .accountActions .logoutButton {
+    flex: 1;
+  }
+
+  /* Phone: the action drops under the provider text so a linked email isn't squeezed. */
+  .provider {
+    flex-wrap: wrap;
+  }
+
+  .provider .outlineButton {
+    width: calc(100% - 54px);
+    margin-left: 54px;
+  }
+
+  .dialog {
+    margin-bottom: 16px;
+  }
+
+  .dialogActions > * {
+    flex: 1;
+    width: auto;
+  }
+
+  .previewOffset.previewOffset {
+    bottom: 120px;
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 50%;
+  }
+
+  to {
+    background-position: 0 50%;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .dialog[open],
+  .bone {
+    animation: none;
+  }
+
+  .spinner {
+    animation-duration: 2s;
+  }
+}

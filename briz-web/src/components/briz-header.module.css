@@ -107,6 +107,53 @@
     white-space: nowrap;
 }
 
+/* Unread-offer count on the Requests icon. Anchored to the icon so it never covers the label. */
+.badgeAnchor {
+    position: relative;
+    display: inline-flex;
+}
+
+.navBadge {
+    position: absolute;
+    top: -6px;
+    left: calc(100% - 8px);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 2px #fff;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    animation: nav-badge-in 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes nav-badge-in {
+    from {
+        scale: 0.4;
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navBadge {
+        animation: none;
+    }
+}
+
+/* Requests is a link, not a panel button: same look as its neighbours. */
+a.navAction,
+.compactLink {
+    color: inherit;
+    text-decoration: none;
+    border-radius: 10px;
+}
+
 .avatar {
     border: 0;
     background: transparent;
@@ -163,6 +210,8 @@
 .navAction:hover,
 .location:hover,
 .secondary:hover,
+.compactLink:hover,
+a.navAction:hover,
 .compactActions > button:hover {
     background: #f8f8f8;
 }
@@ -272,7 +321,8 @@
         padding-right: 24px;
     }
 
-    .compactActions > button {
+    .compactActions > button,
+    .compactLink {
         width: 44px;
         height: 44px;
         display: grid;

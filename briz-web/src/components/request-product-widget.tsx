@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
   motion,
   AnimatePresence,
@@ -16,19 +17,18 @@ import { ShopperLauncherContent } from "./request-shopper-launcher";
 import { useAttentionHint } from "./use-attention-hint";
 import { useCursorLook } from "./use-cursor-look";
 import { money } from "./search-results-model";
+import { requestsStore } from "@/store/requests-store";
 import {
   type RequestFlowStep,
-  type PrototypeState,
   type RequestDraft,
   type CategoryOption,
   CATEGORY_OPTIONS,
   findCategoryMatches,
   submitRequest,
   INITIAL_REQUEST_DRAFT,
-  MOCK_FILLED_DRAFT,
-  MOCK_ATTACHED_IMAGE_DRAFT,
-  MOCK_AMBIGUOUS_DRAFT,
-  MOCK_AMBIGUOUS_SELECTED_DRAFT,
+  REQUEST_UNITS,
+  REQUEST_IMAGE_TYPES,
+  REQUEST_IMAGE_MAX_BYTES,
 } from "./request-flow-data";
 import styles from "./request-product-widget.module.css";
 import panelStyles from "./request-product-panel.module.css";
@@ -172,7 +172,10 @@ export interface RequestProductPanelProps {
   onDraftChange: (updater: (prev: RequestDraft) => RequestDraft) => void;
   className?: string;
   initialStep?: RequestFlowStep;
-  initialPrototypeState?: PrototypeState;
+  /** Preview only: start with the required-field errors showing. */
+  initialShowErrors?: boolean;
+  /** Preview only: the request the success screen links to. */
+  initialCreatedId?: string | null;
 }
 
 /**
@@ -185,22 +188,22 @@ export function RequestProductPanel({
   onDraftChange,
   className,
   initialStep = "form",
-  initialPrototypeState,
+  initialShowErrors = false,
+  initialCreatedId = null,
 }: RequestProductPanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState<RequestFlowStep>(initialStep);
   const [direction, setDirection] = useState(1);
-  const [showValidationError, setShowValidationError] = useState(false);
-  const [isUploadingPreview, setIsUploadingPreview] = useState(false);
-  const [previewDropdownOpen, setPreviewDropdownOpen] = useState(false);
-  const [categoryChoices, setCategoryChoices] = useState<CategoryOption[]>([]);
-  const [activePrototypeState, setActivePrototypeState] = useState<PrototypeState | null>(
-    initialPrototypeState || null
+  const [showValidationError, setShowValidationError] = useState(initialShowErrors);
+  const [imageError, setImageError] = useState("");
+  // The mock request created on submit; the success screen links to it.
+  const [createdId, setCreatedId] = useState<string | null>(initialCreatedId);
+  const [categoryChoices, setCategoryChoices] = useState<CategoryOption[]>(() =>
+    initialStep === "ambiguity" ? findCategoryMatches(draft.itemName) : []
   );
 
   const itemNameInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Focus item name on initial form mount
   useEffect(() => {
@@ -208,22 +211,6 @@ export function RequestProductPanel({
       itemNameInputRef.current.focus();
     }
   }, [step]);
-
-  // Close preview dropdown on outside click
-  useEffect(() => {
-    function handleOutsideClick(e: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setPreviewDropdownOpen(false);
-      }
-    }
-    if (previewDropdownOpen) {
-      document.addEventListener("mousedown", handleOutsideClick);
-      return () => document.removeEventListener("mousedown", handleOutsideClick);
-    }
-  }, [previewDropdownOpen]);
 
   // Global escape key to close widget
   useEffect(() => {
@@ -247,9 +234,12 @@ export function RequestProductPanel({
           setDirection(1);
           setStep("ambiguity");
         } else {
+          // One clear match is used as-is. The "general" fallback means nothing matched,
+          // so no category is claimed and the request goes ahead on its description.
+          const only = matches[0]?.id;
           onDraftChange((prev) => ({
             ...prev,
-            categoryId: matches[0]?.id || "general",
+            categoryId: only && only !== "general" ? only : null,
           }));
           setDirection(1);
           setStep("review");
@@ -266,6 +256,18 @@ export function RequestProductPanel({
       const timer = setTimeout(async () => {
         try {
           await submitRequest(draft);
+          // Mock record only: Active now, expiring 24 hours later, with no offers yet.
+          setCreatedId(
+            requestsStore.create({
+              itemName: draft.itemName.trim(),
+              category: draft.categoryId ? CATEGORY_OPTIONS[draft.categoryId]?.name ?? null : null,
+              quantity: draft.quantity,
+              unit: draft.unit ?? "Pieces",
+              budget: Number(draft.rate),
+              description: draft.details.trim(),
+              image: draft.imagePreviewUrl,
+            })
+          );
           setDirection(1);
           setStep("success");
         } catch {
@@ -277,88 +279,9 @@ export function RequestProductPanel({
     }
   }, [step, draft, shouldReduceMotion]);
 
-  // Preset prototype state switcher
-  const applyPrototypeState = (pState: PrototypeState) => {
-    setActivePrototypeState(pState);
-    setPreviewDropdownOpen(false);
-    setShowValidationError(false);
-    setIsUploadingPreview(false);
-
-    switch (pState) {
-      case "form-empty":
-        onDraftChange(() => ({ ...INITIAL_REQUEST_DRAFT }));
-        setDirection(-1);
-        setStep("form");
-        break;
-      case "form-filled":
-        onDraftChange(() => ({ ...MOCK_FILLED_DRAFT }));
-        setDirection(1);
-        setStep("form");
-        break;
-      case "validation-error":
-        onDraftChange((prev) => ({ ...prev, itemName: "" }));
-        setShowValidationError(true);
-        setDirection(-1);
-        setStep("form");
-        setTimeout(() => itemNameInputRef.current?.focus(), 50);
-        break;
-      case "image-uploading":
-        onDraftChange(() => ({ ...MOCK_FILLED_DRAFT, image: null, imagePreviewUrl: null }));
-        setIsUploadingPreview(true);
-        setDirection(1);
-        setStep("form");
-        break;
-      case "image-attached":
-        onDraftChange(() => ({ ...MOCK_ATTACHED_IMAGE_DRAFT }));
-        setDirection(1);
-        setStep("form");
-        break;
-      case "matching":
-        onDraftChange(() => ({ ...MOCK_AMBIGUOUS_DRAFT }));
-        setDirection(1);
-        setStep("matching");
-        break;
-      case "ambiguity":
-        onDraftChange(() => ({ ...MOCK_AMBIGUOUS_DRAFT }));
-        setCategoryChoices(findCategoryMatches("Apple"));
-        setDirection(1);
-        setStep("ambiguity");
-        break;
-      case "ambiguity-selected":
-        onDraftChange(() => ({ ...MOCK_AMBIGUOUS_SELECTED_DRAFT }));
-        setCategoryChoices(findCategoryMatches("Apple"));
-        setDirection(1);
-        setStep("ambiguity");
-        break;
-      case "review":
-        onDraftChange(() => ({ ...MOCK_ATTACHED_IMAGE_DRAFT }));
-        setDirection(1);
-        setStep("review");
-        break;
-      case "submitting":
-        onDraftChange(() => ({ ...MOCK_ATTACHED_IMAGE_DRAFT }));
-        setDirection(1);
-        setStep("submitting");
-        break;
-      case "success":
-        onDraftChange(() => ({ ...MOCK_ATTACHED_IMAGE_DRAFT }));
-        setDirection(1);
-        setStep("success");
-        break;
-      case "error":
-        onDraftChange(() => ({ ...MOCK_ATTACHED_IMAGE_DRAFT }));
-        setDirection(1);
-        setStep("error");
-        break;
-    }
-  };
-
   // Form input handlers
   const handleItemNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (showValidationError && val.trim().length > 0) {
-      setShowValidationError(false);
-    }
     // If item name changes after ambiguity, clear category selection
     onDraftChange((prev) => ({
       ...prev,
@@ -396,6 +319,15 @@ export function RequestProductPanel({
   };
 
   const handleFileSelect = (file: File) => {
+    if (!REQUEST_IMAGE_TYPES.includes(file.type)) {
+      setImageError("Use a JPG, PNG or WebP image.");
+      return;
+    }
+    if (file.size > REQUEST_IMAGE_MAX_BYTES) {
+      setImageError("That image is larger than 5 MB. Choose a smaller one.");
+      return;
+    }
+    setImageError("");
     const url = URL.createObjectURL(file);
     const sizeInMb = (file.size / (1024 * 1024)).toFixed(1) + " MB";
     onDraftChange((prev) => {
@@ -410,7 +342,6 @@ export function RequestProductPanel({
         imageSize: sizeInMb,
       };
     });
-    setIsUploadingPreview(false);
   };
 
   const handleRemoveImage = () => {
@@ -432,12 +363,31 @@ export function RequestProductPanel({
   };
 
   // Continue from form to matching/category check
+  // Required fields. Errors only show after Continue has been pressed, and each
+  // one clears as soon as its field is fixed.
+  const budgetValid = Number(draft.rate) > 0;
+  const nameError = showValidationError && !draft.itemName.trim();
+  const budgetError = showValidationError && !budgetValid;
+  const detailsError = showValidationError && !draft.details.trim();
+  const quantityLabel = `${draft.quantity} ${
+    draft.quantity === 1 && (draft.unit ?? "Pieces").endsWith("s") ? (draft.unit ?? "Pieces").slice(0, -1) : draft.unit ?? "Pieces"
+  }`;
+  const errorIcon = (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  );
+
   const handleFormContinue = () => {
-    if (!draft.itemName.trim()) {
+    if (!draft.itemName.trim() || !budgetValid || !draft.details.trim()) {
       setShowValidationError(true);
-      itemNameInputRef.current?.focus();
+      const firstInvalid = !draft.itemName.trim() ? "request-item-name" : !budgetValid ? "request-rate" : "request-details";
+      document.getElementById(firstInvalid)?.focus();
       return;
     }
+    setShowValidationError(false);
     setDirection(1);
     setStep("matching");
   };
@@ -445,7 +395,7 @@ export function RequestProductPanel({
   const selectedCategoryName =
     draft.categoryId && CATEGORY_OPTIONS[draft.categoryId]
       ? CATEGORY_OPTIONS[draft.categoryId].name
-      : "General Marketplace";
+      : "Not specified";
 
   return (
     <motion.aside
@@ -465,40 +415,10 @@ export function RequestProductPanel({
           </div>
           <div className={panelStyles.headerTextGroup}>
             <span className={panelStyles.headerTitle}>Request a product</span>
-            <span className={panelStyles.headerSubtitle}>
-              Tell nearby sellers what you’re looking for.
-            </span>
           </div>
         </div>
 
-        <div className={panelStyles.headerControls} ref={dropdownRef}>
-          {/* Prototype State Preview Button */}
-          <button
-            type="button"
-            className={`${panelStyles.previewStatesButton} ${
-              previewDropdownOpen ? panelStyles.previewStatesButtonActive : ""
-            }`}
-            onClick={() => setPreviewDropdownOpen((prev) => !prev)}
-            data-testid="request-preview-states"
-            aria-expanded={previewDropdownOpen}
-            aria-haspopup="listbox"
-            title="Preview all prototype flow states"
-          >
-            <span>Preview states</span>
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-
+        <div className={panelStyles.headerControls}>
           {/* Close / Return to Launcher button */}
           <button
             type="button"
@@ -521,92 +441,9 @@ export function RequestProductPanel({
             </svg>
           </button>
 
-          {/* Preview States Dropdown Popover */}
-          {previewDropdownOpen && (
-            <div className={panelStyles.previewDropdown} role="listbox">
-              <div className={panelStyles.previewDropdownHeader}>
-                <span className={panelStyles.previewDropdownTitle}>Prototype State Preview</span>
-                <span className={panelStyles.previewDropdownBadge}>Mock Tool</span>
-              </div>
-              {[
-                { id: "form-empty", label: "Empty form" },
-                { id: "form-filled", label: "Filled form" },
-                { id: "validation-error", label: "Validation error" },
-                { id: "image-uploading", label: "Uploading photo..." },
-                { id: "image-attached", label: "Photo attached" },
-                { id: "matching", label: "Searching categories..." },
-                { id: "ambiguity", label: "Ambiguous matches (Apple)" },
-                { id: "ambiguity-selected", label: "Ambiguity selected" },
-                { id: "review", label: "Review summary" },
-                { id: "submitting", label: "Submitting request..." },
-                { id: "success", label: "Request sent (Success)" },
-                { id: "error", label: "Submission error" },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  role="option"
-                  aria-selected={activePrototypeState === item.id}
-                  className={`${panelStyles.previewStateItem} ${
-                    activePrototypeState === item.id ? panelStyles.previewStateItemActive : ""
-                  }`}
-                  onClick={() => applyPrototypeState(item.id as PrototypeState)}
-                >
-                  <span>{item.label}</span>
-                  {activePrototypeState === item.id && (
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* ─── Step Progress Ribbon ─── */}
-      <div className={panelStyles.progressRibbon} aria-label="Request progress">
-        <div
-          className={`${panelStyles.progressStep} ${
-            step === "form" || step === "matching" || step === "ambiguity"
-              ? panelStyles.progressStepActive
-              : panelStyles.progressStepDone
-          }`}
-        >
-          <span className={panelStyles.progressDot} />
-          <span>Details</span>
-        </div>
-        <div
-          className={`${panelStyles.progressStep} ${
-            step === "review" || step === "submitting"
-              ? panelStyles.progressStepActive
-              : step === "success"
-              ? panelStyles.progressStepDone
-              : ""
-          }`}
-        >
-          <span className={panelStyles.progressDot} />
-          <span>Review</span>
-        </div>
-        <div
-          className={`${panelStyles.progressStep} ${
-            step === "success" ? panelStyles.progressStepActive : ""
-          }`}
-        >
-          <span className={panelStyles.progressDot} />
-          <span>Sent</span>
-        </div>
-      </div>
-
-      {/* ─── Main Content Area with Motion transition between screens ─── */}
       <div className={panelStyles.bodyArea}>
         <AnimatePresence mode="wait" custom={direction}>
           {/* STEP 1: REQUEST FORM */}
@@ -619,13 +456,6 @@ export function RequestProductPanel({
               animate={shouldReduceMotion ? undefined : "animate"}
               exit={shouldReduceMotion ? undefined : "exit"}
             >
-              <div className={panelStyles.screenHeader}>
-                <h2 className={panelStyles.screenTitle}>What are you looking for?</h2>
-                <p className={panelStyles.screenSubtitle}>
-                  Add a few details so local sellers can understand your request.
-                </p>
-              </div>
-
               <div className={panelStyles.fieldGroup}>
                 {/* 1. Item Name (Required) */}
                 <div className={panelStyles.fieldItem}>
@@ -639,19 +469,19 @@ export function RequestProductPanel({
                     ref={itemNameInputRef}
                     type="text"
                     className={`${panelStyles.textInput} ${
-                      showValidationError ? panelStyles.textInputError : ""
+                      nameError ? panelStyles.textInputError : ""
                     }`}
-                    placeholder="What are you looking for? (e.g. iPhone 15 Pro case)"
+                    placeholder="Enter product name"
                     value={draft.itemName}
                     onChange={handleItemNameChange}
                     data-testid="request-item-name"
                     aria-required="true"
-                    aria-invalid={showValidationError}
+                    aria-invalid={nameError}
                     aria-describedby={
-                      showValidationError ? "request-item-name-error" : undefined
+                      nameError ? "request-item-name-error" : undefined
                     }
                   />
-                  {showValidationError && (
+                  {nameError && (
                     <div
                       id="request-item-name-error"
                       className={panelStyles.inlineErrorMessage}
@@ -674,11 +504,15 @@ export function RequestProductPanel({
                   )}
                 </div>
 
+                <div className={panelStyles.fieldPair}>
                 {/* 2. Quantity (Required) */}
                 <div className={panelStyles.fieldItem}>
                   <label htmlFor="request-quantity" className={panelStyles.fieldLabel}>
-                    <span>Quantity</span>
+                    <span>
+                      Quantity <span className={panelStyles.requiredAsterisk}>*</span>
+                    </span>
                   </label>
+                  <div className={panelStyles.quantityRow}>
                   <div className={panelStyles.quantityStepper}>
                     <button
                       type="button"
@@ -708,15 +542,28 @@ export function RequestProductPanel({
                       +
                     </button>
                   </div>
+                  <select
+                    className={panelStyles.unitSelect}
+                    aria-label="Unit"
+                    value={draft.unit ?? "Pieces"}
+                    onChange={(e) => onDraftChange((prev) => ({ ...prev, unit: e.target.value }))}
+                    data-testid="request-unit"
+                  >
+                    {REQUEST_UNITS.map((unit) => (
+                      <option key={unit}>{unit}</option>
+                    ))}
+                  </select>
+                  </div>
                 </div>
 
                 {/* 3. Rate (Expected Price) */}
                 <div className={panelStyles.fieldItem}>
                   <label htmlFor="request-rate" className={panelStyles.fieldLabel}>
-                    <span>Rate</span>
-                    <span className={panelStyles.optionalBadge}>Optional expected rate</span>
+                    <span>
+                      Budget <span className={panelStyles.requiredAsterisk}>*</span>
+                    </span>
                   </label>
-                  <div className={panelStyles.currencyInputContainer}>
+                  <div className={`${panelStyles.currencyInputContainer} ${budgetError ? panelStyles.textInputError : ""}`}>
                     <span className={panelStyles.currencyPrefix} aria-hidden="true">
                       Rs.
                     </span>
@@ -725,7 +572,10 @@ export function RequestProductPanel({
                       type="text"
                       inputMode="numeric"
                       className={panelStyles.currencyInput}
-                      placeholder="Enter expected rate (e.g. 2,500)"
+                      placeholder="Amount"
+                      aria-required="true"
+                      aria-invalid={budgetError}
+                      aria-describedby={budgetError ? "request-rate-error" : undefined}
                       value={
                         draft.rate ? Number(draft.rate).toLocaleString("en-IN") : ""
                       }
@@ -733,33 +583,47 @@ export function RequestProductPanel({
                       data-testid="request-rate"
                     />
                   </div>
+                  {budgetError && (
+                    <div id="request-rate-error" className={panelStyles.inlineErrorMessage} role="alert">
+                      {errorIcon}
+                      <span>Enter a valid budget.</span>
+                    </div>
+                  )}
+                </div>
                 </div>
 
                 {/* 4. Item Detail */}
                 <div className={panelStyles.fieldItem}>
                   <label htmlFor="request-details" className={panelStyles.fieldLabel}>
-                    <span>Item detail</span>
-                    <span className={panelStyles.optionalBadge}>Optional details</span>
+                    <span>
+                      Item description <span className={panelStyles.requiredAsterisk}>*</span>
+                    </span>
                   </label>
                   <textarea
                     id="request-details"
-                    className={panelStyles.textarea}
-                    placeholder="Add size, brand, color, model, or anything sellers should know."
-                    rows={3}
+                    className={`${panelStyles.textarea} ${detailsError ? panelStyles.textInputError : ""}`}
+                    placeholder="Describe the product, specifications, brand, size, or other important details."
+                    aria-required="true"
+                    aria-invalid={detailsError}
+                    aria-describedby={detailsError ? "request-details-error" : undefined}
+                    rows={2}
                     value={draft.details}
                     onChange={handleDetailsChange}
                     data-testid="request-details"
                   />
-                  <div className={panelStyles.charCounter}>
-                    {draft.details.length} / 500
-                  </div>
+                  {detailsError && (
+                    <div id="request-details-error" className={panelStyles.inlineErrorMessage} role="alert">
+                      {errorIcon}
+                      <span>Add a few details about the product you’re looking for.</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* 5. Attach Image */}
                 <div className={panelStyles.fieldItem}>
                   <span className={panelStyles.fieldLabel}>
-                    <span>Attach image</span>
-                    <span className={panelStyles.optionalBadge}>JPG, PNG, WebP</span>
+                    <span>Photo</span>
+                    <span className={panelStyles.optionalBadge}>Optional</span>
                   </span>
 
                   <input
@@ -770,38 +634,18 @@ export function RequestProductPanel({
                     data-testid="request-image-input"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
+                      e.target.value = "";
                       if (file) handleFileSelect(file);
                     }}
                   />
-
-                  {/* Uploading Simulation Card */}
-                  {isUploadingPreview ? (
-                    <div className={panelStyles.imageUploadingCard}>
-                      <div className={panelStyles.imageUploadingHeader}>
-                        <div className={panelStyles.imageDropzoneIcon}>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                          </svg>
-                        </div>
-                        <div className={panelStyles.imageInfoText}>
-                          <span className={panelStyles.imageFileName}>Uploading photo...</span>
-                          <span className={panelStyles.imageFileSize}>72% completed</span>
-                        </div>
-                      </div>
-                      <div className={panelStyles.uploadProgressBarBg}>
-                        <div className={panelStyles.uploadProgressBarFill} />
-                      </div>
+                  {imageError && (
+                    <div className={panelStyles.inlineErrorMessage} role="alert">
+                      {errorIcon}
+                      <span>{imageError}</span>
                     </div>
-                  ) : draft.imagePreviewUrl ? (
+                  )}
+
+                  {draft.imagePreviewUrl ? (
                     /* Attached Image Card */
                     <div className={panelStyles.imageAttachedCard}>
                       <div className={panelStyles.imageAttachedLeft}>
@@ -990,6 +834,20 @@ export function RequestProductPanel({
                   );
                 })}
               </div>
+
+              {/* No match: carry on with the user's own description instead of forcing a category. */}
+              <button
+                type="button"
+                className={panelStyles.noMatchButton}
+                onClick={() => {
+                  onDraftChange((prev) => ({ ...prev, categoryId: null }));
+                  setDirection(1);
+                  setStep("review");
+                }}
+                data-testid="request-no-category"
+              >
+                None of these — continue with my details
+              </button>
             </motion.div>
           )}
 
@@ -1027,11 +885,11 @@ export function RequestProductPanel({
 
                 <div className={panelStyles.reviewRow}>
                   <span className={panelStyles.reviewRowLabel}>Quantity</span>
-                  <span className={panelStyles.reviewRowValue}>{draft.quantity}</span>
+                  <span className={panelStyles.reviewRowValue}>{quantityLabel}</span>
                 </div>
 
                 <div className={panelStyles.reviewRow}>
-                  <span className={panelStyles.reviewRowLabel}>Expected rate</span>
+                  <span className={panelStyles.reviewRowLabel}>Budget</span>
                   <span className={panelStyles.reviewRowValue}>
                     {draft.rate ? money(Number(draft.rate)) : "Not specified"}
                   </span>
@@ -1067,7 +925,8 @@ export function RequestProductPanel({
               </div>
 
               <p className={panelStyles.reviewDisclaimer}>
-                Nearby sellers will review your request and send you their best offers.
+                <strong>Your request will be active for 24 hours.</strong> Nearby sellers can respond with offers during
+                this time.
               </p>
             </motion.div>
           )}
@@ -1122,13 +981,13 @@ export function RequestProductPanel({
                 </svg>
               </div>
 
-              <h2 className={panelStyles.screenTitle}>Request sent</h2>
+              <h2 className={panelStyles.screenTitle}>Request submitted!</h2>
               <p className={panelStyles.screenSubtitle}>
-                We’ll let you know when local sellers respond with offers.
+                Your request is active. We’ll show you the offers as sellers respond.
               </p>
 
               <div className={panelStyles.successSummaryChip}>
-                {draft.itemName} · {selectedCategoryName} · Qty {draft.quantity}
+                {draft.itemName} · {quantityLabel} · {draft.rate ? money(Number(draft.rate)) : ""}
               </div>
             </motion.div>
           )}
@@ -1204,7 +1063,7 @@ export function RequestProductPanel({
                 setStep("form");
               }}
             >
-              Back
+              Back to request
             </button>
             <button
               type="button"
@@ -1243,35 +1102,35 @@ export function RequestProductPanel({
               }}
               data-testid="request-send"
             >
-              Send request
+              Submit request
             </button>
           </>
         )}
 
-        {/* Step 6: Success footer (Create another + Done) */}
+        {/* Step 6: Success footer. Managing the request happens on the Requests pages. */}
         {step === "success" && (
           <>
-            <button
-              type="button"
+            <Link
+              href="/requests"
               className={panelStyles.secondaryButton}
-              onClick={() => {
-                onDraftChange(() => ({ ...INITIAL_REQUEST_DRAFT }));
-                setDirection(-1);
-                setStep("form");
-              }}
-            >
-              Create another
-            </button>
-            <button
-              type="button"
-              className={panelStyles.primaryButton}
               onClick={() => {
                 onDraftChange(() => ({ ...INITIAL_REQUEST_DRAFT }));
                 onClose();
               }}
             >
-              Done
-            </button>
+              My requests
+            </Link>
+            <Link
+              href={createdId ? `/requests/${createdId}` : "/requests"}
+              className={panelStyles.primaryButton}
+              onClick={() => {
+                onDraftChange(() => ({ ...INITIAL_REQUEST_DRAFT }));
+                onClose();
+              }}
+              data-testid="request-view"
+            >
+              View request
+            </Link>
           </>
         )}
 
@@ -1330,6 +1189,8 @@ export function RequestProductWidget({
   const [scrollExpanded, setExpanded] = useState(initialExpanded);
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [draft, setDraft] = useState<RequestDraft>(INITIAL_REQUEST_DRAFT);
+  // Set only by the development "Preview states" control: which panel step to show, or the launcher's thought bubble.
+  const [preview, setPreview] = useState<RequestWidgetPreview & { key: number }>({ key: 0 });
   const [isScanning, setIsScanning] = useState(false);
   const [hasEntered, setHasEntered] = useState(false);
   // "shopper" and "face" are the two character launchers; they share styles and behaviour.
@@ -1380,18 +1241,26 @@ export function RequestProductWidget({
   // Global event listener for triggering Request Product flow with prefilled query
   useEffect(() => {
     const handleOpenEvent = (e: Event) => {
-      const customEvent = e as CustomEvent<{ itemName?: string; categoryId?: string }>;
+      const customEvent = e as CustomEvent<Partial<RequestDraft>>;
       if (customEvent.detail) {
-        setDraft((prev) => ({
-          ...prev,
-          itemName: customEvent.detail?.itemName !== undefined ? customEvent.detail.itemName : prev.itemName,
-          categoryId: customEvent.detail?.categoryId !== undefined ? customEvent.detail.categoryId : prev.categoryId,
-        }));
+        // Only the fields that were passed change; anything already typed is kept.
+        const defined = Object.fromEntries(Object.entries(customEvent.detail).filter(([, value]) => value !== undefined));
+        setDraft((prev) => ({ ...prev, ...defined }));
       }
       setIsOpen(true);
     };
+    const handlePreviewEvent = (e: Event) => {
+      const detail = (e as CustomEvent<RequestWidgetPreview>).detail ?? {};
+      if (detail.draft) setDraft(detail.draft);
+      setPreview((prev) => ({ ...detail, key: prev.key + 1 }));
+      setIsOpen(Boolean(detail.step));
+    };
     window.addEventListener("briz:open-request", handleOpenEvent);
-    return () => window.removeEventListener("briz:open-request", handleOpenEvent);
+    window.addEventListener("briz:request-preview", handlePreviewEvent);
+    return () => {
+      window.removeEventListener("briz:open-request", handleOpenEvent);
+      window.removeEventListener("briz:request-preview", handlePreviewEvent);
+    };
   }, []);
 
   // The shopper never expands: it stays a lone character and reveals its thought
@@ -1415,8 +1284,11 @@ export function RequestProductWidget({
       <AnimatePresence mode="wait">
         {isOpen ? (
           <RequestProductPanel
-            key="request-panel"
+            key={`request-panel-${preview.key}`}
             layoutId={layoutId}
+            initialStep={preview.step}
+            initialShowErrors={preview.showErrors}
+            initialCreatedId={preview.createdId}
             onClose={handleClose}
             draft={draft}
             onDraftChange={setDraft}
@@ -1444,7 +1316,7 @@ export function RequestProductWidget({
               whileHover={shouldReduceMotion ? undefined : "hover"}
               whileTap={shouldReduceMotion ? { scale: 0.985 } : "tap"}
               onAnimationComplete={() => setHasEntered(true)}
-              data-hint={showHint}
+              data-hint={showHint || Boolean(preview.hint)}
               transition={{
                 layout: {
                   type: "spring",
@@ -1570,7 +1442,24 @@ export function RequestProductWidget({
 }
 
 // Helper function to programmatically open the floating Request a Product widget
-export function openBrizRequest(options?: { itemName?: string; categoryId?: string }) {
+/** What the development "Preview states" control can ask the widget to show. */
+export type RequestWidgetPreview = {
+  /** Open the panel on this step. Leave out to close the panel and show the launcher. */
+  step?: RequestFlowStep;
+  draft?: RequestDraft;
+  showErrors?: boolean;
+  createdId?: string | null;
+  /** Launcher only: show the "Can't find product?" thought bubble. */
+  hint?: boolean;
+};
+
+export function previewBrizRequestWidget(preview: RequestWidgetPreview) {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("briz:request-preview", { detail: preview }));
+  }
+}
+
+export function openBrizRequest(options?: Partial<RequestDraft>) {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent("briz:open-request", { detail: options }));
   }

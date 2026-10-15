@@ -1,6 +1,6 @@
 /**
- * Data structures, category taxonomy, mock matching engine,
- * and prototype preset states for the Briz "Request a Product" flow.
+ * Data structures, category taxonomy and the mock matching engine
+ * for the Briz "Request a Product" flow.
  */
 
 export type RequestFlowStep =
@@ -12,24 +12,12 @@ export type RequestFlowStep =
   | "success"
   | "error";
 
-export type PrototypeState =
-  | "form-empty"
-  | "form-filled"
-  | "validation-error"
-  | "image-uploading"
-  | "image-attached"
-  | "matching"
-  | "ambiguity"
-  | "ambiguity-selected"
-  | "review"
-  | "submitting"
-  | "success"
-  | "error";
-
 export interface RequestDraft {
   itemName: string;
   quantity: number;
-  rate: string; // e.g. "2500"
+  /** Unit for the quantity; "Pieces" when not set. */
+  unit?: string;
+  rate: string; // total budget for the requested quantity, e.g. "2500"
   details: string;
   image: File | null;
   imagePreviewUrl: string | null;
@@ -171,52 +159,7 @@ export const INITIAL_REQUEST_DRAFT: RequestDraft = {
   categoryId: null,
 };
 
-/**
- * Realistic mock data preset for "form-filled" and "review".
- */
-export const MOCK_FILLED_DRAFT: RequestDraft = {
-  itemName: "iPhone 15 Pro case",
-  quantity: 2,
-  rate: "2500",
-  details: "Black silicone case, MagSafe compatible.",
-  image: null,
-  imagePreviewUrl: null,
-  categoryId: "electronics",
-};
-
-/**
- * Realistic mock data preset for "image-attached".
- */
-export const MOCK_ATTACHED_IMAGE_DRAFT: RequestDraft = {
-  ...MOCK_FILLED_DRAFT,
-  imageName: "product-photo.jpg",
-  imageSize: "1.2 MB",
-  imagePreviewUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23eff4ff'/><rect x='28' y='22' width='44' height='56' rx='8' fill='%233e63dd'/><circle cx='50' cy='38' r='7' fill='%23ffffff'/><rect x='44' y='52' width='12' height='16' rx='2' fill='%23ffffff'/></svg>",
-};
-
-/**
- * Preset data for ambiguous demo state.
- */
-export const MOCK_AMBIGUOUS_DRAFT: RequestDraft = {
-  itemName: "Apple",
-  quantity: 1,
-  rate: "",
-  details: "",
-  image: null,
-  imagePreviewUrl: null,
-  categoryId: null,
-};
-
-/**
- * Preset data for ambiguous with category selected.
- */
-export const MOCK_AMBIGUOUS_SELECTED_DRAFT: RequestDraft = {
-  itemName: "Apple",
-  quantity: 1,
-  rate: "",
-  details: "",
-  image: null,
-  imagePreviewUrl: null,
-  categoryId: "electronics",
-};
-
+/** Units offered beside the quantity field. */
+export const REQUEST_UNITS = ["Pieces", "kg", "g", "L", "ml", "Packs", "Boxes"];
+export const REQUEST_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const REQUEST_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
