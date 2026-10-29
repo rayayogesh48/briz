@@ -28,6 +28,8 @@ const FILLED: RequestDraft = {
   imageSize: "0.8 MB",
   categoryId: null,
 };
+/** Fails the content check: the description has a blocked word. */
+const OFFENSIVE: RequestDraft = { ...FILLED, details: "Need it fast, don’t send me stupid low quality seeds." };
 const APPLE: RequestDraft = { ...INITIAL_REQUEST_DRAFT, itemName: "Apple", quantity: 2, rate: "1200", details: "Two fresh red apples." };
 
 type Preset = {
@@ -94,6 +96,8 @@ const GROUPS: { group: string; items: Preset[] }[] = [
       { label: "8. Request review", widget: { step: "review", draft: FILLED } },
       { label: "8b. Submitting", widget: { step: "submitting", draft: FILLED } },
       { label: "9. Submission success", state: submitted, widget: { step: "success", draft: FILLED, createdId: "BR-REQ-011" } },
+      { label: "9b. Offensive content detected", widget: { step: "offensive", draft: OFFENSIVE, flagged: ["details"] } },
+      { label: "9c. Editing flagged words", widget: { step: "form", draft: OFFENSIVE, flagged: ["details"] } },
     ],
   },
   {

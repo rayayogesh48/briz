@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Clock, Inbox, LayoutGrid, List, Plus } from "lucide-react";
+import { Inbox, LayoutGrid, List, Plus } from "lucide-react";
 import { useRef, type KeyboardEvent } from "react";
 import { openBrizRequest } from "@/components/request-product-widget";
 import { requestsStore, useRequestClock, useRequests } from "@/store/requests-store";
-import { formatQuantity, formatRemaining, formatRs, offerCountLabel, offerStats, type BrizRequest, type RequestStatus } from "./request-data";
-import { ListSkeleton, LoadError, MessageState, NewOffersPill, RequestDialogs, RequestThumb, RequestToast, StatusBadge } from "./request-parts";
+import type { BrizRequest, RequestStatus } from "./request-data";
+import { RequestCard, RequestCardSkeleton } from "./request-card";
+import { LoadError, MessageState, RequestDialogs, RequestToast } from "./request-parts";
 import { RequestPreviewControl } from "./request-preview-control";
 import styles from "./requests.module.css";
 
@@ -15,58 +15,6 @@ const TABS: { id: RequestStatus; label: string }[] = [
   { id: "active", label: "Active" },
   { id: "closed", label: "Closed" },
 ];
-
-function RequestCard({ request, now }: { request: BrizRequest; now: number }) {
-  const { count, unread } = offerStats(request);
-  const active = request.status === "active";
-  const href = `/requests/${request.id}`;
-  return (
-    <li className={styles.card}>
-      <div className={styles.cardHead}>
-        <RequestThumb src={request.image} size="small" />
-        <div className={styles.cardMain}>
-          <h2 className={styles.cardTitle}>
-            <Link href={href}>{request.itemName}</Link>
-          </h2>
-          <p className={styles.cardLine}>
-            {formatQuantity(request)} · Budget {formatRs(request.budget)}
-          </p>
-        </div>
-      </div>
-      <div className={styles.cardInfo}>
-        <p className={styles.cardStatus}>
-          <StatusBadge request={request} />
-          {active && (
-            <span className={styles.countdown}>
-              <Clock size={14} aria-hidden="true" />
-              Expires in {formatRemaining(request.expiresAt - now)}
-            </span>
-          )}
-        </p>
-        <p className={styles.cardOffers} data-empty={count === 0}>
-          {offerCountLabel(count)}
-          <NewOffersPill count={unread} />
-        </p>
-      </div>
-      <div className={styles.cardActions}>
-        {active && (
-          <button
-            type="button"
-            className={styles.outlineButton}
-            aria-label={`Cancel request: ${request.itemName}`}
-            onClick={() => requestsStore.openDialog({ type: "cancel", requestId: request.id })}
-          >
-            Cancel
-          </button>
-        )}
-        {/* "View offers" lands on the offers section of the same detail page. */}
-        <Link href={active && count > 0 ? `${href}#offers` : href} className={active && count > 0 ? styles.primaryButton : styles.outlineButton}>
-          {active && count > 0 ? "View offers" : "View request"}
-        </Link>
-      </div>
-    </li>
-  );
-}
 
 export function RequestList() {
   useRequestClock();
@@ -146,7 +94,11 @@ export function RequestList() {
 
       <div id="requests-panel" role="tabpanel" aria-labelledby={`requests-tab-${tab}`} className={styles.panel}>
         {loading ? (
-          <ListSkeleton layout={layout} />
+          <div className={styles.cards} data-layout={layout} aria-busy="true" aria-label="Loading requests">
+            {[0, 1, 2].map((index) => (
+              <RequestCardSkeleton key={index} />
+            ))}
+          </div>
         ) : view === "error" ? (
           <LoadError />
         ) : items.length === 0 ? (
@@ -170,7 +122,22 @@ export function RequestList() {
         ) : (
           <ul className={styles.cards} data-layout={layout}>
             {items.map((request) => (
-              <RequestCard key={request.id} request={request} now={now} />
+              <RequestCard
+                key={request.id}
+                request={request}
+                now={now}
+                onCancel={() => requestsStore.openDialog({ type: "cancel", requestId: request.id })}
+                // Opens the widget with the same details; nothing is created until the user submits it.
+                onRequestAgain={() =>
+                  openBrizRequest({
+                    itemName: request.itemName,
+                    quantity: request.quantity,
+                    unit: request.unit,
+                    rate: String(request.budget),
+                    details: request.description,
+                  })
+                }
+              />
             ))}
           </ul>
         )}

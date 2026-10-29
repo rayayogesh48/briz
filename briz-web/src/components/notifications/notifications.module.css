@@ -1,0 +1,225 @@
+/* A notification row in the navbar panel. */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Row ---------- */
+
+.list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  color: var(--foreground);
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  transition: background-color 150ms ease;
+}
+
+/* Unread rows carry a faint tint as well as the dot, so the state isn't colour of one pixel alone. */
+.item[data-unread="true"] {
+  background: #f6f8ff;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.item[data-type="offer"] .icon {
+  background: var(--primary-container);
+  color: var(--primary-hover);
+}
+
+.item[data-type="reminder"] .icon {
+  background: #fff1e6;
+  color: #ad5700;
+}
+
+.item[data-type="expired"] .icon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.item[data-type="reactivation"] .icon {
+  background: #e9f9ee;
+  color: #18794e;
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.link {
+  color: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+/* The whole row opens the notification. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.link:focus-visible::after {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.item[data-unread="false"] .link {
+  font-weight: 500;
+}
+
+.body {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+/* Promotion image or video poster: a short strip, so a row never turns into a banner. */
+.media {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--muted);
+  aspect-ratio: 3 / 1;
+}
+
+.media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(20, 20, 30, 0.6);
+  color: #fff;
+  transform: translate(-50%, -50%);
+}
+
+/* Buttons sit above the row's link so they get their own clicks. */
+.ctas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.text time {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.item[data-unread="true"] .text time {
+  color: var(--primary-hover);
+  font-weight: 600;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+@media (hover: hover) {
+  .item:hover {
+    background: #f8f8f8;
+  }
+
+  .item[data-unread="true"]:hover {
+    background: #eef2ff;
+  }
+
+  .cta:hover {
+    background: var(--muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}

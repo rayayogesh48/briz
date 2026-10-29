@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BrizFooter } from "@/components/briz-footer";
+import { AccountShell } from "@/components/account/account-shell";
 import { BrizHeader } from "@/components/briz-header";
 import { SavedPage } from "@/components/saved/saved-page";
 
@@ -13,10 +14,12 @@ export default function Saved() {
   return (
     <>
       <BrizHeader />
-      {/* SavedPage reads ?tab= from the URL, which needs a Suspense boundary. */}
-      <Suspense fallback={null}>
-        <SavedPage />
-      </Suspense>
+      <AccountShell>
+        {/* SavedPage reads ?tab= from the URL, which needs a Suspense boundary. */}
+        <Suspense fallback={null}>
+          <SavedPage />
+        </Suspense>
+      </AccountShell>
       <BrizFooter />
     </>
   );

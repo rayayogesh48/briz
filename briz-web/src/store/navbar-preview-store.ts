@@ -1,23 +1,19 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { buildMockNotifications, incomingNotification, type BrizNotification } from "@/components/notifications/notification-data";
 
 // Phase 2 navbar prototype state. In-memory only: there is no real account, no
 // persistence and no network. It lives outside the header component so the mock
 // state survives moving between pages; a refresh resets it to guest.
 
 export type NavbarUserState = "guest" | "authenticated";
-export type NavbarPopover = "notifications" | "profile" | "language" | null;
+/** "language" is the account menu opened with its language list expanded; "more" is the guest More menu. */
+export type NavbarPopover = "notifications" | "profile" | "language" | "more" | null;
 export type NavbarLanguage = "en" | "ne";
 
-export type NavbarNotification = {
-  id: string;
-  type: "offer" | "request" | "promotion";
-  title: string;
-  description: string;
-  time: string;
-  unread: boolean;
-};
+/** Kept as an alias of the shared notification model. */
+export type NavbarNotification = BrizNotification;
 
 export const LANGUAGES: Record<NavbarLanguage, { name: string; short: string }> = {
   en: { name: "English", short: "EN" },
@@ -26,32 +22,7 @@ export const LANGUAGES: Record<NavbarLanguage, { name: string; short: string }> 
 
 export const MOCK_USER = { name: "John Doe", phone: "+977 9812345678", initials: "JD", email: "demo@gmail.com" };
 
-const MOCK_NOTIFICATIONS: NavbarNotification[] = [
-  {
-    id: "offer",
-    type: "offer",
-    title: "New offer received",
-    description: "Everest Electronics sent an offer for your wireless headphones request.",
-    time: "2 min ago",
-    unread: true,
-  },
-  {
-    id: "request",
-    type: "request",
-    title: "Request update",
-    description: "Your iPhone 15 Pro case request received a new response.",
-    time: "1 hr ago",
-    unread: true,
-  },
-  {
-    id: "promotion",
-    type: "promotion",
-    title: "New deals nearby",
-    description: "Explore offers from stores near you.",
-    time: "Yesterday",
-    unread: false,
-  },
-];
+const MOCK_NOTIFICATIONS: NavbarNotification[] = buildMockNotifications(Date.now());
 
 type NavbarPreviewState = {
   userState: NavbarUserState;
@@ -105,9 +76,16 @@ export const navbarPreview = {
   },
   setLanguage: (language: NavbarLanguage) => set({ language }),
   markAllRead: () => set({ notifications: markRead(state.notifications) }),
+  setNotificationRead: (id: string, read: boolean) =>
+    set({ notifications: state.notifications.map((item) => (item.id === id ? { ...item, unread: !read } : item)) }),
+  /** A notification arriving now (preview only); newest first. */
+  receiveNotification: () => set({ notifications: [incomingNotification(Date.now()), ...state.notifications] }),
+  isGuest: () => state.userState === "guest",
   /** Jump straight to a named state — used only by the "Preview navbar" dev control. */
   preview: (patch: Partial<NavbarPreviewState>) => set({ ...INITIAL, language: state.language, ...patch }),
   mockNotifications: (unread: boolean) => (unread ? MOCK_NOTIFICATIONS : markRead(MOCK_NOTIFICATIONS)),
+  /** A fresh mock feed: `count` notifications, the newest `unread` of them unread. */
+  mockNotificationFeed: (count: number, unread: number) => buildMockNotifications(Date.now(), count, unread),
 };
 
 export function useNavbarPreview() {

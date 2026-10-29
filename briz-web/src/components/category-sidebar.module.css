@@ -2,7 +2,7 @@
   width: 260px;
   flex-shrink: 0;
   position: sticky;
-  top: 96px;
+  top: calc(var(--header-height) + 9px);
   max-height: calc(100vh - 110px);
   border-right: 1px solid #ebebeb;
   padding: 0 8px 32px 0;

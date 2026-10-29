@@ -24,6 +24,10 @@ export type SellerOffer = {
   status: OfferStatus;
   /** False until the user has opened the request and seen this offer. */
   isRead: boolean;
+  /** Photo the seller attached of the product they're offering, if any. */
+  image?: string | null;
+  /** How many store reviews the rating is based on, when known. */
+  reviewCount?: number;
 };
 
 export type BrizRequest = {
@@ -77,6 +81,11 @@ export function formatRemaining(ms: number) {
   return `${s}s`;
 }
 
+/** "400 m away" under a kilometre, otherwise "1.2 km away". */
+export const formatDistance = (km: number) => (km < 1 ? `${Math.round(km * 100) * 10} m away` : `${km.toFixed(1)} km away`);
+
+export const formatReviews = (count: number) => `${count.toLocaleString("en-IN")} ${count === 1 ? "review" : "reviews"}`;
+
 export function formatAgo(ms: number) {
   if (ms < MINUTE) return "just now";
   if (ms < HOUR) {
@@ -89,6 +98,13 @@ export function formatAgo(ms: number) {
   }
   const days = Math.floor(ms / (24 * HOUR));
   return `${days} ${days === 1 ? "day" : "days"} ago`;
+}
+
+/** Banner countdown with seconds, "10h : 50m : 18s", as in the Figma request detail. */
+export function formatCountdown(ms: number) {
+  const seconds = Math.max(0, Math.ceil(ms / 1000));
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${Math.floor(seconds / 3600)}h : ${pad(Math.floor((seconds % 3600) / 60))}m : ${pad(seconds % 60)}s`;
 }
 
 export const formatDateTime = (time: number) =>
@@ -111,6 +127,15 @@ export const MATCH_LABEL: Record<OfferMatch, string> = {
 
 export const FULFILMENT_LABEL: Record<Fulfilment, string> = { delivery: "Online delivery", pickup: "Store pickup" };
 
+/** One chip for how the seller hands over the product, worded as in the Figma "Delivery Type State" component. */
+export function fulfilmentSummary(methods: Fulfilment[]): { kind: "pickup" | "delivery" | "both"; label: string } {
+  const delivery = methods.includes("delivery");
+  const pickup = methods.includes("pickup");
+  if (delivery && pickup) return { kind: "both", label: "Online Delivery Available" };
+  if (delivery) return { kind: "delivery", label: "Online Delivery Only" };
+  return { kind: "pickup", label: "Store Pickup Only" };
+}
+
 // ---------- Offer maths ----------
 
 /**
@@ -123,7 +148,8 @@ export function offerStats(request: BrizRequest) {
   return {
     count: prices.length,
     unread: request.offers.filter((offer) => !offer.isRead).length,
-    lowest: prices.length ? Math.min(...prices) : null,
+    // reduce, not Math.min(...prices): spreading a very long list overflows the call stack.
+    lowest: prices.length ? prices.reduce((min, price) => (price < min ? price : min), prices[0]) : null,
     average: prices.length ? prices.reduce((sum, price) => sum + price, 0) / prices.length : null,
   };
 }
@@ -135,10 +161,22 @@ export const unreadOfferCount = (requests: BrizRequest[]) =>
 /** Positive = rupees over budget; zero or negative = within budget. */
 export const overBudget = (offer: SellerOffer, request: BrizRequest) => offer.price - request.budget;
 
+export type BudgetComparison = { kind: "save"; percent: number } | { kind: "on" } | { kind: "over" };
+
+/**
+ * How an offer's total price sits against the request's total budget. Below budget
+ * reports the saving as a whole percent, never "0%": any saving shows at least 1%.
+ */
+export function budgetComparison(offer: SellerOffer, request: BrizRequest): BudgetComparison {
+  const difference = request.budget - offer.price;
+  if (difference > 0) return { kind: "save", percent: Math.max(1, Math.round((difference / request.budget) * 100)) };
+  return difference === 0 ? { kind: "on" } : { kind: "over" };
+}
+
 // ---------- Mock records ----------
 
 // Unsplash photos that roughly match each product; requests without a fitting photo use the placeholder.
-const photo = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=240&h=240&q=70`;
+const photo = (id: string, size = 240) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${size}&h=${size}&q=70`;
 
 export const MOCK_IMAGES = {
   seeds: photo("1574323347407-f5e1ad6d020b"),
@@ -149,6 +187,16 @@ export const MOCK_IMAGES = {
   bottle: "/products/bottle-main.svg",
 };
 const IMG = MOCK_IMAGES;
+
+/** Seller photos are shown full size in the preview, so they're fetched large. */
+export const OFFER_PHOTOS = {
+  seeds: photo("1574323347407-f5e1ad6d020b", 1080),
+  phoneCase: photo("1601784551446-20c9e07cdbdb", 1080),
+  bedsheet: photo("1522771739844-6a9f6d5f14af", 1080),
+  rice: photo("1586201375761-83865001e31c", 1080),
+  backpack: photo("1553062407-98eeb64c6a62", 1080),
+  bottle: "/products/bottle-main.svg",
+};
 
 const LOGO = ["/figma/results/store-imgAvatarImage1.png", "/figma/results/store-imgAvatarImage2.png", "/figma/results/fashion-store-logo.png"];
 
@@ -176,6 +224,8 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Everest Agro Store",
+        image: OFFER_PHOTOS.seeds,
+        reviewCount: 32,
         storeLogo: LOGO[0],
         verified: true,
         rating: 4.8,
@@ -189,6 +239,7 @@ const SEEDS: RequestSeed[] = [
       },
       {
         storeName: "Green Valley Supplies",
+        reviewCount: 18,
         storeLogo: LOGO[1],
         verified: true,
         rating: 4.6,
@@ -238,6 +289,8 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Patan Home Furnishing",
+        image: OFFER_PHOTOS.bedsheet,
+        reviewCount: 54,
         storeLogo: LOGO[2],
         verified: true,
         rating: 4.7,
@@ -264,6 +317,8 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Everest Electronics",
+        image: OFFER_PHOTOS.phoneCase,
+        reviewCount: 120,
         storeLogo: LOGO[1],
         verified: true,
         rating: 4.9,
@@ -300,6 +355,8 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Green Basket",
+        image: OFFER_PHOTOS.rice,
+        reviewCount: 41,
         storeLogo: LOGO[0],
         verified: true,
         rating: 4.7,
@@ -347,6 +404,8 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Urban Essentials Home, Kitchen & Lifestyle Store — Jhamsikhel Branch",
+        image: OFFER_PHOTOS.bottle,
+        reviewCount: 210,
         storeLogo: LOGO[0],
         verified: true,
         rating: 4.9,
@@ -406,6 +465,7 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Patan Home Furnishing",
+        reviewCount: 54,
         storeLogo: LOGO[2],
         verified: true,
         rating: 4.7,
@@ -455,6 +515,8 @@ const SEEDS: RequestSeed[] = [
     offers: [
       {
         storeName: "Vibe Streetwear Nepal",
+        image: OFFER_PHOTOS.backpack,
+        reviewCount: 76,
         storeLogo: LOGO[2],
         verified: true,
         rating: 4.5,

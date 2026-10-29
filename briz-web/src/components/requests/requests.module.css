@@ -1,9 +1,19 @@
 /* Request prototype: create flow, My requests list and request detail. */
 
-.page {
+/* Colour tokens; also on .cards so a request card looks the same outside these pages. */
+.page,
+.cards,
+.offers {
   --destructive: #dc2626;
+  /* Darker than the design system's #16a34a so 12px green text keeps 4.5:1 contrast. */
   --success: #18794e;
   --warning: #ad5700;
+  --info: #2563eb;
+  --info-container: #e9effc;
+  --overlay: rgba(22, 22, 25, 0.6);
+}
+
+.page {
   max-width: 1120px;
   min-height: 60vh;
   margin: 0 auto;
@@ -59,28 +69,16 @@
 .back {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 44px;
-  margin: -8px 0 4px -4px;
+  margin-left: -4px;
   padding: 0 8px 0 4px;
   border: 0;
   border-radius: 8px;
   background: transparent;
   color: var(--muted-foreground);
-  font-weight: 600;
+  font-weight: 650;
   text-decoration: none;
-}
-
-.detailTitle {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-  margin-bottom: 4px;
-}
-
-.detailTitle h1 {
-  margin: 0;
 }
 
 /* ---------- Buttons ---------- */
@@ -654,6 +652,49 @@ textarea.input {
   color: var(--destructive);
 }
 
+/* Waiting for sellers: the request "broadcasts" as rings that grow and fade, staggered.
+   Only transform and opacity animate, so it stays on the compositor. */
+.messageIcon[data-tone="searching"] {
+  position: relative;
+  margin: 16px 0 28px;
+  background: var(--primary-container);
+  color: var(--primary);
+}
+
+.messageIcon[data-tone="searching"] svg {
+  position: relative;
+}
+
+.ripple {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: ripple 3s cubic-bezier(0.2, 0, 0.4, 1) infinite;
+}
+
+.ripple:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.ripple:nth-child(3) {
+  animation-delay: 2s;
+}
+
+@keyframes ripple {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
 .message h2 {
   margin: 0;
   font-size: 18px;
@@ -790,57 +831,61 @@ textarea.input {
 
 .cards {
   display: grid;
+  /* minmax(0, …) lets a long one-line product name truncate instead of widening the card. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Card, top to bottom: product · three facts · status and actions. Same structure in list and grid. */
+/* Each card is a size container: a narrow card (phone, or a grid column) stacks its actions. */
 .card {
+  container: request-card / inline-size;
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 12px;
   padding: 16px;
+  /* Own base type, so the card doesn't depend on the page around it. */
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
   border: 1px solid var(--border);
   border-radius: 16px;
   background: var(--card);
 }
 
-/* Card = product (photo, name, quantity and budget) · state (status, time left, offers) · actions. */
 .cardHead {
   display: flex;
-  flex: 1;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   min-width: 0;
+}
+
+.cardHead .thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
 }
 
 .cardMain {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
 }
 
-.cardInfo {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  gap: 6px;
-  width: 250px;
-}
-
+/* Values from the "Request Card Componnet" Figma component. Long names wrap. */
 .cardTitle {
-  display: -webkit-box;
   margin: 0;
-  overflow: hidden;
   font-size: 16px;
   font-weight: 650;
-  line-height: 22px;
-  letter-spacing: -0.2px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  overflow-wrap: anywhere;
 }
 
 .cardTitle a {
@@ -848,78 +893,142 @@ textarea.input {
   text-decoration: none;
 }
 
-.cardLine,
-.cardStatus,
-.cardOffers {
+/* "Qty: 2 • Rs. 10,000" */
+.cardLine {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 10px;
+  gap: 8px;
   margin: 0;
-}
-
-.cardLine {
   color: var(--muted-foreground);
+  font-size: 14px;
   font-weight: 450;
+  line-height: 20px;
   font-variant-numeric: tabular-nums;
 }
 
-.cardOffers {
-  font-weight: 600;
+.cardLine strong {
+  color: var(--foreground);
+  font-weight: 650;
 }
 
-.cardOffers[data-empty="true"] {
-  color: var(--muted-foreground);
+.cardBudget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--secondary);
+  font-weight: 650;
+}
+
+.cardFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cardFacts li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  font-size: 16px;
   font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardMuted {
+  color: var(--muted-foreground);
+}
+
+/* "1 New Offer": Badge, info colours. */
+.cardNewBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 4px 10px;
+  border-radius: 26px;
+  background: var(--info-container);
+  color: var(--info);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 14px;
+  letter-spacing: 0.12px;
+  white-space: nowrap;
+}
+
+.cardExpiry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Under an hour left: red, as in Figma. */
+.cardExpiry[data-tone="soon"] {
+  color: var(--destructive);
+}
+
+.cardExpiry[data-tone="closed"] {
+  color: var(--muted-foreground);
+}
+
+.cardFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
 }
 
 .cardActions {
   display: flex;
-  flex: none;
   gap: 8px;
 }
 
-/* List view: a fixed-width action column keeps the status column aligned from row to row. */
-@media (min-width: 761px) {
-  .cards[data-layout="list"] .cardActions {
-    justify-content: flex-end;
-    width: 212px;
+/* Button / Size=40px. */
+.cardActions > * {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Narrow card: the actions take the full width under the time. */
+@container request-card (max-width: 520px) {
+  .cardActions {
+    flex: 1 1 100%;
+  }
+
+  .cardActions > * {
+    flex: 1;
   }
 }
 
-/* Grid view: the same three parts, stacked. */
+/* Grid view: the same card in columns; the footer is pushed down so rows line up. */
 .cards[data-layout="grid"] {
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
 }
 
-.cards[data-layout="grid"] .card {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 14px;
-}
-
-.cards[data-layout="grid"] .cardHead {
-  flex: none;
-}
-
-/* Two title lines reserved so rows of cards line up. */
-.cards[data-layout="grid"] .cardTitle {
-  min-height: 44px;
-}
-
-.cards[data-layout="grid"] .cardInfo {
-  width: auto;
-}
-
-.cards[data-layout="grid"] .cardActions {
+.cards[data-layout="grid"] .cardFoot {
   margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-}
-
-.cards[data-layout="grid"] .cardActions > * {
-  flex: 1;
 }
 
 /* "N new offers": accent colour plus an icon and words. */
@@ -938,131 +1047,217 @@ textarea.input {
   white-space: nowrap;
 }
 
-.countdown {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 13px;
-  font-weight: 550;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
 
 /* ---------- Detail ---------- */
 
+/* Figma's 1200px content width (120px gutters at 1440). */
+.page[data-width="wide"] {
+  max-width: 1264px;
+  padding-top: 0;
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 12px 0;
+  list-style: none;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.breadcrumb li + li::before {
+  content: "›";
+  margin-right: 6px;
+  color: var(--muted-foreground);
+}
+
+.breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb [aria-current="page"] {
+  color: var(--foreground);
+}
+
+/* The breadcrumb leads back on wider screens; the back link takes over on phones. */
+.page[data-width="wide"] .back {
+  display: none;
+}
+
+.detailProduct {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+/* Phones only: opens the request card's details. */
+.detailToggle {
+  display: none;
+}
+
+.detailProduct .thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+.detailProduct > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.detailProduct h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 32px;
+  letter-spacing: -0.36px;
+  overflow-wrap: anywhere;
+}
+
+.detailProduct p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.noWrap {
+  white-space: nowrap;
+}
+
 .detailGrid {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: 392px minmax(0, 1fr);
+  gap: 16px;
   align-items: start;
+  padding-top: 8px;
 }
 
 .summaryCard {
   position: sticky;
-  top: 112px;
+  top: calc(var(--header-height) + 24px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 16px;
   background: var(--card);
 }
 
-.summaryTop {
+/* Banner / Variants=default: tertiary (orange) while waiting, red in the last hour, grey once closed. */
+.detailBanner {
+  --banner-bg: #ffedd5;
+  --banner-fg: #f76300;
   display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.summaryTop > div {
-  min-width: 0;
-}
-
-.summaryName {
-  display: -webkit-box;
-  margin: 0 0 2px;
-  overflow: hidden;
-  font-size: 15px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--banner-bg);
+  color: var(--banner-fg);
+  font-size: 16px;
   font-weight: 650;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  line-height: 20px;
+  letter-spacing: -0.1px;
 }
 
-.expiry {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.detailBanner[data-tone="soon"] {
+  --banner-bg: #fee2e2;
+  --banner-fg: var(--destructive);
+}
+
+.detailBanner[data-tone="closed"] {
+  --banner-bg: var(--muted);
+  --banner-fg: var(--muted-foreground);
+}
+
+.detailBanner svg {
+  flex: none;
+}
+
+/* The title keeps its natural width; when space runs out the countdown drops below it. */
+.detailBanner p {
+  flex: 1 0 auto;
+  max-width: calc(100% - 28px);
   margin: 0;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-weight: 650;
+}
+
+.detailCountdown {
+  flex: none;
+  margin-left: auto;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.expiry[data-tone="active"] {
-  background: var(--secondary-container);
-  color: var(--success);
+/* Facts and cancel; collapsible on phones (rows 1fr → 0fr animates the height). */
+.detailMore {
+  display: grid;
+  grid-template-rows: 1fr;
 }
 
-.expiry[data-tone="soon"] {
-  background: #fff4e5;
-  color: var(--warning);
+.detailMore > div {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
 }
 
-.expiry[data-tone="closed"] {
-  background: var(--muted);
-  color: var(--muted-foreground);
+/* Margin, not padding, so the collapsed row can shrink all the way to zero. */
+.detailMore > div > :first-child {
+  margin-top: 16px;
 }
 
 .facts {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
   margin: 0;
+}
+
+.facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.facts > [data-span="full"] {
+  grid-column: 1 / -1;
 }
 
 .facts dt {
   color: var(--muted-foreground);
-  font-size: 12px;
-  font-weight: 450;
-  line-height: 16px;
-  letter-spacing: 0;
+  font-weight: 650;
 }
 
 .facts dd {
   margin: 0;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
   font-variant-numeric: tabular-nums;
-}
-
-.summaryDescription {
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.summaryDescription h2 {
-  margin: 0 0 4px;
-  color: var(--muted-foreground);
-  font-size: 12px;
-  font-weight: 450;
-  line-height: 16px;
-  letter-spacing: 0;
-}
-
-.summaryDescription p {
-  margin: 0;
-  font-weight: 450;
   overflow-wrap: anywhere;
+}
+
+.factText {
   white-space: pre-wrap;
 }
 
 .cancelLink {
   align-self: flex-start;
   min-height: 44px;
-  margin: -8px 0 -12px;
+  margin: -12px 0;
   padding: 0;
   border: 0;
   background: transparent;
@@ -1073,7 +1268,7 @@ textarea.input {
 .offersColumn {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -1090,43 +1285,42 @@ textarea.input {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 16px;
   margin: 0;
+  padding: 20px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--card);
 }
 
 .stats > div {
-  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
-}
-
-.stats > div + div {
-  border-left: 1px solid var(--border);
 }
 
 .stats dt {
   color: var(--muted-foreground);
-  font-size: 12px;
   font-weight: 450;
-  line-height: 16px;
-  letter-spacing: 0;
 }
 
 .stats dd {
-  margin: 2px 0 0;
-  font-size: 18px;
+  margin: 0;
+  font-size: 20px;
   font-weight: 650;
-  line-height: 24px;
-  letter-spacing: -0.2px;
+  line-height: 28px;
+  letter-spacing: -0.36px;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 
 /* ---------- Offer cards ---------- */
 
+/* The list is a size container: the card adapts to the width it gets, not the screen. */
 .offers {
+  container: offers / inline-size;
   display: grid;
   gap: 12px;
   margin: 0;
@@ -1134,20 +1328,21 @@ textarea.input {
   list-style: none;
 }
 
+/* Values from the "Seller Offer Card v2" Figma component. */
 .offer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
-  padding: 16px;
+  padding: 20px;
+  /* Own base type, so the card doesn't depend on the page around it. */
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
   border: 1px solid var(--border);
   border-radius: 16px;
   background: var(--card);
-}
-
-.offer[data-status="interested"] {
-  border-color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary);
 }
 
 .offer[data-status="declined"] {
@@ -1169,8 +1364,8 @@ textarea.input {
   display: grid;
   place-items: center;
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1188,21 +1383,30 @@ textarea.input {
 }
 
 .storeText {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
   min-width: 0;
 }
 
-.storeText h3 {
+.figmaIcon {
+  display: block;
+  flex: none;
+}
+
+.storeName {
   display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  margin: 0 0 2px;
-  font-size: 15px;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
   font-weight: 650;
   line-height: 20px;
 }
 
-.storeText h3 span {
+.storeName span {
   display: -webkit-box;
   min-width: 0;
   overflow: hidden;
@@ -1210,26 +1414,35 @@ textarea.input {
   -webkit-line-clamp: 2;
 }
 
-.verified {
-  flex: none;
-  margin-top: 2px;
-  color: var(--primary);
-}
 
-.storeText p {
+/* Rating · distance: Badge type (12px bold). */
+.storeMeta {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   margin: 0;
-  color: var(--muted-foreground);
-  font-weight: 450;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 14px;
+  letter-spacing: 0.12px;
   white-space: nowrap;
 }
 
-.star {
-  fill: #f5a524;
-  color: #f5a524;
+.rating,
+.distance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
+
+.rating {
+  color: var(--muted-foreground);
+}
+
+.distance {
+  color: var(--success);
+}
+
 
 .offerPrice {
   display: flex;
@@ -1239,37 +1452,71 @@ textarea.input {
 }
 
 .offerPrice strong {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 650;
-  line-height: 26px;
-  letter-spacing: -0.3px;
+  line-height: 24px;
+  letter-spacing: -0.198px;
   font-variant-numeric: tabular-nums;
 }
 
-.offerPrice span {
+.priceLabel {
   color: var(--muted-foreground);
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0;
 }
 
+/* Below budget: the budget crossed out, then the saving in green. */
+.saving {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.saving s {
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.savingPercent,
+.onBudget {
+  color: var(--success);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
+/* Badge: 24px tall, 12px bold. */
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  border-radius: 999px;
+  gap: 4px;
+  height: 24px;
+  padding: 4px 10px;
+  border-radius: 26px;
   font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
-  letter-spacing: 0;
+  font-weight: 750;
+  line-height: 14px;
+  letter-spacing: 0.12px;
   white-space: nowrap;
+}
+
+.chipIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
 }
 
 .chip[data-tone="new"] {
@@ -1277,14 +1524,14 @@ textarea.input {
   color: #fff;
 }
 
-.chip[data-tone="within"] {
-  background: var(--secondary-container);
-  color: var(--success);
+.chip[data-tone="lowest"] {
+  background: var(--info-container);
+  color: var(--info);
 }
 
-.chip[data-tone="over"] {
-  background: #fff4e5;
-  color: var(--warning);
+.chip[data-tone="fulfilment"] {
+  background: var(--secondary-container);
+  color: var(--secondary);
 }
 
 .chip[data-tone="exact"] {
@@ -1305,7 +1552,10 @@ textarea.input {
 
 .offerDescription {
   margin: 0;
+  font-size: 16px;
   font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
   overflow-wrap: anywhere;
 }
 
@@ -1328,13 +1578,41 @@ textarea.input {
 }
 
 .received {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--muted-foreground);
+  font-size: 16px;
   font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
 }
 
 .offerActions {
   display: flex;
   gap: 8px;
+}
+
+/* Card buttons: 40px, 12px corners (Button / Size=40px). */
+.offerActions > button,
+.mutedButton {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.mutedButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 650;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
 }
 
 .offerState {
@@ -1349,6 +1627,608 @@ textarea.input {
 .offerState[data-status="interested"] {
   color: var(--primary-hover);
   font-weight: 650;
+}
+
+.offerMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Seller photo: square, under the note. Thumb on the card, full width in the confirmation. */
+.offerPhoto {
+  position: relative;
+  flex: none;
+  width: 100px;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--muted);
+  cursor: zoom-in;
+}
+
+.offerPhoto[data-variant="full"] {
+  width: 100%;
+  border-radius: 14px;
+}
+
+.offerPhoto > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Small "expand" badge so the photo reads as tappable. */
+.offerPhotoHint {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--overlay);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 14px;
+  backdrop-filter: blur(5px);
+}
+
+.offerPhoto[data-variant="full"] .offerPhotoHint {
+  right: 10px;
+  bottom: 10px;
+  padding: 6px 10px;
+}
+
+.offerPhoto:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--foreground);
+}
+
+/* ---------- Photo preview (lightbox) ---------- */
+
+.dialog.lightbox {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dialog.lightbox[open] {
+  display: grid;
+  place-items: center;
+  animation: lightbox-in 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dialog.lightbox::backdrop {
+  background: rgba(10, 10, 12, 0.88);
+}
+
+.lightboxFigure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 16px;
+}
+
+.lightboxFigure img {
+  display: block;
+  max-width: min(92vw, 960px);
+  max-height: calc(100dvh - 120px);
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.lightboxFigure figcaption {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.lightboxClose {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+/* ---------- Interested confirmation (after the mobile app) ---------- */
+
+/* Doubled class: beats the generic .dialog rules that come later in this file. */
+.dialog.confirmDialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+}
+
+.dialog.confirmDialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A size container: the two-column layout depends on the confirmation's own width. */
+.confirm {
+  container: confirm / inline-size;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.confirmBar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 10px 10px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.confirmBar h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 22px;
+}
+
+/* Focused on open so it's announced; it isn't interactive, so no ring. */
+.confirmBar h2:focus {
+  outline: none;
+}
+
+/* The middle scrolls; the title bar and the actions stay put. */
+.confirmBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  padding: 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.confirmHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.storeLogo[data-size="large"] {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+}
+
+.confirmStore {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.confirmStore .storeName {
+  font-size: 17px;
+  line-height: 22px;
+}
+
+.confirmStore p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--muted-foreground);
+}
+
+.confirmStore p svg {
+  flex: none;
+}
+
+.confirmStore p span {
+  white-space: nowrap;
+}
+
+.confirmDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* The deal: price against budget, then match and fulfilment. */
+.confirmDeal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirmDeal .offerPrice {
+  align-items: flex-start;
+}
+
+.confirmDeal .offerPrice strong {
+  font-size: 26px;
+  line-height: 32px;
+}
+
+.confirmDeal .saving {
+  justify-content: flex-start;
+  font-size: 14px;
+}
+
+/* The request this answers. */
+.confirmRequest {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--background);
+}
+
+.confirmRequestThumb {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--muted);
+  color: #a3a3a3;
+}
+
+.confirmRequestThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.confirmRequestText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.confirmRequestText strong {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmNote,
+.confirmPhoto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.confirmNoteText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.confirmLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+/* Pinned footer: what happens next, then the two choices. */
+.confirmFoot {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 20px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+
+.confirmNext {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.confirmNext svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.confirmActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.softDangerButton,
+.confirmButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 650;
+  transition: background-color 150ms ease, scale 120ms ease;
+}
+
+.softDangerButton {
+  background: #fdecec;
+  color: var(--destructive);
+}
+
+.confirmButton {
+  background: var(--success);
+  color: #fff;
+}
+
+.softDangerButton:active,
+.confirmButton:active {
+  scale: 0.97;
+}
+
+@media (hover: hover) {
+  .offerPhoto:hover > img {
+    scale: 1.04;
+  }
+
+  .iconButton:hover {
+    background: #f4f4f4;
+  }
+
+  .lightboxClose:hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  .softDangerButton:hover {
+    background: #fbdcdc;
+  }
+
+  .confirmButton:hover {
+    background: #146a43;
+  }
+}
+
+/* With a photo the dialog is wider; at 720px+ it splits into two columns, photo on the left, so the offer fits without scrolling. */
+.dialog.confirmDialog.confirmDialogWide {
+  width: min(840px, calc(100vw - 48px));
+}
+
+@container confirm (min-width: 720px) {
+  .confirm[data-photo="true"] .confirmBody {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+  }
+
+  .confirm[data-photo="true"] .confirmPhoto {
+    position: sticky;
+    top: 0;
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .confirm[data-photo="true"] .confirmDetails {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .confirm[data-photo="true"] .confirmActions {
+    width: calc(50% - 12px);
+    margin-left: auto;
+  }
+
+  .confirm[data-photo="true"] .confirmFoot {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .confirm[data-photo="true"] .confirmNext {
+    flex: 1;
+  }
+}
+
+/* Phones: full screen, like the app, with the actions pinned to the bottom. */
+@media (max-width: 640px) {
+  .dialog.confirmDialog {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .confirmBar {
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+
+  .confirmBody {
+    padding: 16px;
+  }
+
+  .confirmFoot {
+    padding: 12px 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .storeLogo[data-size="large"] {
+    width: 48px;
+    height: 48px;
+  }
+
+  .confirmStore .storeName {
+    font-size: 16px;
+    line-height: 21px;
+  }
+
+  .confirmDeal .offerPrice strong {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .offerPhoto > img {
+    transition: none;
+  }
+
+  .dialog.lightbox[open] {
+    animation: none;
+  }
+}
+
+/* Narrow (phone-width) list: price drops under the store, actions fill the width. */
+/* Phone-width cards: same content, tighter. Seller row, then the price on its own line,
+   chips and note, a quieter footer, and full-width 44px buttons for thumbs. */
+@container offers (max-width: 520px) {
+  .offer {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .offerHead {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .offer .storeLogo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .offer .storeText {
+    gap: 4px;
+  }
+
+  /* Card prices only: the confirmation has its own price layout. */
+  .offer .offerPrice {
+    flex: 1 1 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+  }
+
+  .offer .offerPrice strong {
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.3px;
+  }
+
+  .offer .offerPrice .saving {
+    gap: 6px;
+  }
+
+  .offerDescription {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .offer .offerPhoto {
+    width: 80px;
+    border-radius: 10px;
+  }
+
+  .offerFoot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .received {
+    gap: 6px;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0;
+  }
+
+  .received .figmaIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .offerActions > button,
+  .offerFoot > .mutedButton {
+    flex: 1;
+    min-height: 44px;
+  }
 }
 
 .afterOffers {
@@ -1587,6 +2467,7 @@ textarea.input {
 
   .layoutToggle button[aria-pressed="false"]:hover,
   .back:hover,
+  .breadcrumb a:hover,
   .tab:hover {
     color: var(--foreground);
   }
@@ -1611,28 +2492,6 @@ textarea.input {
 
   .summaryCard {
     position: static;
-  }
-}
-
-@media (max-width: 760px) {
-  .card {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .cardInfo {
-    width: auto;
-  }
-
-  .cardActions {
-    flex: 1 1 100%;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-
-  .cardActions > * {
-    flex: 1;
   }
 }
 
@@ -1682,31 +2541,110 @@ textarea.input {
     flex-wrap: wrap;
   }
 
-  .offerHead {
-    flex-wrap: wrap;
-  }
-
-  .offerPrice {
-    flex: 1 1 100%;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 8px;
-  }
-
-  .offerActions {
-    flex: 1 1 100%;
-  }
-
-  .offerActions > * {
-    flex: 1;
+  .stats {
+    padding: 16px;
   }
 
   .stats dd {
     font-size: 16px;
+    line-height: 24px;
   }
 
-  .stats > div {
-    padding: 10px 12px;
+  .page[data-width="wide"] .back {
+    display: inline-flex;
+  }
+
+  .page[data-width="wide"] .breadcrumb {
+    display: none;
+  }
+
+  /* Product and request card merge into one card, collapsed to the product and the timer. */
+  .detailGrid {
+    gap: 0;
+    padding-top: 4px;
+  }
+
+  .detailProduct {
+    position: relative;
+    gap: 12px;
+    margin: 0;
+    padding: 16px 16px 12px;
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+    background: var(--card);
+  }
+
+  .detailProduct .thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+  }
+
+  .detailProduct h1 {
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.2px;
+  }
+
+  .detailToggle {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--muted-foreground);
+  }
+
+  /* The whole product row toggles, not just the chevron. */
+  .detailToggle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .detailToggle svg {
+    transition: rotate 240ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .detailToggle[aria-expanded="true"] svg {
+    rotate: 180deg;
+  }
+
+  .detailToggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .summaryCard {
+    border-top: 0;
+    border-radius: 0 0 16px 16px;
+    padding-top: 0;
+  }
+
+  .detailMore {
+    transition:
+      grid-template-rows 240ms cubic-bezier(0.2, 0, 0, 1),
+      visibility 240ms;
+  }
+
+  .detailMore > div {
+    overflow: hidden;
+  }
+
+  /* Collapsed: hidden from view, focus and screen readers until opened. */
+  .detailGrid[data-expanded="false"] .detailMore {
+    grid-template-rows: 0fr;
+    visibility: hidden;
+  }
+
+  .offersColumn {
+    margin-top: 24px;
   }
 
   .dialog {
@@ -1759,7 +2697,142 @@ textarea.input {
     animation: none;
   }
 
+  /* Still: one faint ring keeps the "sent out" idea without motion. */
+  .ripple {
+    animation: none;
+  }
+
+  .detailMore,
+  .detailToggle svg {
+    transition: none;
+  }
+
+  .ripple:first-child {
+    opacity: 0.25;
+    transform: scale(1.5);
+  }
+
   .spinner {
     animation-duration: 2s;
+  }
+}
+
+/* ---------- Interested in this offer? (after the mobile app, Dev Briz 40016514:3379) ---------- */
+
+/* Doubled class: beats the generic .dialog rules earlier in this file. */
+.dialog.interestDialog {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+
+.interest {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.interestBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -6px -10px -4px 0;
+}
+
+.interestBar h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+}
+
+.interestBar h2:focus {
+  outline: none;
+}
+
+/* The offer card inside the dialog: a touch tighter than in the list. */
+.interest .offer {
+  padding: 16px;
+}
+
+.interestLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-weight: 550;
+}
+
+.interestLabel svg {
+  color: var(--primary);
+}
+
+.interestMessage {
+  width: 100%;
+  min-height: 96px;
+  margin-top: -6px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--muted);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 16px;
+  line-height: 24px;
+  resize: vertical;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.interestMessage:focus-visible {
+  border-color: var(--primary);
+  background: var(--card);
+  outline: none;
+}
+
+.interestSend {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+/* Phones: a bottom sheet, like the app. */
+@media (max-width: 640px) {
+  .dialog.interestDialog {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: calc(100dvh - 24px);
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .dialog.interestDialog[open] {
+    animation: sheet-in 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .interest {
+    padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog.interestDialog[open] {
+    animation: none;
+  }
+
+  .interestMessage {
+    transition: none;
   }
 }

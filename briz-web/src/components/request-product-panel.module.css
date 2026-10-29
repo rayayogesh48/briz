@@ -722,6 +722,18 @@
   color: #e54666;
 }
 
+/* Which fields the content check flagged, under the offensive-content message. */
+.flaggedFields {
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fef2f2;
+  color: #b4233d;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
 /* ─── Sticky Footer ─── */
 .footer {
   padding: 14px 18px;

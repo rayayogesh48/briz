@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BrizFooter } from "@/components/briz-footer";
+import { AccountShell } from "@/components/account/account-shell";
 import { BrizHeader } from "@/components/briz-header";
 import { ProfilePage } from "@/components/profile/profile-page";
 
@@ -12,7 +13,9 @@ export default function Profile() {
   return (
     <>
       <BrizHeader />
-      <ProfilePage />
+      <AccountShell>
+        <ProfilePage />
+      </AccountShell>
       <BrizFooter />
     </>
   );

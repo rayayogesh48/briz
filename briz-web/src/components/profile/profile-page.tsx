@@ -5,7 +5,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronUp, CircleAlert, LoaderCircle, UserRound } from "lucide-react";
+import { ChevronDown, ChevronUp, CircleAlert, LoaderCircle, Trash2, UserRound } from "lucide-react";
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import { navbarPreview, useNavbarPreview } from "@/store/navbar-preview-store";
 import previewStyles from "@/components/navbar-preview-control.module.css";
@@ -25,7 +25,9 @@ type ProfileState = {
   nameError: string;
   save: "idle" | "saving" | "failed";
   links: Record<Provider, LinkStatus>;
-  dialog: "logout" | "delete" | null;
+  /** The Delete account accordion. Closed by default so the destructive action is never one click away. */
+  deleteOpen: boolean;
+  dialog: "delete" | null;
   dialogBusy: boolean;
   deleteError: boolean;
   toast: string;
@@ -54,6 +56,7 @@ const INITIAL: ProfileState = {
   nameError: "",
   save: "idle",
   links: { google: "idle", apple: "idle" },
+  deleteOpen: false,
   dialog: null,
   dialogBusy: false,
   deleteError: false,
@@ -108,11 +111,10 @@ const PRESETS: { group: string; items: { label: string; patch: Partial<ProfileSt
   {
     group: "Account",
     items: [
-      { label: "Log out — confirm", patch: { dialog: "logout" } },
-      { label: "Log out — in progress", patch: { dialog: "logout", dialogBusy: true } },
-      { label: "Delete account — confirm", patch: { dialog: "delete" } },
-      { label: "Delete account — deleting", patch: { dialog: "delete", dialogBusy: true } },
-      { label: "Delete account — failed", patch: { dialog: "delete", deleteError: true } },
+      { label: "Delete account — expanded", patch: { deleteOpen: true } },
+      { label: "Delete account — confirm", patch: { deleteOpen: true, dialog: "delete" } },
+      { label: "Delete account — deleting", patch: { deleteOpen: true, dialog: "delete", dialogBusy: true } },
+      { label: "Delete account — failed", patch: { deleteOpen: true, dialog: "delete", deleteError: true } },
     ],
   },
 ];
@@ -364,7 +366,8 @@ export function ProfilePage() {
     patch({ dialog: null, dialogBusy: false, deleteError: false });
   }
 
-  function confirmLeave() {
+  /** Mock deletion: signs the preview user out and returns home. */
+  function confirmDelete() {
     patch({ dialogBusy: true, deleteError: false });
     later(() => {
       navbarPreview.logOut();
@@ -573,17 +576,30 @@ export function ProfilePage() {
           </ul>
         </Section>
 
-        <Section title="Account" description="Log out, or permanently delete your Briz account.">
-          <div className={styles.accountActions}>
-            <button type="button" className={styles.logoutButton} onClick={() => patch({ dialog: "logout" })}>
-              <Image src="/figma/profile/logout.svg" width={20} height={20} alt="" unoptimized />
-              Logout
-            </button>
-            <button type="button" className={styles.deleteButton} onClick={() => patch({ dialog: "delete" })}>
-              <Image src="/figma/profile/trash.svg" width={20} height={20} alt="" unoptimized />
-              Delete account
-            </button>
-          </div>
+        <Section title="Account" description="Manage what happens to your Briz account.">
+          {/* Native <details>: keyboard and screen-reader support come with it. Log out lives in the avatar menu. */}
+          <details
+            className={styles.dangerZone}
+            open={state.deleteOpen}
+            onToggle={(event) => patch({ deleteOpen: event.currentTarget.open })}
+          >
+            <summary>
+              <span className={styles.dangerSummary}>
+                <strong>Delete account</strong>
+                <span>Permanently remove your account and data</span>
+              </span>
+              <ChevronDown size={18} className={styles.dangerChevron} aria-hidden="true" />
+            </summary>
+            <div className={styles.dangerBody}>
+              <p>
+                Deleting your account removes your profile, saved items, requests and order history. This can&rsquo;t be undone.
+              </p>
+              <button type="button" className={styles.deleteButton} onClick={() => patch({ dialog: "delete" })}>
+                <Trash2 size={18} aria-hidden="true" />
+                Delete account
+              </button>
+            </div>
+          </details>
         </Section>
       </div>
     );
@@ -593,19 +609,6 @@ export function ProfilePage() {
     <main className={styles.page}>
       <h1 className={styles.srOnly}>Profile</h1>
       {content}
-
-      <ConfirmDialog open={state.dialog === "logout"} busy={state.dialogBusy} title="Log out of Briz?" onClose={closeDialog}>
-        <p>You&rsquo;ll need your phone number to log back in.</p>
-        <div className={styles.dialogActions}>
-          <button type="button" className={styles.outlineButton} data-size="large" disabled={state.dialogBusy} onClick={closeDialog}>
-            Cancel
-          </button>
-          <button type="button" className={styles.primaryButton} disabled={state.dialogBusy} onClick={confirmLeave}>
-            {state.dialogBusy && <Spinner />}
-            {state.dialogBusy ? "Logging out…" : "Log out"}
-          </button>
-        </div>
-      </ConfirmDialog>
 
       <ConfirmDialog open={state.dialog === "delete"} busy={state.dialogBusy} title="Delete your Briz account?" onClose={closeDialog}>
         <p>
@@ -637,7 +640,7 @@ export function ProfilePage() {
             type="button"
             className={styles.dangerButton}
             disabled={state.dialogBusy || (!canDelete && !state.deleteError)}
-            onClick={confirmLeave}
+            onClick={confirmDelete}
           >
             {state.dialogBusy && <Spinner />}
             {state.dialogBusy ? "Deleting…" : "Delete account"}

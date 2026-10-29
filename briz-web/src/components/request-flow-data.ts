@@ -10,7 +10,9 @@ export type RequestFlowStep =
   | "review"
   | "submitting"
   | "success"
-  | "error";
+  | "error"
+  /** The request was rejected by the content check. */
+  | "offensive";
 
 export interface RequestDraft {
   itemName: string;
@@ -132,15 +134,44 @@ export function findCategoryMatches(itemName: string): CategoryOption[] {
   return [CATEGORY_OPTIONS["general"]];
 }
 
+/** The text fields the content check reads. */
+export type ModeratedField = "itemName" | "details";
+
+export const MODERATED_FIELD_LABEL: Record<ModeratedField, string> = {
+  itemName: "Item name",
+  details: "Item description",
+};
+
+/**
+ * Placeholder blocklist for the prototype. The real check runs on the server when the
+ * request is submitted; this only lets the flow be tried out.
+ */
+const BLOCKED_WORDS = ["idiot", "stupid", "bastard", "damn", "crap"];
+
+/** Fields whose text contains a blocked word (whole words, any case), in form order. */
+export function findOffensiveFields(data: Pick<RequestDraft, "itemName" | "details">): ModeratedField[] {
+  const pattern = new RegExp(`\\b(${BLOCKED_WORDS.join("|")})\\b`, "i");
+  return (["itemName", "details"] as const).filter((field) => pattern.test(data[field]));
+}
+
+/** Thrown by submitRequest when the content check rejects the request. */
+export class OffensiveContentError extends Error {
+  constructor(public readonly fields: ModeratedField[]) {
+    super("Offensive content detected");
+    this.name = "OffensiveContentError";
+  }
+}
+
 /**
  * Prototype mock submission helper.
- * Simulates network submission delay.
+ * Simulates network submission delay, then the server's content check.
  */
 export async function submitRequest(
-  _data: RequestDraft
+  data: RequestDraft
 ): Promise<{ success: boolean; id: string }> {
-  void _data;
   await new Promise((resolve) => setTimeout(resolve, 800));
+  const flagged = findOffensiveFields(data);
+  if (flagged.length > 0) throw new OffensiveContentError(flagged);
   return { success: true, id: `req_${Date.now()}` };
 }
 

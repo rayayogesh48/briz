@@ -1,3 +1,4 @@
+/* One clean row on desktop: logo, location, a search box that takes the free space, then a few icons. */
 .header {
     position: -webkit-sticky;
     position: sticky;
@@ -5,8 +6,10 @@
     left: 0;
     display: flex;
     align-items: center;
+    gap: 24px;
     width: 100%;
-    height: 87px;
+    height: var(--header-height);
+    padding: 0 32px;
     background: #fff;
     border-bottom: 1px solid var(--border);
     z-index: 100;
@@ -14,18 +17,17 @@
 
 .identity {
     display: flex;
-    align-self: stretch;
-    flex: 1 1 0;
+    align-items: center;
+    gap: 16px;
+    flex: none;
     min-width: 0;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    padding-left: 32px;
-    width: 120px;
     flex-shrink: 0;
-    border-right: 1px solid var(--border);
+    border-radius: 8px;
 }
 
 .logo img {
@@ -34,77 +36,98 @@
     height: 28px;
 }
 
+/* Location: a pin and the area name. Quiet enough not to compete with search. */
 .location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    min-width: 0;
+    padding: 0 10px 0 8px;
     border: 0;
+    border-radius: 10px;
     background: transparent;
-    padding: 0 32px;
+    color: var(--foreground);
+    text-align: left;
+}
+
+.pin {
+    flex: none;
+    color: var(--primary);
+}
+
+.locationText {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 4px;
-    text-align: left;
     min-width: 0;
 }
 
-.location strong {
-    font-size: 18px;
-    font-weight: 650;
-    line-height: 24px;
-    letter-spacing: -.198px;
-    white-space: nowrap;
+.locationLabel {
+    color: var(--muted-foreground);
+    font-size: 12px;
+    font-weight: 450;
+    line-height: 16px;
 }
 
-.location>span {
+.address {
     display: flex;
     align-items: center;
-    gap: 4px;
-    color: var(--muted-foreground);
+    gap: 2px;
+    min-width: 0;
     font-size: 14px;
-    font-weight: 450;
+    font-weight: 600;
     line-height: 20px;
     letter-spacing: -.1px;
 }
 
-.address {
+.addressText {
     max-width: 210px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.address svg {
+    flex: none;
+    color: var(--muted-foreground);
+}
+
 .searchColumn {
-    flex: 0 0 540px;
+    flex: 1 1 auto;
     min-width: 0;
+    max-width: 720px;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
 }
 
 .actions {
     display: flex;
-    flex: 1 1 0;
-    min-width: 0;
-    justify-content: flex-end;
+    flex: none;
     align-items: center;
-    gap: 12px;
-    padding: 0 32px 0 12px;
+    gap: 4px;
 }
 
-.navAction {
+/* Icon-only actions (Requests, Cart, compact Search). The name comes from aria-label; data-tip shows it on hover and focus. */
+.iconAction {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     border: 0;
+    border-radius: 10px;
     background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 48px;
-    padding: 4px 12px;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 450;
-    letter-spacing: .12px;
-    white-space: nowrap;
+    color: var(--foreground);
+}
+
+a.iconAction {
+    text-decoration: none;
+}
+
+.iconAction:hover {
+    background: #f8f8f8;
 }
 
 /* Unread-offer count on the Requests icon. Anchored to the icon so it never covers the label. */
@@ -133,6 +156,11 @@
     animation: nav-badge-in 220ms cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* Cart count: a quantity, not an alert, so it stays neutral. */
+.navBadge[data-tone="neutral"] {
+    background: var(--foreground);
+}
+
 @keyframes nav-badge-in {
     from {
         scale: 0.4;
@@ -146,49 +174,6 @@
     }
 }
 
-/* Requests is a link, not a panel button: same look as its neighbours. */
-a.navAction,
-.compactLink {
-    color: inherit;
-    text-decoration: none;
-    border-radius: 10px;
-}
-
-.avatar {
-    border: 0;
-    background: transparent;
-    padding: 0;
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.primary,
-.secondary {
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 0 12px;
-    height: 44px;
-    border-radius: 10px;
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: -.1px;
-    font-weight: 650;
-    white-space: nowrap;
-    background: #fff;
-}
-
-.primary {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: white;
-}
-
 .compactActions {
     display: none;
 }
@@ -200,24 +185,16 @@ a.navAction,
 
 /* Where the Phase 2 account popovers pin as sheets on phones: just under the header. */
 .header {
-    --navbar-sheet-top: 95px;
+    --navbar-sheet-top: calc(var(--header-height) + 8px);
 }
 
 .header button {
     transition: background-color 150ms ease;
 }
 
-.navAction:hover,
 .location:hover,
-.secondary:hover,
-.compactLink:hover,
-a.navAction:hover,
-.compactActions > button:hover {
+.logo:hover {
     background: #f8f8f8;
-}
-
-.primary:hover {
-    background: #3457ca;
 }
 
 .header img {
@@ -294,6 +271,46 @@ a.navAction:hover,
     color: var(--primary);
 }
 
+/* Search radius, inside the location dialog. */
+.dialog > .radiusLabel {
+    margin: 20px 0 8px;
+    color: var(--foreground);
+    font-weight: 600;
+}
+
+.radius {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.radius button {
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.radius button[aria-checked="true"] {
+    border-color: var(--primary);
+    background: #f0f4ff;
+    color: var(--primary);
+}
+
+.locationDone {
+    width: 100%;
+    height: 44px;
+    margin-top: 20px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 650;
+}
+
 .searchDialog {
     width: min(580px, calc(100vw - 32px));
     max-height: calc(100dvh - 32px);
@@ -301,36 +318,26 @@ a.navAction:hover,
 
 @media (max-width: 1279px) {
 
+    .header {
+        padding: 0 24px;
+    }
+
     .searchColumn,
     .actions {
         display: none;
     }
 
-    .logo {
-        padding: 0 24px;
-        width: auto;
-    }
-
-    .location {
-        padding: 0 24px;
-    }
-
     .compactActions {
         display: flex;
-        gap: 12px;
-        padding-right: 24px;
+        align-items: center;
+        gap: 4px;
+        margin-left: auto;
     }
 
-    .compactActions > button,
-    .compactLink {
+    /* Touch-sized icons on small screens. */
+    .compactActions .iconAction {
         width: 44px;
         height: 44px;
-        display: grid;
-        place-items: center;
-        padding: 0;
-        background: transparent;
-        border: 0;
-        border-radius: 10px;
     }
 }
 
@@ -343,8 +350,6 @@ a.navAction:hover,
         position: absolute;
         left: 16px;
         top: 22px;
-        padding: 0;
-        border: 0;
     }
 
     .logo img {
@@ -352,19 +357,23 @@ a.navAction:hover,
         height: 24px;
     }
 
+    /* Second row: the location, aligned with the logo above it. */
     .location {
         position: absolute;
-        left: 16px;
-        top: 72px;
-        padding: 0;
+        left: 8px;
+        right: 8px;
+        top: 76px;
+    }
+
+    .addressText {
+        max-width: none;
     }
 
     .compactActions {
         position: absolute;
-        right: 16px;
+        right: 12px;
         top: 12px;
-        padding: 0;
-        gap: 8px;
+        gap: 0;
     }
 }
 
@@ -428,16 +437,12 @@ a.navAction:hover,
 }
 
 @media (min-width: 1280px) and (max-width: 1400px) {
-    .location {
-        padding-inline: 16px;
+    .header {
+        gap: 16px;
+        padding: 0 24px;
     }
 
-    .address {
-        max-width: 170px;
-    }
-
-    .actions {
-        padding-right: 16px;
-        gap: 8px;
+    .addressText {
+        max-width: 140px;
     }
 }

@@ -168,6 +168,8 @@ export const requestsStore = {
   openDialog: (dialog: RequestDialog) => set({ dialog }),
   closeDialog: () => set({ dialog: null }),
   clearToast: () => set({ toast: "" }),
+  /** A short confirmation in the toast region. */
+  showToast: (toast: string) => set({ toast }),
   dismissOfferToast: () => set({ offerToast: null }),
   setView: (view: RequestsState["view"]) => set({ view }),
   setLayout: (layout: RequestsState["layout"]) => set({ layout }),

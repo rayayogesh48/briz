@@ -1,5 +1,6 @@
 .root { position: relative; width: 400px; flex-shrink: 0; max-width: 100%; transition: width 300ms cubic-bezier(.22, 1, .36, 1); z-index: 20; color: var(--foreground); }
 .root[data-open="true"], .root[data-filled="true"], .root:focus-within { width: 540px; }
+.fluid, .fluid[data-open="true"], .fluid[data-filled="true"], .fluid:focus-within { width: 100%; }
 .searchHeader { display: flex; align-items: center; gap: 8px; width: 100%; }
 .backButton { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--foreground); cursor: pointer; flex-shrink: 0; transition: background-color 150ms ease; }
 .backButton:hover, .backButton:active { background: #f1f1f1; }

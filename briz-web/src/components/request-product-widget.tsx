@@ -22,7 +22,10 @@ import {
   type RequestFlowStep,
   type RequestDraft,
   type CategoryOption,
+  type ModeratedField,
   CATEGORY_OPTIONS,
+  MODERATED_FIELD_LABEL,
+  OffensiveContentError,
   findCategoryMatches,
   submitRequest,
   INITIAL_REQUEST_DRAFT,
@@ -176,6 +179,8 @@ export interface RequestProductPanelProps {
   initialShowErrors?: boolean;
   /** Preview only: the request the success screen links to. */
   initialCreatedId?: string | null;
+  /** Preview only: fields the content check flagged. */
+  initialFlagged?: ModeratedField[];
 }
 
 /**
@@ -190,12 +195,15 @@ export function RequestProductPanel({
   initialStep = "form",
   initialShowErrors = false,
   initialCreatedId = null,
+  initialFlagged = [],
 }: RequestProductPanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState<RequestFlowStep>(initialStep);
   const [direction, setDirection] = useState(1);
   const [showValidationError, setShowValidationError] = useState(initialShowErrors);
   const [imageError, setImageError] = useState("");
+  // Fields the content check rejected; each clears once the user edits it.
+  const [flagged, setFlagged] = useState<ModeratedField[]>(initialFlagged);
   // The mock request created on submit; the success screen links to it.
   const [createdId, setCreatedId] = useState<string | null>(initialCreatedId);
   const [categoryChoices, setCategoryChoices] = useState<CategoryOption[]>(() =>
@@ -205,11 +213,22 @@ export function RequestProductPanel({
   const itemNameInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Focus item name on initial form mount
+  // Focus item name on initial form mount, or the field "Edit request" sends the user to.
+  const formFocusRef = useRef<ModeratedField>(initialFlagged[0] ?? "itemName");
+  // The form mounts only after the previous step's exit animation, so wait for the field.
   useEffect(() => {
-    if (step === "form" && itemNameInputRef.current) {
-      itemNameInputRef.current.focus();
-    }
+    if (step !== "form") return;
+    const target = formFocusRef.current;
+    formFocusRef.current = "itemName";
+    let frame = 0;
+    let tries = 0;
+    const focusField = () => {
+      const field = target === "details" ? document.getElementById("request-details") : itemNameInputRef.current;
+      if (field) field.focus();
+      else if (tries++ < 60) frame = requestAnimationFrame(focusField);
+    };
+    focusField();
+    return () => cancelAnimationFrame(frame);
   }, [step]);
 
   // Global escape key to close widget
@@ -270,9 +289,14 @@ export function RequestProductPanel({
           );
           setDirection(1);
           setStep("success");
-        } catch {
+        } catch (error) {
           setDirection(1);
-          setStep("error");
+          if (error instanceof OffensiveContentError) {
+            setFlagged(error.fields);
+            setStep("offensive");
+          } else {
+            setStep("error");
+          }
         }
       }, duration);
       return () => clearTimeout(timer);
@@ -282,6 +306,7 @@ export function RequestProductPanel({
   // Form input handlers
   const handleItemNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
+    setFlagged((fields) => fields.filter((field) => field !== "itemName"));
     // If item name changes after ambiguity, clear category selection
     onDraftChange((prev) => ({
       ...prev,
@@ -315,6 +340,7 @@ export function RequestProductPanel({
 
   const handleDetailsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value.slice(0, 500);
+    setFlagged((fields) => fields.filter((field) => field !== "details"));
     onDraftChange((prev) => ({ ...prev, details: text }));
   };
 
@@ -369,6 +395,10 @@ export function RequestProductPanel({
   const nameError = showValidationError && !draft.itemName.trim();
   const budgetError = showValidationError && !budgetValid;
   const detailsError = showValidationError && !draft.details.trim();
+  // Flagged by the content check (only while the field isn't already empty-invalid).
+  const nameFlagged = !nameError && flagged.includes("itemName");
+  const detailsFlagged = !detailsError && flagged.includes("details");
+  const flaggedMessage = "Remove offensive or inappropriate words.";
   const quantityLabel = `${draft.quantity} ${
     draft.quantity === 1 && (draft.unit ?? "Pieces").endsWith("s") ? (draft.unit ?? "Pieces").slice(0, -1) : draft.unit ?? "Pieces"
   }`;
@@ -469,16 +499,16 @@ export function RequestProductPanel({
                     ref={itemNameInputRef}
                     type="text"
                     className={`${panelStyles.textInput} ${
-                      nameError ? panelStyles.textInputError : ""
+                      nameError || nameFlagged ? panelStyles.textInputError : ""
                     }`}
                     placeholder="Enter product name"
                     value={draft.itemName}
                     onChange={handleItemNameChange}
                     data-testid="request-item-name"
                     aria-required="true"
-                    aria-invalid={nameError}
+                    aria-invalid={nameError || nameFlagged}
                     aria-describedby={
-                      nameError ? "request-item-name-error" : undefined
+                      nameError || nameFlagged ? "request-item-name-error" : undefined
                     }
                   />
                   {nameError && (
@@ -500,6 +530,12 @@ export function RequestProductPanel({
                         <line x1="12" y1="16" x2="12.01" y2="16" />
                       </svg>
                       <span>Please enter the item you’re looking for.</span>
+                    </div>
+                  )}
+                  {nameFlagged && (
+                    <div id="request-item-name-error" className={panelStyles.inlineErrorMessage}>
+                      {errorIcon}
+                      <span>{flaggedMessage}</span>
                     </div>
                   )}
                 </div>
@@ -601,11 +637,11 @@ export function RequestProductPanel({
                   </label>
                   <textarea
                     id="request-details"
-                    className={`${panelStyles.textarea} ${detailsError ? panelStyles.textInputError : ""}`}
+                    className={`${panelStyles.textarea} ${detailsError || detailsFlagged ? panelStyles.textInputError : ""}`}
                     placeholder="Describe the product, specifications, brand, size, or other important details."
                     aria-required="true"
-                    aria-invalid={detailsError}
-                    aria-describedby={detailsError ? "request-details-error" : undefined}
+                    aria-invalid={detailsError || detailsFlagged}
+                    aria-describedby={detailsError || detailsFlagged ? "request-details-error" : undefined}
                     rows={2}
                     value={draft.details}
                     onChange={handleDetailsChange}
@@ -615,6 +651,12 @@ export function RequestProductPanel({
                     <div id="request-details-error" className={panelStyles.inlineErrorMessage} role="alert">
                       {errorIcon}
                       <span>Add a few details about the product you’re looking for.</span>
+                    </div>
+                  )}
+                  {detailsFlagged && (
+                    <div id="request-details-error" className={panelStyles.inlineErrorMessage}>
+                      {errorIcon}
+                      <span>{flaggedMessage}</span>
                     </div>
                   )}
                 </div>
@@ -1024,6 +1066,41 @@ export function RequestProductPanel({
               </p>
             </motion.div>
           )}
+
+          {/* STEP 8: CONTENT CHECK REJECTED. Shown in the panel, not as a second dialog on top:
+              the panel is already modal, and fixing the words happens here. */}
+          {step === "offensive" && (
+            <motion.div
+              key="step-offensive"
+              custom={direction}
+              variants={shouldReduceMotion ? undefined : contentStepVariants}
+              initial={shouldReduceMotion ? undefined : "initial"}
+              animate={shouldReduceMotion ? undefined : "animate"}
+              exit={shouldReduceMotion ? undefined : "exit"}
+              className={panelStyles.errorContainer}
+              role="alert"
+              data-testid="request-offensive"
+            >
+              <div className={panelStyles.errorIconBadge} aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3 2.5 20h19L12 3Z" />
+                  <line x1="12" y1="10" x2="12" y2="14" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </div>
+
+              <h2 className={panelStyles.screenTitle}>Offensive Content Detected</h2>
+              <p className={panelStyles.screenSubtitle}>
+                We can’t process this request as it might contain offensive or inappropriate language. Please be
+                mindful of your activity, as it might lead to your account being blocked.
+              </p>
+              {flagged.length > 0 && (
+                <p className={panelStyles.flaggedFields}>
+                  Check: {flagged.map((field) => MODERATED_FIELD_LABEL[field]).join(", ")}
+                </p>
+              )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
@@ -1131,6 +1208,26 @@ export function RequestProductPanel({
             >
               View request
             </Link>
+          </>
+        )}
+
+        {/* Step 8: Content check footer. No "Try again": the same words would be rejected again. */}
+        {step === "offensive" && (
+          <>
+            <button type="button" className={panelStyles.secondaryButton} onClick={onClose}>
+              Close
+            </button>
+            <button
+              type="button"
+              className={panelStyles.primaryButton}
+              onClick={() => {
+                formFocusRef.current = flagged[0] ?? "itemName";
+                setDirection(-1);
+                setStep("form");
+              }}
+            >
+              Edit request
+            </button>
           </>
         )}
 
@@ -1289,6 +1386,7 @@ export function RequestProductWidget({
             initialStep={preview.step}
             initialShowErrors={preview.showErrors}
             initialCreatedId={preview.createdId}
+            initialFlagged={preview.flagged}
             onClose={handleClose}
             draft={draft}
             onDraftChange={setDraft}
@@ -1451,6 +1549,8 @@ export type RequestWidgetPreview = {
   createdId?: string | null;
   /** Launcher only: show the "Can't find product?" thought bubble. */
   hint?: boolean;
+  /** Fields the content check flagged (the offensive-content screen and the form after it). */
+  flagged?: ModeratedField[];
 };
 
 export function previewBrizRequestWidget(preview: RequestWidgetPreview) {

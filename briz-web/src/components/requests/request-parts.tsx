@@ -4,17 +4,20 @@
 
 import Link from "next/link";
 import { BellDot, CircleAlert, Package, X } from "lucide-react";
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { requestsStore, useRequests } from "@/store/requests-store";
 import { formatRs, newOfferLabel, type BrizRequest } from "./request-data";
+import { InterestedMessageDialog } from "./offer-card";
 import styles from "./requests.module.css";
 
 export function RequestThumb({ src, size = "medium" }: { src: string | null; size?: "small" | "medium" | "large" }) {
+  // A link that fails to load falls back to the placeholder instead of a broken-image icon.
+  const [failed, setFailed] = useState<string | null>(null);
   return (
     <span className={styles.thumb} data-size={size}>
-      {src ? (
+      {src && failed !== src ? (
         // eslint-disable-next-line @next/next/no-img-element -- mock asset or a local object URL
-        <img src={src} alt="" />
+        <img src={src} alt="" onError={() => setFailed(src)} />
       ) : (
         <Package size={size === "large" ? 32 : 22} aria-hidden="true" />
       )}
@@ -90,27 +93,20 @@ export function RequestDialogs() {
         </div>
       </ConfirmDialog>
 
-      <ConfirmDialog open={live?.type === "interest" && Boolean(offer)} title="Interested in this offer?" onClose={close}>
-        <p>You&rsquo;ve shown interest in this seller&rsquo;s offer. You can review the offer details before continuing.</p>
-        {offer && (
-          <p className={styles.dialogOffer}>
-            <span>{offer.storeName}</span>
-            <strong>{formatRs(offer.price)}</strong>
-          </p>
-        )}
-        <div className={styles.dialogActions}>
-          <button type="button" className={styles.outlineButton} onClick={close}>
-            Go back
-          </button>
-          <button
-            type="button"
-            className={styles.primaryButton}
-            onClick={() => live && live.type === "interest" && requestsStore.setOfferStatus(live.requestId, live.offerId, "interested")}
-          >
-            Confirm interest
-          </button>
-        </div>
-      </ConfirmDialog>
+      {/* Interested: the mobile app's "Interested in this offer?" sheet. Sending the message marks the offer as interested. */}
+      {request && offer && (
+        <InterestedMessageDialog
+          open={live?.type === "interest"}
+          offer={offer}
+          request={request}
+          onClose={close}
+          onSend={() => {
+            // Messaging isn't connected yet; the offer is marked and the user told it went.
+            requestsStore.setOfferStatus(request.id, offer.id, "interested");
+            requestsStore.showToast(`Message sent to ${offer.storeName}`);
+          }}
+        />
+      )}
 
       <ConfirmDialog open={live?.type === "decline" && Boolean(offer)} title="Decline this offer?" onClose={close}>
         <p>You won&rsquo;t be able to select this offer again in this request.</p>
@@ -165,7 +161,8 @@ export function MessageState({
   children,
 }: {
   icon: ReactNode;
-  tone?: "error";
+  /** "searching": soft ripples from the icon while a request waits for sellers. */
+  tone?: "error" | "searching";
   title: string;
   description: string;
   children?: ReactNode;
@@ -173,6 +170,7 @@ export function MessageState({
   return (
     <div className={styles.message} role={tone === "error" ? "alert" : undefined}>
       <span className={styles.messageIcon} data-tone={tone}>
+        {tone === "searching" && [0, 1, 2].map((ring) => <span key={ring} className={styles.ripple} aria-hidden="true" />)}
         {icon}
       </span>
       <h2>{title}</h2>
@@ -194,28 +192,6 @@ export function LoadError() {
         Try again
       </button>
     </MessageState>
-  );
-}
-
-export function ListSkeleton({ rows = 3, layout = "list" }: { rows?: number; layout?: "list" | "grid" }) {
-  return (
-    <div className={styles.cards} data-layout={layout} aria-busy="true" aria-label="Loading requests">
-      {Array.from({ length: rows }, (_, index) => (
-        <div key={index} className={styles.card}>
-          <div className={styles.cardHead}>
-            <span className={styles.bone} style={{ width: 48, height: 48, borderRadius: 10, flex: "none" }} />
-            <div className={styles.cardMain}>
-              <span className={styles.bone} style={{ width: "70%", height: 18 }} />
-              <span className={styles.bone} style={{ width: "45%", height: 14 }} />
-            </div>
-          </div>
-          <div className={styles.cardInfo}>
-            <span className={styles.bone} style={{ width: 150, height: 16 }} />
-            <span className={styles.bone} style={{ width: 100, height: 16 }} />
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }
 

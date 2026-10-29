@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  /* Desktop navbar height; sticky page elements offset from it. */
+  --header-height: 72px;
   --background: #f9f9f9;
   --card: #ffffff;
   --foreground: #202020;
@@ -42,4 +44,49 @@ button {
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
+}
+
+/* Tooltip for icon-only navbar actions: <button data-tip="Label" aria-label="Label">. Decorative only;
+   the accessible name always comes from aria-label. */
+[data-tip] {
+  position: relative;
+}
+
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  z-index: 20;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #202020;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% -2px;
+  transition: opacity 120ms ease, translate 120ms ease;
+}
+
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  opacity: 1;
+  translate: -50% 0;
+  transition-delay: 300ms;
+}
+
+/* Don't cover an open popover with the tooltip of the button that opened it. */
+[data-tip][aria-expanded="true"]::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tip]::after {
+    transition: none;
+  }
 }
