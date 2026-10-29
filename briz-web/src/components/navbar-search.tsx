@@ -50,13 +50,15 @@ function RequestProduct({ query, location, onClose }: { query: string; location:
 
 export type SearchState = "idle" | "focused" | "loading" | "results" | "filled" | "empty-history" | "no-results";
 
-export default function NavbarSearch({ location, embedded = false, previewState, initialQuery = "", categoryContext, onNavigate, onClose }: {
+export default function NavbarSearch({ location, embedded = false, fluid = false, previewState, initialQuery = "", categoryContext, onNavigate, onClose }: {
   location: string;
   initialQuery?: string;
   categoryContext?: string;
   onNavigate?: () => void;
   onClose?: () => void;
   embedded?: boolean;
+  /** Fill the parent's width instead of the fixed 400px that grows to 540px on focus. */
+  fluid?: boolean;
   previewState?: SearchState;
 }) {
   const router = useRouter();
@@ -132,7 +134,7 @@ export default function NavbarSearch({ location, embedded = false, previewState,
   const expanded = state !== "idle" && state !== "filled";
   function focusSearch() { setInteracted(true); setOpen(true); }
 
-  return <div ref={root} className={`${styles.root} ${embedded ? styles.embedded : ""}`} data-open={expanded} data-filled={Boolean(normalized)} data-preview={Boolean(previewState)} data-state={state} onKeyDown={keyDown} onBlur={event => {
+  return <div ref={root} className={`${styles.root} ${embedded ? styles.embedded : ""} ${fluid ? styles.fluid : ""}`} data-open={expanded} data-filled={Boolean(normalized)} data-preview={Boolean(previewState)} data-state={state} onKeyDown={keyDown} onBlur={event => {
     if (!embedded && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false);
   }}>
     <div className={styles.searchHeader}>

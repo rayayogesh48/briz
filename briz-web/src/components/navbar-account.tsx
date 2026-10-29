@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { Bell, Check, ChevronDown, ChevronRight, Heart, Megaphone, MessageSquareText, Tag } from "lucide-react";
+import { Bell, Check, CheckCheck, ChevronDown, ChevronRight, Download, Ellipsis, Globe, Heart, LogOut, MessageCircle, Package, Store, UserRound, type LucideIcon } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   LANGUAGES,
@@ -11,15 +11,16 @@ import {
   navbarPreview,
   useNavbarPreview,
   type NavbarLanguage,
-  type NavbarNotification,
 } from "@/store/navbar-preview-store";
+import { groupByDay, matchesFilter } from "./notifications/notification-data";
+import { NotificationItem, useNow } from "./notifications/notification-item";
+import notificationStyles from "./notifications/notifications.module.css";
+import { badgeLabel } from "./requests/request-data";
 import styles from "./navbar-account.module.css";
 
-const NOTIFICATION_ICON: Record<NavbarNotification["type"], ReactNode> = {
-  offer: <Tag size={16} aria-hidden="true" />,
-  request: <MessageSquareText size={16} aria-hidden="true" />,
-  promotion: <Megaphone size={16} aria-hidden="true" />,
-};
+/** Header panels the account menu can open. */
+export type NavbarPanel = "orders" | "cart" | "chat" | "seller" | "download";
+
 
 const maskedPhone = `${MOCK_USER.phone.slice(5, 7)}••••••${MOCK_USER.phone.slice(-2)}`;
 
@@ -65,7 +66,7 @@ function Popover({ children, className, label }: { children: ReactNode; classNam
   );
 }
 
-function LanguageOptions({ onPicked }: { onPicked?: () => void }) {
+function LanguageOptions() {
   const { language } = useNavbarPreview();
   return (
     <div role="group" aria-label="Language">
@@ -79,7 +80,6 @@ function LanguageOptions({ onPicked }: { onPicked?: () => void }) {
           lang={code}
           onClick={() => {
             navbarPreview.setLanguage(code);
-            onPicked?.();
           }}
         >
           {LANGUAGES[code].name}
@@ -90,14 +90,26 @@ function LanguageOptions({ onPicked }: { onPicked?: () => void }) {
   );
 }
 
+/**
+ * The bell's panel: every notification (All or Unread only), grouped by day in a
+ * list that scrolls inside the panel. Opening one goes to its page and marks it read.
+ * There is no separate notifications page for now, so nothing links out of here.
+ */
 function NotificationsPanel() {
   const { notifications } = useNavbarPreview();
-  const hasUnread = notifications.some((item) => item.unread);
+  const [filter, setFilter] = useState<"all" | "unread">("all");
+  const now = useNow();
+  const unreadCount = notifications.filter((item) => item.unread).length;
+  const groups = groupByDay(
+    notifications.filter((item) => matchesFilter(item, filter)),
+    now,
+  );
+
   return (
     <Popover label="Notifications" className={styles.notifications}>
       <div className={styles.popoverHead}>
         <h2>Notifications</h2>
-        {hasUnread && (
+        {unreadCount > 0 && (
           <button type="button" className={styles.textAction} onClick={navbarPreview.markAllRead}>
             Mark all as read
           </button>
@@ -114,51 +126,97 @@ function NotificationsPanel() {
         </div>
       ) : (
         <>
-          <ul className={styles.notificationList}>
-            {notifications.map((item) => (
-              <li key={item.id} className={styles.notification} data-unread={item.unread}>
-                <span className={styles.notificationIcon}>{NOTIFICATION_ICON[item.type]}</span>
-                <span className={styles.notificationText}>
-                  <strong>{item.title}</strong>
-                  <span>{item.description}</span>
-                  <time>{item.time}</time>
-                </span>
-                {item.unread && <span className={styles.unreadDot} role="img" aria-label="Unread" />}
-              </li>
-            ))}
-          </ul>
-          <Link href="/notifications" className={styles.popoverFoot} onClick={navbarPreview.closePopover}>
-            View all notifications
-          </Link>
+          <div className={styles.segmented} role="group" aria-label="Show">
+            <button type="button" aria-pressed={filter === "all"} onClick={() => setFilter("all")}>
+              All
+            </button>
+            <button type="button" aria-pressed={filter === "unread"} onClick={() => setFilter("unread")}>
+              Unread{unreadCount > 0 && <span className={styles.segmentCount}>{badgeLabel(unreadCount)}</span>}
+            </button>
+          </div>
+
+          {groups.length === 0 ? (
+            <div className={styles.empty}>
+              <span className={styles.emptyIcon}>
+                <CheckCheck size={20} aria-hidden="true" />
+              </span>
+              <strong>You&rsquo;re all caught up</strong>
+              <p>You&rsquo;ve read every notification.</p>
+            </div>
+          ) : (
+            <div className={styles.notificationScroll}>
+              {groups.map((group) => (
+                <section key={group.label} aria-labelledby={`notifications-${group.label}`}>
+                  <h3 id={`notifications-${group.label}`} className={styles.groupTitle}>
+                    {group.label}
+                  </h3>
+                  <ul className={notificationStyles.list}>
+                    {group.items.map((item) => (
+                      <NotificationItem
+                        key={item.id}
+                        item={item}
+                        now={now}
+                        onOpen={() => {
+                          navbarPreview.setNotificationRead(item.id, true);
+                          navbarPreview.closePopover();
+                        }}
+                      />
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          )}
         </>
       )}
     </Popover>
   );
 }
 
-function ProfileMenu({ compact, onOpenPanel }: { compact: boolean; onOpenPanel: (panel: "orders" | "cart") => void }) {
-  const { language, signedInWithGoogle } = useNavbarPreview();
-  const pathname = usePathname();
-  // Open straight to the language list when the preview control asks for it on small screens.
-  const [languageOpen, setLanguageOpen] = useState(false);
-  const close = navbarPreview.closePopover;
-  const link = (href: string, label: string) => (
-    <Link href={href} role="menuitem" className={styles.menuItem} aria-current={pathname === href ? "page" : undefined} onClick={close}>
-      {label}
-    </Link>
+/** A menu row: leading icon and label, optionally with a value or chevron on the right. */
+function MenuLabel({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode }) {
+  return (
+    <span className={styles.menuLabel}>
+      <Icon size={18} strokeWidth={1.6} aria-hidden="true" />
+      {children}
+    </span>
   );
-  const panel = (name: "orders" | "cart", label: string) => (
+}
+
+function PanelItem({ icon, label, onSelect }: { icon: LucideIcon; label: string; onSelect: () => void }) {
+  return (
     <button
       type="button"
       role="menuitem"
       className={styles.menuItem}
       onClick={() => {
-        close();
-        onOpenPanel(name);
+        navbarPreview.closePopover();
+        onSelect();
       }}
     >
-      {label}
+      <MenuLabel icon={icon}>{label}</MenuLabel>
     </button>
+  );
+}
+
+/**
+ * Everything that isn't one of the navbar's three everyday icons (Requests, Cart,
+ * Notifications), grouped: your account, Briz, preferences, then Log out.
+ */
+function ProfileMenu({ onOpenPanel, languageExpanded }: { onOpenPanel: (panel: NavbarPanel) => void; languageExpanded: boolean }) {
+  const { language, signedInWithGoogle } = useNavbarPreview();
+  const pathname = usePathname();
+  const [languageOpen, setLanguageOpen] = useState(languageExpanded);
+  const link = (href: string, icon: LucideIcon, label: string) => (
+    <Link
+      href={href}
+      role="menuitem"
+      className={styles.menuItem}
+      aria-current={pathname === href ? "page" : undefined}
+      onClick={navbarPreview.closePopover}
+    >
+      <MenuLabel icon={icon}>{label}</MenuLabel>
+    </Link>
   );
 
   return (
@@ -173,16 +231,21 @@ function ProfileMenu({ compact, onOpenPanel }: { compact: boolean; onOpenPanel: 
         </span>
       </div>
 
-      <div className={styles.menuGroup} role="menu" aria-label="Account">
-        {link("/profile", "Profile")}
-        {link("/requests", "My requests")}
-        {link("/saved", "Saved")}
-        {compact && link("/notifications", "Notifications")}
-        {panel("orders", "My orders")}
-        {compact && panel("cart", "Your cart")}
+      {/* Same groups as the account sidebar, labelled so the menu scans at a glance. */}
+      <div className={styles.menuGroup} role="menu" aria-label="Your activity">
+        <p className={styles.groupLabel} aria-hidden="true">
+          Your activity
+        </p>
+        <PanelItem icon={Package} label="My orders" onSelect={() => onOpenPanel("orders")} />
+        {link("/saved", Heart, "Saved")}
+        <PanelItem icon={MessageCircle} label="Chat" onSelect={() => onOpenPanel("chat")} />
       </div>
 
-      <div className={styles.menuGroup} role="menu" aria-label="Preferences">
+      <div className={styles.menuGroup} role="menu" aria-label="Settings">
+        <p className={styles.groupLabel} aria-hidden="true">
+          Settings
+        </p>
+        {link("/profile", UserRound, "Profile")}
         <button
           type="button"
           role="menuitem"
@@ -190,7 +253,7 @@ function ProfileMenu({ compact, onOpenPanel }: { compact: boolean; onOpenPanel: 
           aria-expanded={languageOpen}
           onClick={() => setLanguageOpen(!languageOpen)}
         >
-          Language
+          <MenuLabel icon={Globe}>Language</MenuLabel>
           <span className={styles.menuValue} lang={language}>
             {LANGUAGES[language].name}
             <ChevronRight size={16} data-open={languageOpen} aria-hidden="true" />
@@ -203,83 +266,91 @@ function ProfileMenu({ compact, onOpenPanel }: { compact: boolean; onOpenPanel: 
         )}
       </div>
 
+      <div className={styles.menuGroup} role="menu" aria-label="More from Briz">
+        <p className={styles.groupLabel} aria-hidden="true">
+          More from Briz
+        </p>
+        <PanelItem icon={Store} label="Become a seller" onSelect={() => onOpenPanel("seller")} />
+        <PanelItem icon={Download} label="Download app" onSelect={() => onOpenPanel("download")} />
+      </div>
+
       <div className={styles.menuGroup} role="menu" aria-label="Session">
         <button type="button" role="menuitem" className={styles.menuItem} onClick={navbarPreview.logOut}>
-          Log out
+          <MenuLabel icon={LogOut}>Log out</MenuLabel>
         </button>
       </div>
     </Popover>
   );
 }
 
+/** Guests: the occasional actions (Become a seller, Download app) wait behind one "More" button. */
+function GuestMoreMenu({ onOpenPanel }: { onOpenPanel: (panel: NavbarPanel) => void }) {
+  const { activePopover } = useNavbarPreview();
+  return (
+    <div className={styles.anchor} data-navbar-popover-root>
+      <button
+        type="button"
+        className={`${styles.utility} ${styles.iconOnly}`}
+        data-tip="More"
+        aria-haspopup="menu"
+        aria-expanded={activePopover === "more"}
+        aria-label="More"
+        onClick={() => navbarPreview.togglePopover("more")}
+      >
+        <Ellipsis size={22} strokeWidth={1.75} aria-hidden="true" />
+      </button>
+      {activePopover === "more" && (
+        <Popover label="More" className={styles.more}>
+          <div className={styles.menuGroup} role="menu" aria-label="More from Briz">
+            <PanelItem icon={Store} label="Become a seller" onSelect={() => onOpenPanel("seller")} />
+            <PanelItem icon={Download} label="Download app" onSelect={() => onOpenPanel("download")} />
+          </div>
+        </Popover>
+      )}
+    </div>
+  );
+}
+
 type NavbarAccountProps = {
-  /** "desktop": full utilities. "compact": the small-screen header (bell + avatar, or Log in). */
+  /** "desktop" or "compact" (the small-screen header). Both show the same controls; popovers become sheets on phones. */
   layout: "desktop" | "compact";
   /** Opens one of the header's existing Phase 1 panels. */
-  onOpenPanel: (panel: "orders" | "cart") => void;
+  onOpenPanel: (panel: NavbarPanel) => void;
 };
 
 /**
- * Phase 2 account utilities for the navbar: Log in for guests; language, Saved,
- * notifications and the account menu once the mock user is signed in.
+ * Phase 2 account utilities for the navbar: More and Log in for guests; notifications
+ * and the account menu (which holds everything else) once the mock user is signed in.
  */
 export function NavbarAccount({ layout, onOpenPanel }: NavbarAccountProps) {
-  const { userState, activePopover, language, notifications } = useNavbarPreview();
-  const pathname = usePathname();
-  const compact = layout === "compact";
+  const { userState, activePopover, notifications } = useNavbarPreview();
 
   if (userState === "guest") {
     return (
-      <button type="button" className={styles.login} onClick={navbarPreview.openAuth}>
-        Log in
-      </button>
+      <div className={styles.account} data-layout={layout}>
+        <GuestMoreMenu onOpenPanel={onOpenPanel} />
+        <button type="button" className={styles.login} onClick={navbarPreview.openAuth}>
+          Log in
+        </button>
+      </div>
     );
   }
 
   const hasUnread = notifications.some((item) => item.unread);
-  const onSaved = pathname === "/saved";
 
   return (
     <div className={styles.account} data-layout={layout}>
-      {!compact && (
-        <div className={styles.anchor} data-navbar-popover-root>
-          <button
-            type="button"
-            className={styles.utility}
-            aria-haspopup="menu"
-            aria-expanded={activePopover === "language"}
-            aria-label={`Language: ${LANGUAGES[language].name}`}
-            onClick={() => navbarPreview.togglePopover("language")}
-          >
-            <span lang={language}>{LANGUAGES[language].short}</span>
-            <ChevronDown size={14} aria-hidden="true" />
-          </button>
-          {activePopover === "language" && (
-            <Popover label="Language" className={styles.language}>
-              <p className={styles.popoverLabel}>Language</p>
-              <LanguageOptions onPicked={navbarPreview.closePopover} />
-            </Popover>
-          )}
-        </div>
-      )}
-
-      {!compact && (
-        <Link href="/saved" className={styles.utility} data-active={onSaved} aria-current={onSaved ? "page" : undefined}>
-          <Heart size={18} fill={onSaved ? "currentColor" : "none"} aria-hidden="true" />
-          <span className={styles.utilityLabel}>Saved</span>
-        </Link>
-      )}
-
       <div className={styles.anchor} data-navbar-popover-root>
         <button
           type="button"
           className={`${styles.utility} ${styles.iconOnly}`}
+          data-tip="Notifications"
           aria-haspopup="dialog"
           aria-expanded={activePopover === "notifications"}
           aria-label={hasUnread ? "Notifications, unread updates" : "Notifications"}
           onClick={() => navbarPreview.togglePopover("notifications")}
         >
-          <Bell size={20} aria-hidden="true" />
+          <Bell size={22} strokeWidth={1.75} aria-hidden="true" />
           {hasUnread && <span className={styles.bellDot} aria-hidden="true" />}
         </button>
         {activePopover === "notifications" && <NotificationsPanel />}
@@ -290,7 +361,7 @@ export function NavbarAccount({ layout, onOpenPanel }: NavbarAccountProps) {
           type="button"
           className={styles.avatarTrigger}
           aria-haspopup="menu"
-          aria-expanded={activePopover === "profile"}
+          aria-expanded={activePopover === "profile" || activePopover === "language"}
           aria-label="Open account menu"
           onClick={() => navbarPreview.togglePopover("profile")}
         >
@@ -299,7 +370,10 @@ export function NavbarAccount({ layout, onOpenPanel }: NavbarAccountProps) {
           </span>
           <ChevronDown size={14} aria-hidden="true" />
         </button>
-        {activePopover === "profile" && <ProfileMenu compact={compact} onOpenPanel={onOpenPanel} />}
+        {(activePopover === "profile" || activePopover === "language") && (
+          // Keyed so switching between "profile" and "language" re-applies the expanded state.
+          <ProfileMenu key={activePopover} onOpenPanel={onOpenPanel} languageExpanded={activePopover === "language"} />
+        )}
       </div>
     </div>
   );

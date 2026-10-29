@@ -4,6 +4,7 @@ import "./globals.css";
 import { RequestProductWidget } from "@/components/request-product-widget";
 import { StatePreviewLauncher } from "@/components/system-state/state-preview-launcher";
 import { NavbarPreviewControl } from "@/components/navbar-preview-control";
+import { OfferToast } from "@/components/requests/request-parts";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body suppressHydrationWarning>
         {children}
         <RequestProductWidget variant="sprite" />
+        <OfferToast />
         <StatePreviewLauncher />
         <NavbarPreviewControl />
       </body>

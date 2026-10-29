@@ -108,8 +108,7 @@ test("desktop margins consistently align at 120px, navbar has 32px padding, and 
   assert.match(headerCss, /\.header\s*\{[^}]*top:\s*0/);
 
   // Navbar has 32px padding on both sides as previous
-  assert.match(headerCss, /\.logo\s*\{[^}]*padding-left:\s*32px/);
-  assert.match(headerCss, /\.actions\s*\{[^}]*padding:\s*0\s+32px\s+0\s+12px/);
+  assert.match(headerCss, /\.header\s*\{[^}]*padding:\s*0\s+32px/);
 
   // Search results body has 120px left/right padding and full width
   assert.match(searchCss, /\.page\s*\{[^}]*padding:\s*0\s+120px\s+48px/);
@@ -371,7 +370,7 @@ test("home page contains only redirection buttons to specific pages and componen
   assert.match(homeTsx, /\/store\/s6/);
 
   // Redirection button to component documentation page
-  assert.match(homeTsx, /href="\/components\/product-category-list"/);
+  assert.match(homeTsx, /href[=:] ?"\/components\/product-category-list"/);
   assert.match(homeTsx, /View Component Docs & Preview/);
 
   // Dedicated component documentation page exists with title and description

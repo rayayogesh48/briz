@@ -1,0 +1,2838 @@
+/* Request prototype: create flow, My requests list and request detail. */
+
+/* Colour tokens; also on .cards so a request card looks the same outside these pages. */
+.page,
+.cards,
+.offers {
+  --destructive: #dc2626;
+  /* Darker than the design system's #16a34a so 12px green text keeps 4.5:1 contrast. */
+  --success: #18794e;
+  --warning: #ad5700;
+  --info: #2563eb;
+  --info-container: #e9effc;
+  --overlay: rgba(22, 22, 25, 0.6);
+}
+
+.page {
+  max-width: 1120px;
+  min-height: 60vh;
+  margin: 0 auto;
+  padding: 24px 32px 56px;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.narrow {
+  max-width: 704px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Page header ---------- */
+
+.pageHeader {
+  margin-bottom: 20px;
+}
+
+.pageHeader h1 {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 650;
+  line-height: 36px;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.pageHeader p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.listHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-left: -4px;
+  padding: 0 8px 0 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+/* ---------- Buttons ---------- */
+
+.primaryButton,
+.outlineButton,
+.dangerButton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-weight: 650;
+  letter-spacing: -0.1px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease, border-color 150ms ease, scale 120ms ease;
+}
+
+.primaryButton {
+  background: var(--primary);
+  color: #fff;
+}
+
+.dangerButton {
+  background: var(--destructive);
+  color: #fff;
+}
+
+.outlineButton {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
+}
+
+.outlineButton[data-tone="danger"] {
+  color: var(--destructive);
+}
+
+.primaryButton:disabled,
+.outlineButton:disabled {
+  background: #e4e4e4;
+  border-color: transparent;
+  color: rgba(100, 100, 100, 0.5);
+  cursor: not-allowed;
+}
+
+.primaryButton:not(:disabled):active,
+.outlineButton:not(:disabled):active,
+.dangerButton:active {
+  scale: 0.97;
+}
+
+.linkButton {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 650;
+}
+
+/* Text-sized link: widen the tap target without moving the layout. */
+.linkButton::after {
+  content: "";
+  position: absolute;
+  inset: -12px -8px;
+}
+
+.linkMuted {
+  color: var(--muted-foreground);
+}
+
+.spinner {
+  flex: none;
+  animation: spin 800ms linear infinite;
+}
+
+/* ---------- Form ---------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field label,
+.label {
+  font-weight: 650;
+}
+
+.field label span[aria-hidden],
+.optional {
+  color: var(--destructive);
+  font-weight: 500;
+}
+
+.optional {
+  color: var(--muted-foreground);
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.fieldError {
+  margin: 0;
+  color: var(--destructive);
+  font-weight: 500;
+}
+
+.input,
+.inputGroup {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--foreground);
+  font-weight: 450;
+  letter-spacing: -0.1px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.input {
+  padding: 10px 12px;
+}
+
+textarea.input {
+  min-height: 120px;
+  line-height: 20px;
+  resize: vertical;
+}
+
+.input::placeholder,
+.inputGroup input::placeholder {
+  color: #8f8f8f;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.inputGroup input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.inputGroup select {
+  flex: none;
+  padding: 0 10px;
+  border: 0;
+  border-left: 1px solid var(--border);
+  outline: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.prefix {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+
+.prefix + input {
+  padding-left: 6px;
+}
+
+.input:focus-visible,
+.inputGroup:focus-within {
+  border-color: var(--primary);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(62, 99, 221, 0.18);
+}
+
+.input[aria-invalid="true"],
+.inputGroup[data-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+.input[aria-invalid="true"]:focus-visible,
+.inputGroup[data-invalid="true"]:focus-within {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
+}
+
+.fieldFoot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.counter {
+  flex: none;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 88px;
+  border: 1px dashed #cfcfcf;
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--primary);
+  font-weight: 650;
+}
+
+.upload[data-state="busy"] {
+  color: var(--muted-foreground);
+}
+
+.upload[data-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+.attached {
+  display: flex;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.attachedName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.formActions[data-align="center"] {
+  justify-content: center;
+}
+
+.formSkeleton {
+  height: 520px;
+  border-radius: 16px;
+  background: var(--muted);
+}
+
+/* ---------- Category clarification ---------- */
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--foreground);
+  text-align: left;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.option[aria-checked="true"] {
+  border-color: var(--primary);
+  background: var(--primary-container);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.optionIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--primary);
+}
+
+.option[aria-checked="true"] .optionIcon {
+  background: #fff;
+}
+
+.optionText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.optionText strong {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.optionText span {
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.optionCheck {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid #cfcfcf;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.option[aria-checked="true"] .optionCheck {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.escape {
+  display: block;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 650;
+  text-align: left;
+}
+
+/* ---------- Review summary ---------- */
+
+.summary {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.summary > div {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 16px;
+}
+
+.summary > div + div {
+  border-top: 1px solid var(--border);
+}
+
+.summary dt {
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.summary dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.notice svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.notice strong {
+  font-weight: 650;
+}
+
+.notice p {
+  margin: 2px 0 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.notice[data-tone="info"] {
+  border-color: #d5e0ff;
+  background: var(--primary-container);
+}
+
+.notice[data-tone="info"] svg {
+  color: var(--primary);
+}
+
+.notice[data-tone="closed"] {
+  background: var(--muted);
+}
+
+/* ---------- Success ---------- */
+
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  text-align: center;
+}
+
+.success h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 650;
+  line-height: 34px;
+  letter-spacing: -0.4px;
+}
+
+.success > p {
+  margin: 0 0 16px;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.success .summary {
+  text-align: left;
+}
+
+.success .summary > div {
+  grid-template-columns: 140px minmax(0, 1fr);
+}
+
+.successIcon {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--secondary-container);
+  color: var(--success);
+}
+
+/* ---------- Shared bits ---------- */
+
+.thumb {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--muted);
+  color: #a3a3a3;
+}
+
+.thumb[data-size="small"] {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.thumb[data-size="large"] {
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.badge[data-tone="active"] {
+  background: var(--secondary-container);
+  color: var(--success);
+}
+
+.badge[data-tone="closed"] {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.message {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: 400px;
+  margin: 48px auto 24px;
+  text-align: center;
+}
+
+.messageIcon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.messageIcon[data-tone="error"] {
+  background: #fef2f2;
+  color: var(--destructive);
+}
+
+/* Waiting for sellers: the request "broadcasts" as rings that grow and fade, staggered.
+   Only transform and opacity animate, so it stays on the compositor. */
+.messageIcon[data-tone="searching"] {
+  position: relative;
+  margin: 16px 0 28px;
+  background: var(--primary-container);
+  color: var(--primary);
+}
+
+.messageIcon[data-tone="searching"] svg {
+  position: relative;
+}
+
+.ripple {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: ripple 3s cubic-bezier(0.2, 0, 0.4, 1) infinite;
+}
+
+.ripple:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.ripple:nth-child(3) {
+  animation-delay: 2s;
+}
+
+@keyframes ripple {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.message h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+}
+
+.message p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.messageActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.bone {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ececec 25%, #f5f5f5 37%, #ececec 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* ---------- Tabs ---------- */
+
+/* Tabs on the left, the list/grid switch on the right, sharing one hairline. */
+.tabsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: -1px;
+}
+
+.layoutToggle {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 10px;
+  background: var(--muted);
+}
+
+.layoutToggle button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.layoutToggle button[aria-pressed="true"] {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px rgba(20, 20, 30, 0.12);
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 15px;
+  font-weight: 550;
+}
+
+.tab::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.tab[aria-selected="true"] {
+  color: var(--foreground);
+  font-weight: 650;
+}
+
+.tab[aria-selected="true"]::after {
+  background: var(--primary);
+}
+
+.count {
+  min-width: 24px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.tab[aria-selected="true"] .count {
+  background: var(--primary-container);
+  color: var(--primary-hover);
+}
+
+.panel {
+  padding-top: 16px;
+}
+
+/* ---------- Request cards ---------- */
+
+.cards {
+  display: grid;
+  /* minmax(0, …) lets a long one-line product name truncate instead of widening the card. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Card, top to bottom: product · three facts · status and actions. Same structure in list and grid. */
+/* Each card is a size container: a narrow card (phone, or a grid column) stacks its actions. */
+.card {
+  container: request-card / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  /* Own base type, so the card doesn't depend on the page around it. */
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cardHead .thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+}
+
+.cardMain {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Values from the "Request Card Componnet" Figma component. Long names wrap. */
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  overflow-wrap: anywhere;
+}
+
+.cardTitle a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* "Qty: 2 • Rs. 10,000" */
+.cardLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardLine strong {
+  color: var(--foreground);
+  font-weight: 650;
+}
+
+.cardBudget {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--secondary);
+  font-weight: 650;
+}
+
+.cardFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cardFacts li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardMuted {
+  color: var(--muted-foreground);
+}
+
+/* "1 New Offer": Badge, info colours. */
+.cardNewBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 4px 10px;
+  border-radius: 26px;
+  background: var(--info-container);
+  color: var(--info);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 14px;
+  letter-spacing: 0.12px;
+  white-space: nowrap;
+}
+
+.cardExpiry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Under an hour left: red, as in Figma. */
+.cardExpiry[data-tone="soon"] {
+  color: var(--destructive);
+}
+
+.cardExpiry[data-tone="closed"] {
+  color: var(--muted-foreground);
+}
+
+.cardFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Button / Size=40px. */
+.cardActions > * {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Narrow card: the actions take the full width under the time. */
+@container request-card (max-width: 520px) {
+  .cardActions {
+    flex: 1 1 100%;
+  }
+
+  .cardActions > * {
+    flex: 1;
+  }
+}
+
+/* Grid view: the same card in columns; the footer is pushed down so rows line up. */
+.cards[data-layout="grid"] {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.cards[data-layout="grid"] .cardFoot {
+  margin-top: auto;
+}
+
+/* "N new offers": accent colour plus an icon and words. */
+.newPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+
+/* ---------- Detail ---------- */
+
+/* Figma's 1200px content width (120px gutters at 1440). */
+.page[data-width="wide"] {
+  max-width: 1264px;
+  padding-top: 0;
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 12px 0;
+  list-style: none;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.breadcrumb li + li::before {
+  content: "›";
+  margin-right: 6px;
+  color: var(--muted-foreground);
+}
+
+.breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb [aria-current="page"] {
+  color: var(--foreground);
+}
+
+/* The breadcrumb leads back on wider screens; the back link takes over on phones. */
+.page[data-width="wide"] .back {
+  display: none;
+}
+
+.detailProduct {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+/* Phones only: opens the request card's details. */
+.detailToggle {
+  display: none;
+}
+
+.detailProduct .thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+.detailProduct > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.detailProduct h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 32px;
+  letter-spacing: -0.36px;
+  overflow-wrap: anywhere;
+}
+
+.detailProduct p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.noWrap {
+  white-space: nowrap;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: 392px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding-top: 8px;
+}
+
+.summaryCard {
+  position: sticky;
+  top: calc(var(--header-height) + 24px);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+/* Banner / Variants=default: tertiary (orange) while waiting, red in the last hour, grey once closed. */
+.detailBanner {
+  --banner-bg: #ffedd5;
+  --banner-fg: #f76300;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--banner-bg);
+  color: var(--banner-fg);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.detailBanner[data-tone="soon"] {
+  --banner-bg: #fee2e2;
+  --banner-fg: var(--destructive);
+}
+
+.detailBanner[data-tone="closed"] {
+  --banner-bg: var(--muted);
+  --banner-fg: var(--muted-foreground);
+}
+
+.detailBanner svg {
+  flex: none;
+}
+
+/* The title keeps its natural width; when space runs out the countdown drops below it. */
+.detailBanner p {
+  flex: 1 0 auto;
+  max-width: calc(100% - 28px);
+  margin: 0;
+}
+
+.detailCountdown {
+  flex: none;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Facts and cancel; collapsible on phones (rows 1fr → 0fr animates the height). */
+.detailMore {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.detailMore > div {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* Margin, not padding, so the collapsed row can shrink all the way to zero. */
+.detailMore > div > :first-child {
+  margin-top: 16px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.facts > [data-span="full"] {
+  grid-column: 1 / -1;
+}
+
+.facts dt {
+  color: var(--muted-foreground);
+  font-weight: 650;
+}
+
+.facts dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.factText {
+  white-space: pre-wrap;
+}
+
+.cancelLink {
+  align-self: flex-start;
+  min-height: 44px;
+  margin: -12px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--destructive);
+  font-weight: 650;
+}
+
+.offersColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 16px;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.stats dt {
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Offer cards ---------- */
+
+/* The list is a size container: the card adapts to the width it gets, not the screen. */
+.offers {
+  container: offers / inline-size;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Values from the "Seller Offer Card v2" Figma component. */
+.offer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px;
+  /* Own base type, so the card doesn't depend on the page around it. */
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.offer[data-status="declined"] {
+  background: #fafafa;
+}
+
+.offer[data-status="declined"] > :not(.offerFoot) {
+  opacity: 0.55;
+}
+
+.offerHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.storeLogo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--primary-container);
+  color: var(--primary-hover);
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.storeLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.storeText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.figmaIcon {
+  display: block;
+  flex: none;
+}
+
+.storeName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 20px;
+}
+
+.storeName span {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+
+/* Rating · distance: Badge type (12px bold). */
+.storeMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 14px;
+  letter-spacing: 0.12px;
+  white-space: nowrap;
+}
+
+.rating,
+.distance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating {
+  color: var(--muted-foreground);
+}
+
+.distance {
+  color: var(--success);
+}
+
+
+.offerPrice {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.offerPrice strong {
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.198px;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceLabel {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0;
+}
+
+/* Below budget: the budget crossed out, then the saving in green. */
+.saving {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.saving s {
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.savingPercent,
+.onBudget {
+  color: var(--success);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Badge: 24px tall, 12px bold. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 4px 10px;
+  border-radius: 26px;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 14px;
+  letter-spacing: 0.12px;
+  white-space: nowrap;
+}
+
+.chipIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+}
+
+.chip[data-tone="new"] {
+  background: var(--primary);
+  color: #fff;
+}
+
+.chip[data-tone="lowest"] {
+  background: var(--info-container);
+  color: var(--info);
+}
+
+.chip[data-tone="fulfilment"] {
+  background: var(--secondary-container);
+  color: var(--secondary);
+}
+
+.chip[data-tone="exact"] {
+  background: var(--primary-container);
+  color: var(--primary-hover);
+}
+
+.chip[data-tone="neutral"] {
+  background: var(--muted);
+  color: #4a4a4a;
+}
+
+.chip[data-tone="plain"] {
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: #4a4a4a;
+  font-weight: 550;
+}
+
+.offerDescription {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+  overflow-wrap: anywhere;
+}
+
+.offerDescription[data-clamped="true"] {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.offerFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.received {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted-foreground);
+  font-size: 16px;
+  font-weight: 450;
+  line-height: 24px;
+  letter-spacing: -0.096px;
+}
+
+.offerActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Card buttons: 40px, 12px corners (Button / Size=40px). */
+.offerActions > button,
+.mutedButton {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.mutedButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 650;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+}
+
+.offerState {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+
+.offerState[data-status="interested"] {
+  color: var(--primary-hover);
+  font-weight: 650;
+}
+
+.offerMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Seller photo: square, under the note. Thumb on the card, full width in the confirmation. */
+.offerPhoto {
+  position: relative;
+  flex: none;
+  width: 100px;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--muted);
+  cursor: zoom-in;
+}
+
+.offerPhoto[data-variant="full"] {
+  width: 100%;
+  border-radius: 14px;
+}
+
+.offerPhoto > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Small "expand" badge so the photo reads as tappable. */
+.offerPhotoHint {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--overlay);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 14px;
+  backdrop-filter: blur(5px);
+}
+
+.offerPhoto[data-variant="full"] .offerPhotoHint {
+  right: 10px;
+  bottom: 10px;
+  padding: 6px 10px;
+}
+
+.offerPhoto:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--foreground);
+}
+
+/* ---------- Photo preview (lightbox) ---------- */
+
+.dialog.lightbox {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dialog.lightbox[open] {
+  display: grid;
+  place-items: center;
+  animation: lightbox-in 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dialog.lightbox::backdrop {
+  background: rgba(10, 10, 12, 0.88);
+}
+
+.lightboxFigure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 16px;
+}
+
+.lightboxFigure img {
+  display: block;
+  max-width: min(92vw, 960px);
+  max-height: calc(100dvh - 120px);
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.lightboxFigure figcaption {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.lightboxClose {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+/* ---------- Interested confirmation (after the mobile app) ---------- */
+
+/* Doubled class: beats the generic .dialog rules that come later in this file. */
+.dialog.confirmDialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+}
+
+.dialog.confirmDialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A size container: the two-column layout depends on the confirmation's own width. */
+.confirm {
+  container: confirm / inline-size;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.confirmBar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 10px 10px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.confirmBar h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 22px;
+}
+
+/* Focused on open so it's announced; it isn't interactive, so no ring. */
+.confirmBar h2:focus {
+  outline: none;
+}
+
+/* The middle scrolls; the title bar and the actions stay put. */
+.confirmBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  padding: 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.confirmHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.storeLogo[data-size="large"] {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+}
+
+.confirmStore {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.confirmStore .storeName {
+  font-size: 17px;
+  line-height: 22px;
+}
+
+.confirmStore p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--muted-foreground);
+}
+
+.confirmStore p svg {
+  flex: none;
+}
+
+.confirmStore p span {
+  white-space: nowrap;
+}
+
+.confirmDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* The deal: price against budget, then match and fulfilment. */
+.confirmDeal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirmDeal .offerPrice {
+  align-items: flex-start;
+}
+
+.confirmDeal .offerPrice strong {
+  font-size: 26px;
+  line-height: 32px;
+}
+
+.confirmDeal .saving {
+  justify-content: flex-start;
+  font-size: 14px;
+}
+
+/* The request this answers. */
+.confirmRequest {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--background);
+}
+
+.confirmRequestThumb {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--muted);
+  color: #a3a3a3;
+}
+
+.confirmRequestThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.confirmRequestText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.confirmRequestText strong {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.confirmNote,
+.confirmPhoto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.confirmNoteText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.confirmLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+/* Pinned footer: what happens next, then the two choices. */
+.confirmFoot {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 20px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+
+.confirmNext {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.confirmNext svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.confirmActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.softDangerButton,
+.confirmButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 650;
+  transition: background-color 150ms ease, scale 120ms ease;
+}
+
+.softDangerButton {
+  background: #fdecec;
+  color: var(--destructive);
+}
+
+.confirmButton {
+  background: var(--success);
+  color: #fff;
+}
+
+.softDangerButton:active,
+.confirmButton:active {
+  scale: 0.97;
+}
+
+@media (hover: hover) {
+  .offerPhoto:hover > img {
+    scale: 1.04;
+  }
+
+  .iconButton:hover {
+    background: #f4f4f4;
+  }
+
+  .lightboxClose:hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  .softDangerButton:hover {
+    background: #fbdcdc;
+  }
+
+  .confirmButton:hover {
+    background: #146a43;
+  }
+}
+
+/* With a photo the dialog is wider; at 720px+ it splits into two columns, photo on the left, so the offer fits without scrolling. */
+.dialog.confirmDialog.confirmDialogWide {
+  width: min(840px, calc(100vw - 48px));
+}
+
+@container confirm (min-width: 720px) {
+  .confirm[data-photo="true"] .confirmBody {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+  }
+
+  .confirm[data-photo="true"] .confirmPhoto {
+    position: sticky;
+    top: 0;
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .confirm[data-photo="true"] .confirmDetails {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .confirm[data-photo="true"] .confirmActions {
+    width: calc(50% - 12px);
+    margin-left: auto;
+  }
+
+  .confirm[data-photo="true"] .confirmFoot {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .confirm[data-photo="true"] .confirmNext {
+    flex: 1;
+  }
+}
+
+/* Phones: full screen, like the app, with the actions pinned to the bottom. */
+@media (max-width: 640px) {
+  .dialog.confirmDialog {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .confirmBar {
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+
+  .confirmBody {
+    padding: 16px;
+  }
+
+  .confirmFoot {
+    padding: 12px 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .storeLogo[data-size="large"] {
+    width: 48px;
+    height: 48px;
+  }
+
+  .confirmStore .storeName {
+    font-size: 16px;
+    line-height: 21px;
+  }
+
+  .confirmDeal .offerPrice strong {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .offerPhoto > img {
+    transition: none;
+  }
+
+  .dialog.lightbox[open] {
+    animation: none;
+  }
+}
+
+/* Narrow (phone-width) list: price drops under the store, actions fill the width. */
+/* Phone-width cards: same content, tighter. Seller row, then the price on its own line,
+   chips and note, a quieter footer, and full-width 44px buttons for thumbs. */
+@container offers (max-width: 520px) {
+  .offer {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .offerHead {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .offer .storeLogo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .offer .storeText {
+    gap: 4px;
+  }
+
+  /* Card prices only: the confirmation has its own price layout. */
+  .offer .offerPrice {
+    flex: 1 1 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+  }
+
+  .offer .offerPrice strong {
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.3px;
+  }
+
+  .offer .offerPrice .saving {
+    gap: 6px;
+  }
+
+  .offerDescription {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .offer .offerPhoto {
+    width: 80px;
+    border-radius: 10px;
+  }
+
+  .offerFoot {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .received {
+    gap: 6px;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0;
+  }
+
+  .received .figmaIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .offerActions > button,
+  .offerFoot > .mutedButton {
+    flex: 1;
+    min-height: 44px;
+  }
+}
+
+.afterOffers {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+/* ---------- Dialogs ---------- */
+
+.dialog {
+  width: min(420px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 24px 60px -20px rgba(20, 20, 30, 0.45);
+}
+
+.dialog::backdrop {
+  background: rgba(20, 20, 30, 0.45);
+}
+
+.dialog[open] {
+  animation: dialog-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.dialogBody h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+}
+
+.dialogBody > p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 450;
+}
+
+.dialogBody > p.dialogOffer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.dialogOffer span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dialogOffer strong {
+  flex: none;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ---------- Toast ---------- */
+
+.toastRegion {
+  position: fixed;
+  right: 0;
+  bottom: 28px;
+  left: 0;
+  z-index: 950;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #202020;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 550;
+  box-shadow: 0 12px 28px -10px rgba(20, 20, 30, 0.5);
+  animation: toast-in 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------- "New offer received" toast (global) ---------- */
+
+.offerToast {
+  position: fixed;
+  top: 108px;
+  right: 24px;
+  z-index: 960;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(400px, calc(100vw - 32px));
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  box-shadow: 0 16px 40px -16px rgba(20, 20, 30, 0.4);
+  animation: toast-in 220ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.offerToastIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary-container);
+  color: var(--primary);
+}
+
+.offerToastText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.offerToastText strong {
+  font-weight: 650;
+}
+
+.offerToastText span {
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 450;
+}
+
+.offerToastLink {
+  flex: none;
+  padding: 8px 4px;
+  color: var(--primary);
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.offerToastClose {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+@media (max-width: 640px) {
+  .offerToast {
+    top: 148px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .offerToast {
+    animation: none;
+  }
+}
+
+/* ---------- Dev preview control: third pill in the corner stack ---------- */
+
+.previewOffset.previewOffset {
+  bottom: 124px;
+}
+
+.previewMenu.previewMenu {
+  width: 320px;
+  max-height: min(64vh, 560px);
+  overflow-y: auto;
+}
+
+.previewGroup + .previewGroup {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.previewLabel {
+  margin: 0;
+  padding: 6px 10px 2px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+@media (hover: hover) {
+  .primaryButton:not(:disabled):hover {
+    background: var(--primary-hover);
+  }
+
+  .dangerButton:hover {
+    background: #b91c1c;
+  }
+
+  .outlineButton:not(:disabled):hover {
+    background: #f6f6f6;
+  }
+
+  .layoutToggle button[aria-pressed="false"]:hover,
+  .back:hover,
+  .breadcrumb a:hover,
+  .tab:hover {
+    color: var(--foreground);
+  }
+
+  .linkButton:hover,
+  .escape:hover,
+  .cancelLink:hover,
+  .cardTitle a:hover {
+    text-decoration: underline;
+  }
+
+  .option:not([aria-checked="true"]):hover,
+  .upload:not([data-state="busy"]):hover {
+    border-color: #b9c6f3;
+  }
+}
+
+@media (max-width: 960px) {
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryCard {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 16px 16px 48px;
+  }
+
+  .pageHeader h1 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .listHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* 16px text stops iOS zooming the page when a field is focused. */
+  .input,
+  .inputGroup input,
+  .inputGroup select {
+    font-size: 16px;
+  }
+
+  .formActions > *,
+  .dialogActions > * {
+    flex: 1;
+  }
+
+  .summary > div,
+  .success .summary > div {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .summary dt {
+    grid-column: 1 / -1;
+    margin-bottom: -8px;
+  }
+
+  .attached {
+    flex-wrap: wrap;
+  }
+
+  .stats {
+    padding: 16px;
+  }
+
+  .stats dd {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .page[data-width="wide"] .back {
+    display: inline-flex;
+  }
+
+  .page[data-width="wide"] .breadcrumb {
+    display: none;
+  }
+
+  /* Product and request card merge into one card, collapsed to the product and the timer. */
+  .detailGrid {
+    gap: 0;
+    padding-top: 4px;
+  }
+
+  .detailProduct {
+    position: relative;
+    gap: 12px;
+    margin: 0;
+    padding: 16px 16px 12px;
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: 16px 16px 0 0;
+    background: var(--card);
+  }
+
+  .detailProduct .thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+  }
+
+  .detailProduct h1 {
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: -0.2px;
+  }
+
+  .detailToggle {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--muted-foreground);
+  }
+
+  /* The whole product row toggles, not just the chevron. */
+  .detailToggle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .detailToggle svg {
+    transition: rotate 240ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .detailToggle[aria-expanded="true"] svg {
+    rotate: 180deg;
+  }
+
+  .detailToggle:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .summaryCard {
+    border-top: 0;
+    border-radius: 0 0 16px 16px;
+    padding-top: 0;
+  }
+
+  .detailMore {
+    transition:
+      grid-template-rows 240ms cubic-bezier(0.2, 0, 0, 1),
+      visibility 240ms;
+  }
+
+  .detailMore > div {
+    overflow: hidden;
+  }
+
+  /* Collapsed: hidden from view, focus and screen readers until opened. */
+  .detailGrid[data-expanded="false"] .detailMore {
+    grid-template-rows: 0fr;
+    visibility: hidden;
+  }
+
+  .offersColumn {
+    margin-top: 24px;
+  }
+
+  .dialog {
+    margin-bottom: 16px;
+  }
+
+  .previewOffset.previewOffset {
+    bottom: 120px;
+  }
+
+  .previewMenu.previewMenu {
+    width: min(320px, calc(100vw - 32px));
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 50%;
+  }
+
+  to {
+    background-position: 0 50%;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .dialog[open],
+  .bone {
+    animation: none;
+  }
+
+  /* Still: one faint ring keeps the "sent out" idea without motion. */
+  .ripple {
+    animation: none;
+  }
+
+  .detailMore,
+  .detailToggle svg {
+    transition: none;
+  }
+
+  .ripple:first-child {
+    opacity: 0.25;
+    transform: scale(1.5);
+  }
+
+  .spinner {
+    animation-duration: 2s;
+  }
+}
+
+/* ---------- Interested in this offer? (after the mobile app, Dev Briz 40016514:3379) ---------- */
+
+/* Doubled class: beats the generic .dialog rules earlier in this file. */
+.dialog.interestDialog {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+
+.interest {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  color: var(--foreground);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+}
+
+.interestBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -6px -10px -4px 0;
+}
+
+.interestBar h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 24px;
+}
+
+.interestBar h2:focus {
+  outline: none;
+}
+
+/* The offer card inside the dialog: a touch tighter than in the list. */
+.interest .offer {
+  padding: 16px;
+}
+
+.interestLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-weight: 550;
+}
+
+.interestLabel svg {
+  color: var(--primary);
+}
+
+.interestMessage {
+  width: 100%;
+  min-height: 96px;
+  margin-top: -6px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--muted);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 16px;
+  line-height: 24px;
+  resize: vertical;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.interestMessage:focus-visible {
+  border-color: var(--primary);
+  background: var(--card);
+  outline: none;
+}
+
+.interestSend {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+/* Phones: a bottom sheet, like the app. */
+@media (max-width: 640px) {
+  .dialog.interestDialog {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: calc(100dvh - 24px);
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .dialog.interestDialog[open] {
+    animation: sheet-in 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .interest {
+    padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog.interestDialog[open] {
+    animation: none;
+  }
+
+  .interestMessage {
+    transition: none;
+  }
+}

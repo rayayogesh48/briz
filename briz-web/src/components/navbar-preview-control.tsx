@@ -11,15 +11,32 @@ const SHOW = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_NA
 
 const STATES: { label: string; apply: () => void }[] = [
   { label: "Guest", apply: () => navbarPreview.preview({ userState: "guest" }) },
+  { label: "Guest + More menu open", apply: () => navbarPreview.preview({ userState: "guest", activePopover: "more" }) },
   {
     label: "Authenticated",
     apply: () => navbarPreview.preview({ userState: "authenticated", notifications: navbarPreview.mockNotifications(false) }),
   },
   { label: "Authenticated + unread notification", apply: () => navbarPreview.preview({ userState: "authenticated" }) },
-  { label: "Notifications open", apply: () => navbarPreview.preview({ userState: "authenticated", activePopover: "notifications" }) },
+  { label: "Notifications open (36, 4 unread)", apply: () => navbarPreview.preview({ userState: "authenticated", activePopover: "notifications" }) },
   {
     label: "Notifications empty",
     apply: () => navbarPreview.preview({ userState: "authenticated", notifications: [], activePopover: "notifications" }),
+  },
+  {
+    label: "Notifications: a few (3, all read)",
+    apply: () => navbarPreview.preview({ userState: "authenticated", notifications: navbarPreview.mockNotificationFeed(3, 0), activePopover: "notifications" }),
+  },
+  {
+    label: "Notifications: 12 unread",
+    apply: () => navbarPreview.preview({ userState: "authenticated", notifications: navbarPreview.mockNotificationFeed(36, 12), activePopover: "notifications" }),
+  },
+  {
+    // Keeps the current state; signs in first when needed so the bell is there.
+    label: "New notification arrives",
+    apply: () => {
+      if (navbarPreview.isGuest()) navbarPreview.preview({ userState: "authenticated" });
+      navbarPreview.receiveNotification();
+    },
   },
   { label: "Profile menu open", apply: () => navbarPreview.preview({ userState: "authenticated", activePopover: "profile" }) },
   { label: "Language menu open", apply: () => navbarPreview.preview({ userState: "authenticated", activePopover: "language" }) },

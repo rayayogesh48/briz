@@ -230,9 +230,8 @@ test("Route pages and global navigation entries are properly registered", () => 
   assert.match(home, /\/featured-products/, "Home page links to /featured-products");
   assert.match(home, /\/featured-stores/, "Home page links to /featured-stores");
 
-  // StatePreviewLauncher
+  // The featured pages are reached from the home page; the dev StatePreviewLauncher only links to states.
   const launcherPath = path.join(rootDir, "src/components/system-state/state-preview-launcher.tsx");
   const launcher = fs.readFileSync(launcherPath, "utf8");
-  assert.match(launcher, /\/featured-products/, "StatePreviewLauncher links to /featured-products");
-  assert.match(launcher, /\/featured-stores/, "StatePreviewLauncher links to /featured-stores");
+  assert.doesNotMatch(launcher, /\/featured-products/, "StatePreviewLauncher no longer links to /featured-products");
 });

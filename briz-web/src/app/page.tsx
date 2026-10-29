@@ -94,6 +94,53 @@ const REDIRECTION_PAGES = [
   },
 ];
 
+/** Component pages. Only the ones with a props playground are listed on the live site. */
+const COMPONENTS = [
+  {
+    title: "Product Category List",
+    badge: "Component · Figma 946:103107",
+    description:
+      "Horizontal scrollable pill navigation with 152px gradient fade masks, auto-scrolling, chevron controls, and active text expansion for long category names.",
+    href: "/components/product-category-list",
+    label: "View Product Category List Component Documentation and Live Previews",
+    playground: false,
+  },
+  {
+    title: "Request Card",
+    badge: "Component · Requests",
+    description:
+      "A props playground for the My requests card, mirroring the Figma component’s states: waiting, offers, new offer, expiring soon, expired and cancelled.",
+    href: "/components/request-card",
+    label: "View Request Card playground and props",
+    playground: true,
+  },
+  {
+    title: "Seller Offer Card",
+    badge: "Component · Requests",
+    description:
+      "A props playground for an offer on a request, mirroring the Figma component: status, budget, new, lowest price, photo, verified, note and fulfilment.",
+    href: "/components/offer-card",
+    label: "View Seller Offer Card playground and props",
+    playground: true,
+  },
+  {
+    title: "Notification",
+    badge: "Component · Navbar",
+    description:
+      "A props playground for a row in the notification panel, mirroring the Figma component: type, unread, media, video, buttons and external link.",
+    href: "/components/notification",
+    label: "View Notification playground and props",
+    playground: true,
+  },
+];
+
+/**
+ * The live site (a production build) lists only the component playgrounds. Local
+ * development shows the whole hub; set NEXT_PUBLIC_SHOW_ALL_PAGES=1 to show it all in a
+ * production build too.
+ */
+const SHOW_ALL = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_SHOW_ALL_PAGES === "1";
+
 export default function Home() {
   const [isShareOpen, setIsShareOpen] = useState(false);
 
@@ -107,10 +154,12 @@ export default function Home() {
           <div className={styles.headerRow}>
             <div>
               <h1 id="portal-heading" className={styles.portalTitle}>
-                Briz Web Application Navigation Hub
+                {SHOW_ALL ? "Briz Web Application Navigation Hub" : "Briz Component Playgrounds"}
               </h1>
               <p className={styles.portalSubtitle}>
-                Select any page, component, or interactive dialog below to test and inspect.
+                {SHOW_ALL
+                  ? "Select any page, component, or interactive dialog below to test and inspect."
+                  : "Try each component in every state, at desktop and phone widths, with its props alongside."}
               </p>
             </div>
             <button
@@ -131,76 +180,74 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Dialogs & Interactive CTAs */}
-        <section className={styles.sectionGroup} aria-label="Dialogs and Actions">
-          <h2 className={styles.sectionHeading}>Dialogs & Actions</h2>
-          <div className={styles.actionCard}>
-            <div className={styles.actionCardBody}>
-              <div className={styles.actionIconWrapper} aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="18" cy="5" r="3" />
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="18" cy="19" r="3" />
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                </svg>
-              </div>
-              <div>
-                <h3 className={styles.actionCardTitle}>Share Dialog</h3>
-                <p className={styles.actionCardDescription}>
-                  Social media sharing modal supporting Facebook, Instagram, WhatsApp, Email, copy-to-clipboard, and native Web Share.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              className={styles.openDialogBtn}
-              onClick={() => setIsShareOpen(true)}
-              aria-label="Open Share Dialog"
-            >
-              Open Share Dialog ↗
-            </button>
-          </div>
-        </section>
-
-        {/* Core Application Pages Grid */}
-        <section className={styles.sectionGroup} aria-label="Application Pages">
-          <h2 className={styles.sectionHeading}>Pages</h2>
-          <div className={styles.redirectGrid}>
-            {REDIRECTION_PAGES.map((page) => (
-              <Link key={page.href} href={page.href} className={styles.redirectCard}>
-                <div>
-                  <span className={styles.cardIcon} aria-hidden>{page.icon}</span>
-                  <h3 className={styles.cardTitle}>{page.title}</h3>
-                  <p className={styles.cardDescription}>{page.description}</p>
+        {/* Dialogs & Interactive CTAs (not on the live site) */}
+        {SHOW_ALL && (
+          <section className={styles.sectionGroup} aria-label="Dialogs and Actions">
+            <h2 className={styles.sectionHeading}>Dialogs & Actions</h2>
+            <div className={styles.actionCard}>
+              <div className={styles.actionCardBody}>
+                <div className={styles.actionIconWrapper} aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                  </svg>
                 </div>
-                <span className={styles.cardButton}>{page.cta} →</span>
-              </Link>
-            ))}
-          </div>
-        </section>
+                <div>
+                  <h3 className={styles.actionCardTitle}>Share Dialog</h3>
+                  <p className={styles.actionCardDescription}>
+                    Social media sharing modal supporting Facebook, Instagram, WhatsApp, Email, copy-to-clipboard, and native Web Share.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className={styles.openDialogBtn}
+                onClick={() => setIsShareOpen(true)}
+                aria-label="Open Share Dialog"
+              >
+                Open Share Dialog ↗
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* Core Application Pages Grid (not on the live site) */}
+        {SHOW_ALL && (
+          <section className={styles.sectionGroup} aria-label="Application Pages">
+            <h2 className={styles.sectionHeading}>Pages</h2>
+            <div className={styles.redirectGrid}>
+              {REDIRECTION_PAGES.map((page) => (
+                <Link key={page.href} href={page.href} className={styles.redirectCard}>
+                  <div>
+                    <span className={styles.cardIcon} aria-hidden>{page.icon}</span>
+                    <h3 className={styles.cardTitle}>{page.title}</h3>
+                    <p className={styles.cardDescription}>{page.description}</p>
+                  </div>
+                  <span className={styles.cardButton}>{page.cta} →</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Component Redirection Card */}
         <section className={styles.sectionGroup} aria-label="Design System Components">
-          <h2 className={styles.sectionHeading}>Components</h2>
-          <Link
-            href="/components/product-category-list"
-            className={styles.componentCard}
-            aria-label="View Product Category List Component Documentation and Live Previews"
-          >
-            <div className={styles.componentCardBody}>
-              <div className={styles.badgeRow}>
-                <span className={styles.componentBadge}>Component · Figma 946:103107</span>
+          <h2 className={styles.sectionHeading}>{SHOW_ALL ? "Components" : "Component playgrounds"}</h2>
+          {COMPONENTS.filter((component) => SHOW_ALL || component.playground).map((component) => (
+            <Link key={component.href} href={component.href} className={styles.componentCard} aria-label={component.label}>
+              <div className={styles.componentCardBody}>
+                <div className={styles.badgeRow}>
+                  <span className={styles.componentBadge}>{component.badge}</span>
+                </div>
+                <h3 className={styles.componentTitle}>{component.title}</h3>
+                <p className={styles.componentDescription}>{component.description}</p>
               </div>
-              <h3 className={styles.componentTitle}>Product Category List</h3>
-              <p className={styles.componentDescription}>
-                Horizontal scrollable pill navigation with 152px gradient fade masks, auto-scrolling, chevron controls, and active text expansion for long category names.
-              </p>
-            </div>
-            <span className={styles.componentButton}>
-              View Component Docs & Preview →
-            </span>
-          </Link>
+              <span className={styles.componentButton}>View Component Docs & Preview →</span>
+            </Link>
+          ))}
         </section>
       </main>
 

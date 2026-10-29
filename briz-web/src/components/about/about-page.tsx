@@ -14,7 +14,7 @@ import styles from "./about.module.css";
 export function AboutPage() {
   return (
     <div className={styles.shell}>
-      <BrizHeader variant="download" />
+      <BrizHeader />
       <main className={styles.page}>
         <Hero />
         <WhyBriz />

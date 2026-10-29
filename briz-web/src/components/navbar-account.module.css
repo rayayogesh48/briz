@@ -122,9 +122,12 @@
   width: 280px;
 }
 
-.language {
-  width: 200px;
-  padding: 6px;
+.more {
+  width: 220px;
+}
+
+.more .menuGroup {
+  border-top: 0;
 }
 
 .popoverHead {
@@ -143,15 +146,6 @@
   letter-spacing: -0.2px;
 }
 
-.popoverLabel {
-  margin: 0;
-  padding: 6px 10px 4px;
-  color: var(--muted-foreground);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-}
-
 .textAction {
   min-height: 32px;
   padding: 0 6px;
@@ -163,87 +157,69 @@
   font-weight: 600;
 }
 
-.notificationList {
+/* Rows come from notifications.module.css. Every notification is here, so the list
+   scrolls inside the panel; the header and the All / Unread switch stay put. */
+.notificationScroll {
+  max-height: min(560px, calc(100dvh - 200px));
+  padding: 0 6px 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Day label, pinned while its rows scroll past. */
+.groupTitle {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   margin: 0;
-  padding: 0 6px;
-  list-style: none;
-}
-
-.notification {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 10px;
-  border-radius: 12px;
-}
-
-.notificationIcon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: var(--muted);
+  padding: 8px 10px 4px;
+  background: var(--card);
   color: var(--muted-foreground);
-}
-
-.notificationText {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  color: var(--muted-foreground);
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.notificationText strong {
-  color: var(--foreground);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-}
-
-.notificationText time {
-  margin-top: 2px;
   font-size: 12px;
+  font-weight: 650;
   line-height: 16px;
 }
 
-/* Read items are quieter, not hidden: lighter title weight only. */
-.notification[data-unread="false"] .notificationText strong {
-  color: var(--muted-foreground);
-  font-weight: 500;
-}
-
-.notification[data-unread="true"] .notificationIcon {
-  background: var(--primary-container);
-  color: var(--primary-hover);
-}
-
-.unreadDot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  margin-top: 7px;
-  border-radius: 50%;
-  background: var(--primary);
-}
-
-.popoverFoot {
+/* All / Unread. */
+.segmented {
   display: flex;
+  gap: 4px;
+  margin: 0 16px 8px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--muted);
+}
+
+.segmented button {
+  display: inline-flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  margin-top: 6px;
-  border-top: 1px solid var(--border);
-  border-radius: 0 0 16px 16px;
-  color: var(--primary-hover);
-  font-size: 14px;
+  gap: 6px;
+  min-height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 13px;
   font-weight: 600;
-  text-decoration: none;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgba(20, 20, 30, 0.1);
+}
+
+.segmentCount {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
 }
 
 .empty {
@@ -314,6 +290,16 @@
   border-top: 1px solid var(--border);
 }
 
+.groupLabel {
+  margin: 0;
+  padding: 6px 10px 2px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0;
+}
+
 .menuItem {
   display: flex;
   align-items: center;
@@ -335,6 +321,17 @@
 
 .menuItem[aria-current="page"] {
   font-weight: 650;
+}
+
+.menuLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menuLabel > svg {
+  flex: none;
+  color: var(--muted-foreground);
 }
 
 .menuValue {
@@ -368,25 +365,12 @@
   .utility:hover,
   .avatarTrigger:hover,
   .menuItem:hover,
-  .textAction:hover,
-  .popoverFoot:hover {
+  .textAction:hover {
     background: #f8f8f8;
   }
 
   .utility[data-active="true"]:hover {
     background: var(--primary-container);
-  }
-}
-
-/* The Saved label drops first when the bar gets tight; the heart stays. */
-@media (max-width: 1399px) {
-  .utilityLabel {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 }
 
@@ -432,6 +416,19 @@
     width: auto;
     max-height: calc(100dvh - var(--navbar-sheet-top, 76px) - 16px);
     overflow-y: auto;
+  }
+
+  /* Notifications: only the list scrolls; it takes whatever height the sheet has left. */
+  .popover.notifications {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .notificationScroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
   }
 
   .menuItem {

@@ -69,24 +69,6 @@ export function StatePreviewLauncher() {
             </div>
             <div className={styles.popoverHeaderActions}>
               <Link
-                href="/featured-products"
-                className={styles.fullGalleryLink}
-                onClick={() => setIsOpen(false)}
-                title="Open Featured Products Page"
-              >
-                <span>Products</span>
-                <ExternalLink size={12} />
-              </Link>
-              <Link
-                href="/featured-stores"
-                className={styles.fullGalleryLink}
-                onClick={() => setIsOpen(false)}
-                title="Open Featured Stores Page"
-              >
-                <span>Stores</span>
-                <ExternalLink size={12} />
-              </Link>
-              <Link
                 href="/previewer"
                 className={styles.fullGalleryLink}
                 onClick={() => setIsOpen(false)}

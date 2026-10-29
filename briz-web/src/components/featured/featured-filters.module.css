@@ -5,7 +5,7 @@
   width: 260px;
   flex-shrink: 0;
   position: sticky;
-  top: 96px;
+  top: calc(var(--header-height) + 9px);
   background: #ffffff;
   border: 1px solid #ebebeb;
   border-radius: 12px;
